@@ -1,0 +1,29 @@
+package com.georlegacy.general.theatrical.items.base;
+
+import com.georlegacy.general.theatrical.TheatricalMain;
+import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.init.ModItems;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+
+/**
+ * Base for item creation
+ *
+ * @author James Conway
+ */
+public class ItemBase extends Item implements IHasModel {
+
+    public ItemBase(String name) {
+        setUnlocalizedName(name);
+        setRegistryName(name);
+        setCreativeTab(CreativeTabs.REDSTONE);
+
+        ModItems.ITEMS.add(this);
+    }
+
+    @Override
+    public void registerModels() {
+        TheatricalMain.proxy.registerItemRenderer(this, 0, "inventory");
+    }
+
+}
