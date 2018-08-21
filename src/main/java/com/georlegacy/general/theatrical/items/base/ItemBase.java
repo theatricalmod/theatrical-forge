@@ -2,7 +2,7 @@ package com.georlegacy.general.theatrical.items.base;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
-import com.georlegacy.general.theatrical.init.ModItems;
+import com.georlegacy.general.theatrical.init.TheatricalItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
@@ -18,7 +18,7 @@ public class ItemBase extends Item implements IHasModel {
         setRegistryName(name);
         setCreativeTab(CreativeTabs.REDSTONE);
 
-        ModItems.ITEMS.add(this);
+        TheatricalItems.ITEMS.add(this);
     }
 
     @Override
