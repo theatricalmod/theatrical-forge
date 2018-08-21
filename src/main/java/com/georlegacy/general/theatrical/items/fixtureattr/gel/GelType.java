@@ -234,4 +234,13 @@ public enum GelType {
         this.id = id;
     }
 
+    public static GelType getGelType(int id){
+        for(GelType gelType : values()){
+            if(gelType.getId() == id){
+                return gelType;
+            }
+        }
+        return null;
+    }
+
 }

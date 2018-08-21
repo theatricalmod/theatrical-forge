@@ -7,16 +7,6 @@ import net.minecraft.util.NonNullList;
 
 public class Gel extends Item {
 
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        for (GelType gelType : GelType.values()) {
-            items.add(new ItemStack(
-                    this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")"),
-                    1,
-                    gelType.getId()
-            ));
-        }
-    }
 
     public Gel() {
         this
@@ -26,8 +16,22 @@ public class Gel extends Item {
                 .setMaxDamage(0)
                 .setHasSubtypes(true);
     }
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        NonNullList<ItemStack> itemStacks = NonNullList.create();
+        for (GelType gelType : GelType.values()) {
+            itemStacks.add(new ItemStack(
+                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")"),
+                1,
+                gelType.getId()
+            ));
+        }
+        items.addAll(itemStacks);
+    }
 
-
-
-
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        GelType gelType = GelType.getGelType(stack.getMetadata());
+        return gelType.getName() + " Gel (" + gelType.getId() + ")";
+    }
 }
