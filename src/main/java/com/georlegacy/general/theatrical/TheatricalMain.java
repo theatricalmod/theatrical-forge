@@ -17,7 +17,7 @@ import static com.georlegacy.general.theatrical.util.Reference.*;
  */
 @Mod(modid = MOD_ID, name = NAME, version = VERSION)
 public class TheatricalMain {
-    
+
     @Mod.Instance
     public static TheatricalMain instance;
 

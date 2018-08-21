@@ -4,7 +4,8 @@ import com.georlegacy.general.theatrical.blocks.BlockBase;
 
 public class BlockFresnel extends BlockBase {
 
-  public BlockFresnel() {
-    super("fresnel");
-  }
+    public BlockFresnel() {
+        super("fresnel");
+    }
+
 }

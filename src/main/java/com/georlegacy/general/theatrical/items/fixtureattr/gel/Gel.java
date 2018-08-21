@@ -1,6 +1,5 @@
 package com.georlegacy.general.theatrical.items.fixtureattr.gel;
 
-import com.georlegacy.general.theatrical.TheatricalMain;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
