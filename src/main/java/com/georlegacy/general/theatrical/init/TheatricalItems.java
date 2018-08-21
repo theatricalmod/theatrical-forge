@@ -1,8 +1,7 @@
 package com.georlegacy.general.theatrical.init;
 
-import com.georlegacy.general.theatrical.items.base.ItemBase;
+import com.georlegacy.general.theatrical.items.fixtureattr.gel.Gel;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBanner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,5 +14,9 @@ import java.util.List;
 public class TheatricalItems {
 
     public static final List<Item> ITEMS = new ArrayList<Item>();
+
+    static {
+        ITEMS.add(new Gel());
+    }
 
 }
