@@ -1,12 +1,12 @@
 package com.georlegacy.general.theatrical.items.fixtureattr.gel;
 
+import com.georlegacy.general.theatrical.TheatricalMain;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
 public class Gel extends Item {
-
 
     public Gel() {
         this
@@ -16,12 +16,14 @@ public class Gel extends Item {
                 .setMaxDamage(0)
                 .setHasSubtypes(true);
     }
+
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
             itemStacks.add(new ItemStack(
-                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")"),
+                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")")
+                    .setCreativeTab(TheatricalMain.getTabManager().getGelTab()),
                 1,
                 gelType.getId()
             ));

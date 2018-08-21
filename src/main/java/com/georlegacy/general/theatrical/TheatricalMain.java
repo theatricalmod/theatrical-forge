@@ -1,5 +1,6 @@
 package com.georlegacy.general.theatrical;
 
+import com.georlegacy.general.theatrical.inventory.tabs.base.TabManager;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -17,6 +18,12 @@ import static com.georlegacy.general.theatrical.util.Reference.*;
 @Mod(modid = MOD_ID, name = NAME, version = VERSION)
 public class TheatricalMain {
 
+    private static TabManager tabManager;
+
+    public static TabManager getTabManager() {
+        return tabManager;
+    }
+
     @Mod.Instance
     public static TheatricalMain instance;
 
@@ -25,7 +32,7 @@ public class TheatricalMain {
 
     @Mod.EventHandler
     public static void PreInit(FMLPreInitializationEvent event) {
-
+        tabManager = new TabManager();
     }
 
     @Mod.EventHandler
