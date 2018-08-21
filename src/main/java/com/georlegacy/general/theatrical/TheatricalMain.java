@@ -17,13 +17,7 @@ import static com.georlegacy.general.theatrical.util.Reference.*;
  */
 @Mod(modid = MOD_ID, name = NAME, version = VERSION)
 public class TheatricalMain {
-
-    private static TabManager tabManager;
-
-    public static TabManager getTabManager() {
-        return tabManager;
-    }
-
+    
     @Mod.Instance
     public static TheatricalMain instance;
 

@@ -22,8 +22,7 @@ public class Gel extends Item {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
             itemStacks.add(new ItemStack(
-                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")")
-                    .setCreativeTab(TheatricalMain.getTabManager().getGelTab()),
+                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")"),
                 1,
                 gelType.getId()
             ));
