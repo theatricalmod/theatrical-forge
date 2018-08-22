@@ -153,70 +153,70 @@ public enum GelType {
     SOFT_GOLDEN_AMBER("Soft Golden Amber", 321, "#FF943C"),
 
     GYPSY_RED("Gypsy Red", 324, "#F50F39"),
-    HENNA_SKY("Henna Sky", 325, ""),
+    HENNA_SKY("Henna Sky", 325, "#E32B0C"),
 
-    SHELL_PINK("Shell Pink", 331, ""),
-    CHERRY_ROSE("Cherry Rose", 332, ""),
+    SHELL_PINK("Shell Pink", 331, "#FF9D8D"),
+    CHERRY_ROSE("Cherry Rose", 332, "#FF2957"),
 
-    BILLINTON_PINK("Billinton Pink", 336, ""),
-    TRUE_PINK("True Pink", 337, ""),
+    BILLINTON_PINK("Billinton Pink", 336, "#F9C5D8"),
+    TRUE_PINK("True Pink", 337, "#FFAFC2"),
 
-    BROADWAY_PINK("Broadway Pink", 339, ""),
+    BROADWAY_PINK("Broadway Pink", 339, "#FF1283"),
 
-    ROSE_PINK("Rose Pink", 342, ""),
-    NEON_PINK("Neon Pink", 343, ""),
-    FOLLIES_PINK("Follies Pink", 344, ""),
+    ROSE_PINK("Rose Pink", 342, "#FF1562"),
+    NEON_PINK("Neon Pink", 343, "#FF397F"),
+    FOLLIES_PINK("Follies Pink", 344, "#FF05D3"),
 
-    TROPICAL_MAGENTA("Tropical Magenta", 346, ""),
-    BELLADONNA_ROSE("Belladonna Rose", 347, ""),
-    PURPLE_JAZZ("Purple Jazz", 348, ""),
-    FISCHER_FUCHSIA("Fischer Fuchsia", 349, ""),
+    TROPICAL_MAGENTA("Tropical Magenta", 346, "#FF2DD5"),
+    BELLADONNA_ROSE("Belladonna Rose", 347, "#D101DD"),
+    PURPLE_JAZZ("Purple Jazz", 348, "#DA2DFF"),
+    FISCHER_FUCHSIA("Fischer Fuchsia", 349, "#F000FF"),
 
-    LAVENDER_MIST("Lavender Mist", 351, ""),
+    LAVENDER_MIST("Lavender Mist", 351, "#EFDCFF"),
 
-    LILLY_LAVENDER("Lilly Lavender", 353, ""),
+    LILLY_LAVENDER("Lilly Lavender", 353, "#C4ADFF"),
 
-    PALE_VIOLET("Pale Violet", 355, ""),
-    MIDDLE_LAVENDER("Middle Lavender", 356, ""),
-    ROYAL_LAVENDER("Royal Lavender", 357, ""),
-    ROSE_INDIGO("Rose Indigo", 358, ""),
-    MEDIUM_VIOLET("Medium Violet", 359, ""),
+    PALE_VIOLET("Pale Violet", 355, "#A590FF"),
+    MIDDLE_LAVENDER("Middle Lavender", 356, "#FFFFFF"),
+    ROYAL_LAVENDER("Royal Lavender", 357, "#8A2BFF"),
+    ROSE_INDIGO("Rose Indigo", 358, "#8E0AEA"),
+    MEDIUM_VIOLET("Medium Violet", 359, "#8E0AEA"),
+//MISSING #360 - INTENTIONAL?
+    HEMSLEY_BLUE("Hemsley Blue", 361, "#669EFC"),
+    TIPTON_BLUE("Tipton Blue", 362, "#A7BCFF"),
+    AQUAMARINE("Aquamarine", 363, "#ABE9FF"),
+    BLUE_BELL("Blue Bell", 364, "#8CA9FF"),
+//MISSING #365 - INTENTIONAL?
+    JORDAN_BLUE("Jordan Blue", 366, "#29C0F9"),
+    SLATE_BLUE("Slate Blue", 367, "#44A5FF"),
+    WINKLER_BLUE("Winkler Blue", 368, "#448AFF"),
+    TAHITIAN_BLUE("Tahitian Blue", 369, "#00C6FF"),
+    ITALIAN_BLUE("Italian Blue", 370, "#01CDDF"),
+    THEATRE_BOOSTER_ONE("Theatre Booster 1", 371, "#A3A8FF"),
+    THEATRE_BOOSTER_TWO("Theatre Booster 2", 372, "#D9DCFF"),
+    THEATRE_BOOSTER_THREE("Theatre Booster 3", 373, "#E0E9FD"),
+    SEA_GREEN("Sea Green", 374, "#01A4A6"),
+    CERULEAN_BLUE("Cerulean Blue", 375, "#00B5DE"),
+    BERMUDA_BLUE("Bermuda Blue", 376, "#0087B1"),
+    IRIS_PURPLE("Iris Purple", 377, "#7124FF"),
+    ALICE_BLUE("Alice Blue", 378, "#8474FD"),
+//MISSING #381 - INTENTIONAL?
+    CONGO_BLUE("Congo Blue", 382, "#250070"),
+    SAPPHIRE_BLUE("Sapphire Blue", 383, "#0022D1"),
+    MIDNIGHT_BLUE("Midnight Blue", 384, "#0500D0"),
+    ROYAL_BLUE("Royal Blue", 385, "#4F02CF"),
+    LEAF_GREEN("Leaf Green", 386, "#7BD300"),
 
-    HEMSLEY_BLUE("Hemsley Blue", 361, ""),
-    TIPTON_BLUE("Tipton Blue", 362, ""),
-    AQUAMARINE("Aquamarine", 363, ""),
-    BLUE_BELL("Blue Bell", 364, ""),
+    GASLIGHT_GREEN("Gaslight Green", 388, "#D0F54E"),
+    CHROMA_GREEN("Chroma Green", 389, "#29F433"),
 
-    JORDAN_BLUE("Jordan Blue", 366, ""),
-    SLATE_BLUE("Slate Blue", 367, ""),
-    WINKLER_BLUE("Winkler Blue", 368, ""),
-    TAHITIAN_BLUE("Tahitian Blue", 369, ""),
-    ITALIAN_BLUE("Italian Blue", 370, ""),
-    THEATRE_BOOSTER_ONE("Theatre Booster 1", 371, ""),
-    THEATRE_BOOSTER_TWO("Theatre Booster 2", 372, ""),
-    THEATRE_BOOSTER_THREE("Theatre Booster 3", 373, ""),
-    SEA_GREEN("Sea Green", 374, ""),
-    CERULEAN_BLUE("Cerulean Blue", 375, ""),
-    BERMUDA_BLUE("Bermuda Blue", 376, ""),
-    IRIS_PURPLE("Iris Purple", 377, ""),
-    ALICE_BLUE("Alice Blue", 378, ""),
+    PACIFIC_GREEN("Pacific Green", 392, "#009493"),
+    EMERALD_GREEN("Emerald Green", 393, "#007150"),
 
-    CONGO_BLUE("Congo Blue", 382, ""),
-    SAPPHIRE_BLUE("Sapphire Blue", 383, ""),
-    MIDNIGHT_BLUE("Midnight Blue", 384, ""),
-    ROYAL_BLUE("Royal Blue", 385, ""),
-    LEAF_GREEN("Leaf Green", 386, ""),
+    TEAL_GREEN("Teal Green", 395, "#00726A"),
 
-    GASLIGHT_GREEN("Gaslight Green", 388, ""),
-    CHROMA_GREEN("Chroma Green", 389, ""),
-
-    PACIFIC_GREEN("Pacific Green", 392, ""),
-    EMERALD_GREEN("Emerald Green", 393, ""),
-
-    TEAL_GREEN("Teal Green", 395, ""),
-
-    PALE_GREY("Pale Grey", 397, ""),
-    NEUTRAL_GREY("Neutral Grey", 398, "");
+    PALE_GREY("Pale Grey", 397, "#D4D3D3"),
+    NEUTRAL_GREY("Neutral Grey", 398, "#B0B4B9");
 
     private String name;
     private int id;
