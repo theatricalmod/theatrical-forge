@@ -20,6 +20,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.PropertyEnum;
@@ -40,6 +41,7 @@ public class BlockLadderBar extends BlockBase {
 
     public BlockLadderBar() {
         super("ladder_bar");
+        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
     }
 
 

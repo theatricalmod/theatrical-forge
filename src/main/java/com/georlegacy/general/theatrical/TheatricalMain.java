@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical;
 
+import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.packets.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacketHandler;
@@ -59,6 +60,16 @@ public class TheatricalMain {
     @Mod.EventHandler
     public static void PostInit(FMLPostInitializationEvent event) {
 
+    }
+
+    public TheatricalMain() {
+        this.dmxUniverseRuntimeBroker = new DMXUniverseRuntimeBroker();
+    }
+
+    private final DMXUniverseRuntimeBroker dmxUniverseRuntimeBroker;
+
+    public DMXUniverseRuntimeBroker getDmxUniverseRuntimeBroker() {
+        return dmxUniverseRuntimeBroker;
     }
 
 }

@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.tabs.base;
+package com.georlegacy.general.theatrical.logic.transport.dmx.managers;
 
-import com.georlegacy.general.theatrical.tabs.FixturesTab;
-import com.georlegacy.general.theatrical.tabs.GelsTab;
-import com.georlegacy.general.theatrical.tabs.RiggingTab;
-import com.georlegacy.general.theatrical.tabs.TheatricalMainTab;
+import com.georlegacy.general.theatrical.logic.transport.dmx.entities.DMXUniverse;
 
-public class CreativeTabs {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-    //TODO: DO NOT WANT TO USE V
-    public static final TheatricalMainTab MAIN_TAB = new TheatricalMainTab();
+public class DMXUniverseRuntimeBroker {
 
+    private final Set<DMXUniverse> managedUniverses;
 
-    public static final FixturesTab FIXTURES_TAB = new FixturesTab();
-    public static final GelsTab GELS_TAB = new GelsTab();
-    public static final RiggingTab RIGGING_TAB = new RiggingTab();
+    public DMXUniverseRuntimeBroker() {
+        this.managedUniverses = new HashSet<>();
+
+        this.managedUniverses.addAll(findUniverses());
+    }
+
+    private Collection<DMXUniverse> findUniverses() {
+        //Todo
+        return Collections.EMPTY_LIST;
+    }
 
 }

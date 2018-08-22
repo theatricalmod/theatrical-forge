@@ -33,11 +33,11 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         int destroyStage, float alpha) {
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-//because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
+// because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
         GL11.glTranslated(x, y, z);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-//you will need to supply your own position vectors
+// you will need to supply your own position vectors
         renderLight(te);
         GL11.glPopAttrib();
         GL11.glPopMatrix();

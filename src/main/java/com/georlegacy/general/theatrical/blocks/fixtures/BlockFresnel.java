@@ -53,7 +53,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     public BlockFresnel() {
         super("fresnel");
-        this.setCreativeTab(CreativeTabs.fixturesTab);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Nullable
@@ -67,21 +67,22 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
         return TileEntityFresnel.class;
     }
 
-    private TileEntityFresnel getTE(World world, BlockPos pos){
+    private TileEntityFresnel getTE(World world, BlockPos pos) {
         return (TileEntityFresnel) world.getTileEntity(pos);
     }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
-        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
-        if(!worldIn.isRemote) {
+                                    EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+                                    float hitZ) {
+        if (!worldIn.isRemote) {
             if (playerIn.getHeldItem(hand).getItem() instanceof Gel) {
                 ItemStack itemStack = playerIn.getHeldItem(hand);
                 GelType gelType = GelType.getGelType(itemStack.getMetadata());
                 getTE(worldIn, pos).setGelType(gelType);
                 worldIn.notifyBlockUpdate(pos, state, state, 3);
-                playerIn.sendStatusMessage(new TextComponentString("Set light gel to " + getTE(worldIn, pos).getGelType().getName()), false);
+                playerIn.sendStatusMessage(new TextComponentString("Set light gel to " +
+                        getTE(worldIn, pos).getGelType().getName()), false);
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
                 nbtTagCompound.setInteger("x", pos.getX());
                 nbtTagCompound.setInteger("y", pos.getY());
@@ -89,14 +90,14 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
                 nbtTagCompound.setInteger("gelType", gelType.getId());
                 TheatricalPacketHandler.INSTANCE.sendToAll(new UpdateLightPacket(nbtTagCompound));
                 return true;
-            }else if(playerIn.getHeldItem(hand).getItem() == Items.AIR){
+            } else if (playerIn.getHeldItem(hand).getItem() == Items.AIR) {
                 playerIn.sendStatusMessage(new TextComponentString("Light gel is " +
-                    getTE(worldIn, pos).getGelType().getName()), false);
+                        getTE(worldIn, pos).getGelType().getName()), false);
                 return true;
             }
         }
         return super
-            .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+                .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
@@ -112,13 +113,13 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
-        EntityLivingBase placer, ItemStack stack) {
+                                EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state.withProperty(ON_BAR, false), placer, stack);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        int bool = meta>>2;
+        int bool = meta >> 2;
         int facing = meta & 3;
         EnumFacing facing1 = EnumFacing.getFront((facing) + 2);
 
@@ -144,6 +145,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
         super.registerModels();
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFresnel.class, new FresnelTESR());
     }
+
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos, EnumFacing side) {

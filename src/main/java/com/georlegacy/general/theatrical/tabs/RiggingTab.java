@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.tabs.base;
+package com.georlegacy.general.theatrical.tabs;
 
-import com.georlegacy.general.theatrical.tabs.FixturesTab;
-import com.georlegacy.general.theatrical.tabs.GelsTab;
-import com.georlegacy.general.theatrical.tabs.RiggingTab;
-import com.georlegacy.general.theatrical.tabs.TheatricalMainTab;
+import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.util.Reference;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
-public class CreativeTabs {
+public class RiggingTab extends CreativeTabs {
 
-    //TODO: DO NOT WANT TO USE V
-    public static final TheatricalMainTab MAIN_TAB = new TheatricalMainTab();
+    public RiggingTab() {
+        super(Reference.MOD_ID + "_rigging");
+    }
 
-
-    public static final FixturesTab FIXTURES_TAB = new FixturesTab();
-    public static final GelsTab GELS_TAB = new GelsTab();
-    public static final RiggingTab RIGGING_TAB = new RiggingTab();
+    @Override
+    public ItemStack getTabIconItem() {
+        return new ItemStack(Item.getItemFromBlock(TheatricalBlocks.BLOCK_LADDER_BAR));
+    }
 
 }

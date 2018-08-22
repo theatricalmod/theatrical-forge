@@ -1,4 +1,7 @@
+
 itemGroup.theatrical_gels=Lighting Gels
+itemGroup.theatrical_fixtures=Lighting Fixtures
+itemGroup.theatrical_rigging=Rigging/Truss
 
 tile.fresnel.name=Harmony F Fresnel
 

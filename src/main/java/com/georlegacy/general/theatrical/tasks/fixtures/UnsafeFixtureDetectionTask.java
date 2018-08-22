@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.tabs.base;
+package com.georlegacy.general.theatrical.tasks.fixtures;
 
-import com.georlegacy.general.theatrical.tabs.FixturesTab;
-import com.georlegacy.general.theatrical.tabs.GelsTab;
-import com.georlegacy.general.theatrical.tabs.RiggingTab;
-import com.georlegacy.general.theatrical.tabs.TheatricalMainTab;
+public class UnsafeFixtureDetectionTask implements Runnable {
 
-public class CreativeTabs {
-
-    //TODO: DO NOT WANT TO USE V
-    public static final TheatricalMainTab MAIN_TAB = new TheatricalMainTab();
-
-
-    public static final FixturesTab FIXTURES_TAB = new FixturesTab();
-    public static final GelsTab GELS_TAB = new GelsTab();
-    public static final RiggingTab RIGGING_TAB = new RiggingTab();
+    @Override
+    public void run() {
+        //TODO: loop through fixing checking for safety chains (to do)
+    }
 
 }

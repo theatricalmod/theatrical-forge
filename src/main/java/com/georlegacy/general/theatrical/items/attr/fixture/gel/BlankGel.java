@@ -25,7 +25,7 @@ public class BlankGel extends Item {
         this
                 .setRegistryName("theatrical", "blank_gel")
                 .setUnlocalizedName("blank_gel")
-                .setMaxStackSize(64).setCreativeTab(CreativeTabs.gelsTab);
+                .setMaxStackSize(64).setCreativeTab(CreativeTabs.GELS_TAB);
     }
 
 }

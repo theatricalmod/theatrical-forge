@@ -33,7 +33,7 @@ public class Gel extends Item implements IHasModel {
                 .setMaxStackSize(64)
                 .setMaxDamage(0)
                 .setHasSubtypes(true).setCreativeTab(
-            com.georlegacy.general.theatrical.tabs.base.CreativeTabs.gelsTab);
+            com.georlegacy.general.theatrical.tabs.base.CreativeTabs.GELS_TAB);
     }
 
     @Override

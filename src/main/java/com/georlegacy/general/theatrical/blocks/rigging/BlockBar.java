@@ -20,6 +20,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockLog.EnumAxis;
@@ -41,6 +42,7 @@ public class BlockBar extends BlockBase {
 
     public BlockBar() {
         super("bar");
+        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class BlockBar extends BlockBase {
         if(!worldIn.isRemote){
             if(Block.getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IFixture){
                 worldIn.setBlockToAir(pos);
-                worldIn.setBlockState(pos, TheatricalBlocks.blockFresnel.getDefaultState().withProperty(
+                worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
                     BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING, playerIn.getHorizontalFacing().getOpposite()), 2);
                 return true;
             }
