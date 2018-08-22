@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
-import com.georlegacy.general.theatrical.blocks.BlockBase;
+import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
@@ -121,5 +122,11 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
         @Nullable BlockPos pos, int tintIndex) {
         TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) worldIn.getTileEntity(pos);
         return 0xb4713d;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0, 0, 1, 1.1, 1);
+        return axisAlignedBB;
     }
 }

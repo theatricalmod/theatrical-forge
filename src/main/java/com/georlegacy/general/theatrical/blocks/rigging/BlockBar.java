@@ -6,7 +6,13 @@ import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+<<<<<<< HEAD:src/main/java/com/georlegacy/general/theatrical/blocks/rigging/BlockBar.java
+=======
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+>>>>>>> 03cc01933e5b4119ff66f4fbb47707c48b562720:src/main/java/com/georlegacy/general/theatrical/blocks/structure/BlockBar.java
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -37,6 +43,12 @@ public class BlockBar extends BlockDirectional {
     }
 
     @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
+        EntityLivingBase placer, ItemStack stack) {
+        worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
+    }
+
+    @Override
     public boolean isBlockNormalCube(IBlockState blockState) {
         return false;
     }
@@ -49,6 +61,21 @@ public class BlockBar extends BlockDirectional {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(0, 0.8, 0.5, 1, 1, 0.7);
+        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
+        switch(state.getValue(FACING)){
+            case WEST:
+                axisAlignedBB = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
+                break;
+            case NORTH:
+                axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
+                break;
+            case SOUTH:
+                axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
+                break;
+            case EAST:
+                axisAlignedBB = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
+                break;
+        }
+        return axisAlignedBB;
     }
 }
