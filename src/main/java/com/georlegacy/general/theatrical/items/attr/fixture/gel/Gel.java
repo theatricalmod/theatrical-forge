@@ -2,6 +2,9 @@ package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.tabs.GelsTab;
+import com.georlegacy.general.theatrical.util.Reference;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,6 +29,9 @@ public class Gel extends Item implements IHasModel {
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if(!(tab instanceof GelsTab)){
+            return;
+        }
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
             itemStacks.add(new ItemStack(this,

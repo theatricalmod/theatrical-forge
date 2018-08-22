@@ -8,11 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-<<<<<<< HEAD:src/main/java/com/georlegacy/general/theatrical/blocks/rigging/BlockBar.java
-=======
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
->>>>>>> 03cc01933e5b4119ff66f4fbb47707c48b562720:src/main/java/com/georlegacy/general/theatrical/blocks/structure/BlockBar.java
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
