@@ -11,4 +11,6 @@ public abstract class CommonProxy {
 
     public abstract void registerModelBakeryVariants();
 
+    public abstract void registerColorBlocks();
+
 }

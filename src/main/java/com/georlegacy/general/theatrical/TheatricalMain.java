@@ -32,6 +32,7 @@ public class TheatricalMain {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         proxy.registerModelBakeryVariants();
+        proxy.registerColorBlocks();
     }
 
     @Mod.EventHandler

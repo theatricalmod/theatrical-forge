@@ -6,23 +6,30 @@ import com.georlegacy.general.theatrical.items.fixtureattr.gel.Gel;
 import com.georlegacy.general.theatrical.items.fixtureattr.gel.GelType;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import java.io.EOFException;
+import java.io.IOException;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture {
+public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture,
+    IBlockColor {
 
     public static final PropertyBool ON_BAR = PropertyBool.create("on_bar");
 
@@ -56,7 +63,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
                 GelType gelType = GelType.getGelType(itemStack.getMetadata());
                 getTE(worldIn, pos).setGelType(gelType);
                 playerIn.sendStatusMessage(new TextComponentString("Set light gel to " + gelType.getName()), false);
-            }else {
+            }else if(playerIn.getHeldItem(hand).getItem() == Items.AIR){
                 playerIn.sendStatusMessage(new TextComponentString("Light gel is " +
                     getTE(worldIn, pos).getGelType().getName()), false);
             }
@@ -82,16 +89,40 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta).withProperty(ON_BAR, meta == 1);
+        int bool = meta>>2;
+        int facing = meta & 3;
+        EnumFacing facing1 = EnumFacing.getFront((facing) + 2);
+
+        return this.getDefaultState().withProperty(FACING, facing1).withProperty(ON_BAR, bool == 1);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return super.getMetaFromState(state) + (state.getValue(ON_BAR) ? 1 : 0);
+        int facingBits = state.getValue(FACING).getIndex() - 2;
+        int boolBits = state.getValue(ON_BAR) ? 1 : 0;
+        boolBits <<= 2;
+        boolBits |= facingBits;
+        return boolBits;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, ON_BAR, FACING);
+    }
+
+    public int getUInt32(byte[] bytes) {
+        int value =
+            ((bytes[0] & 0xFF) <<  0) |
+                ((bytes[1] & 0xFF) <<  8) |
+                ((bytes[2] & 0xFF) << 16) |
+                ((bytes[3] & 0xFF) << 24);
+        return value;
+    }
+
+    @Override
+    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn,
+        @Nullable BlockPos pos, int tintIndex) {
+        TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) worldIn.getTileEntity(pos);
+        return 0xb4713d;
     }
 }

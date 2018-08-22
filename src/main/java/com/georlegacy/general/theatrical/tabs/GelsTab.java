@@ -15,6 +15,6 @@ public class GelsTab extends CreativeTabs {
 
   @Override
   public ItemStack getTabIconItem() {
-    return new ItemStack(TheatricalItems.ITEMS.get(0));
+    return new ItemStack(TheatricalItems.GEL_ITEM, 1, 79);
   }
 }

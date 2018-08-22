@@ -23,11 +23,20 @@ public class Gel extends Item implements IHasModel {
     }
 
     @Override
+    public String getUnlocalizedNameInefficiently(ItemStack stack) {
+        return this.getUnlocalizedName() + "." + GelType.getGelType(stack.getMetadata()).getId();
+    }
+
+    @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
             itemStacks.add(new ItemStack(
-                this.setUnlocalizedName(this.getUnlocalizedName() + "." + gelType.getId()/*gelType.getName() + " Gel (" + gelType.getId() + ")"*/),
+<<<<<<< HEAD
+                this.setUnlocalizedName(this.getUnlocalizedName() + "." + gelType.getId()),
+=======
+                this,
+>>>>>>> 095bbaf20bebff0fadd755b8cceacb9a65bf0855
                 1,
                 gelType.getId()
             ));
@@ -38,7 +47,7 @@ public class Gel extends Item implements IHasModel {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         GelType gelType = GelType.getGelType(stack.getMetadata());
-        return gelType.getName() + " Gel (" + gelType.getId() + ")";
+        return this.getUnlocalizedName() + "." + gelType.getId();
     }
 
     @Override
