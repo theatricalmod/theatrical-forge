@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.items.fixtureattr.gel;
+package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.item.Item;

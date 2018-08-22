@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.tiles.fixtures;
 
-import com.georlegacy.general.theatrical.items.fixtureattr.gel.GelType;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 

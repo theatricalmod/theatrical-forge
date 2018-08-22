@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.blocks;
+package com.georlegacy.general.theatrical.blocks.base;
 
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;

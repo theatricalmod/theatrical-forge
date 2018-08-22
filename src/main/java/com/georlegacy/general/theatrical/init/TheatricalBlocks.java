@@ -2,7 +2,7 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 
-import com.georlegacy.general.theatrical.blocks.structure.BlockBar;
+import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import java.util.ArrayList;
 import java.util.List;
 

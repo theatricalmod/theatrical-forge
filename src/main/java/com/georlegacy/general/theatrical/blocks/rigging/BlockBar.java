@@ -1,14 +1,12 @@
-package com.georlegacy.general.theatrical.blocks.structure;
+package com.georlegacy.general.theatrical.blocks.rigging;
 
-import com.georlegacy.general.theatrical.blocks.BlockDirectional;
+import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;

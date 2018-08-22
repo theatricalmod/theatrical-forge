@@ -1,20 +1,17 @@
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.blocks.BlockBase;
-import com.georlegacy.general.theatrical.blocks.BlockDirectional;
-import com.georlegacy.general.theatrical.items.fixtureattr.gel.Gel;
-import com.georlegacy.general.theatrical.items.fixtureattr.gel.GelType;
+import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import java.io.EOFException;
-import java.io.IOException;
+
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

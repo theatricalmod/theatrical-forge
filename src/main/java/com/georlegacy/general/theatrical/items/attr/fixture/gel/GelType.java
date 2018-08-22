@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.items.fixtureattr.gel;
+package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 
 public enum GelType {
 
@@ -220,6 +220,7 @@ public enum GelType {
 
     private String name;
     private int id;
+    private String hex;
 
     public String getName() {
         return name;
@@ -229,9 +230,14 @@ public enum GelType {
         return id;
     }
 
-    GelType(String name, int id) {
+    public String getHex() {
+        return hex;
+    }
+
+    GelType(String name, int id, String hex) {
         this.name = name;
         this.id = id;
+        this.hex = hex;
     }
 
     public static GelType getGelType(int id){

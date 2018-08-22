@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.blocks;
+package com.georlegacy.general.theatrical.blocks.base;
 
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;

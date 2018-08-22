@@ -1,7 +1,7 @@
 package com.georlegacy.general.theatrical.init;
 
-import com.georlegacy.general.theatrical.items.fixtureattr.gel.Gel;
-import com.georlegacy.general.theatrical.items.fixtureattr.gel.GelType;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
