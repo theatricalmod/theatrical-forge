@@ -31,8 +31,7 @@ public class Gel extends Item implements IHasModel {
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
-            itemStacks.add(new ItemStack(
-                this.setUnlocalizedName(this.getUnlocalizedName() + "." + gelType.getId()),
+            itemStacks.add(new ItemStack(this,
                 1,
                 gelType.getId()
             ));

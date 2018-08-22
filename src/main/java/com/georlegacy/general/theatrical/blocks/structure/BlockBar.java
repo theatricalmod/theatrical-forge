@@ -48,16 +48,9 @@ public class BlockBar extends BlockDirectional {
         return false;
     }
 
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn,
-        BlockPos pos) {
-        return super.getCollisionBoundingBox(blockState, worldIn, pos);
-    }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-
-        return super.getBoundingBox(state, source, pos);
+        return new AxisAlignedBB(0, 0.8, 0.5, 1, 1, 0.7);
     }
 }
