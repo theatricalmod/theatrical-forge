@@ -17,7 +17,8 @@ public class Gel extends Item {
                 .setUnlocalizedName("Unknown Gel")
                 .setMaxStackSize(64)
                 .setMaxDamage(0)
-                .setHasSubtypes(true);
+                .setHasSubtypes(true).setCreativeTab(
+            com.georlegacy.general.theatrical.tabs.base.CreativeTabs.gelsTab);
     }
 
     @Override
