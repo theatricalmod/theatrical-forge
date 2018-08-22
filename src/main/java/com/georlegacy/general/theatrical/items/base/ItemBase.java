@@ -1,12 +1,9 @@
 package com.georlegacy.general.theatrical.items.base;
 
-import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 /**
  * Base for item creation
@@ -25,7 +22,7 @@ public class ItemBase extends Item implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalMain.proxy.registerItemRenderer(this, 0, "inventory");
+        TheatricalItems.registerItemRenderer(this, 0, "inventory");
     }
 
 }

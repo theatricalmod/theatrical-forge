@@ -1,9 +1,9 @@
 package com.georlegacy.general.theatrical.blocks;
 
-import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
-import com.georlegacy.general.theatrical.tabs.CreativeTabs;
+import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -22,6 +22,6 @@ public class BlockBase extends Block implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalMain.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+        TheatricalItems.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
     }
 }

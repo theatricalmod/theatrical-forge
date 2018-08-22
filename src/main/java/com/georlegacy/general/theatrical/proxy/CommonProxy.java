@@ -7,10 +7,8 @@ import net.minecraft.item.Item;
  *
  * @author James Conway
  */
-public class CommonProxy {
+public abstract class CommonProxy {
 
-    public void registerItemRenderer(Item item, int meta, String id) {
-
-    }
+    public abstract void registerModelBakeryVariants();
 
 }
