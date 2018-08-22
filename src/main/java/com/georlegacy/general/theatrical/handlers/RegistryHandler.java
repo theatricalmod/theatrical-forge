@@ -1,15 +1,19 @@
 package com.georlegacy.general.theatrical.handlers;
 
+import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Handler for registry of mod entities
@@ -28,6 +32,12 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void onBlockRegister(RegistryEvent.Register<Block> event){
         event.getRegistry().registerAll(TheatricalBlocks.BLOCKS.toArray(new Block[0]));
+        TheatricalBlocks.BLOCKS.forEach(block -> {
+            if(block instanceof IFixture){
+                IFixture fixture = (IFixture) block;
+                GameRegistry.registerTileEntity(fixture.getTileEntity(), block.getRegistryName());
+            }
+        });
     }
 
     @SubscribeEvent

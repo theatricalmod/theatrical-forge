@@ -10,8 +10,11 @@ import net.minecraft.item.Item;
 
 public class BlockBase extends Block implements IHasModel {
 
+    private String name;
+
     public BlockBase(String name) {
         super(Material.ROCK);
+        this.name = name;
         setUnlocalizedName(name);
         setCreativeTab(CreativeTabs.mainTab);
         setRegistryName(name);
@@ -22,6 +25,6 @@ public class BlockBase extends Block implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalItems.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+        TheatricalItems.registerItemRenderer(Item.getItemFromBlock(this), 0, this.name);
     }
 }
