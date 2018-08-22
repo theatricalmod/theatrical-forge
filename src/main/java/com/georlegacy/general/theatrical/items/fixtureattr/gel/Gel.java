@@ -14,7 +14,7 @@ public class Gel extends Item {
     public Gel() {
         this
                 .setRegistryName("theatrical", "gel")
-                .setUnlocalizedName("Unknown Gel")
+                .setUnlocalizedName("gel")
                 .setMaxStackSize(64)
                 .setMaxDamage(0)
                 .setHasSubtypes(true);
@@ -25,7 +25,7 @@ public class Gel extends Item {
         NonNullList<ItemStack> itemStacks = NonNullList.create();
         for (GelType gelType : GelType.values()) {
             itemStacks.add(new ItemStack(
-                this.setUnlocalizedName(gelType.getName() + " Gel (" + gelType.getId() + ")"),
+                this.setUnlocalizedName(this.getUnlocalizedName() + "." + gelType.getId()/*gelType.getName() + " Gel (" + gelType.getId() + ")"*/),
                 1,
                 gelType.getId()
             ));
