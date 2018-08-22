@@ -177,7 +177,7 @@ public enum GelType {
     LILLY_LAVENDER("Lilly Lavender", 353, "#C4ADFF"),
 
     PALE_VIOLET("Pale Violet", 355, "#A590FF"),
-    MIDDLE_LAVENDER("Middle Lavender", 356, "#FFFFFF"),
+    MIDDLE_LAVENDER("Middle Lavender", 356, "#C38DFF"),
     ROYAL_LAVENDER("Royal Lavender", 357, "#8A2BFF"),
     ROSE_INDIGO("Rose Indigo", 358, "#8E0AEA"),
     MEDIUM_VIOLET("Medium Violet", 359, "#8E0AEA"),
