@@ -1,9 +1,12 @@
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
-import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
+import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.packets.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 
@@ -16,7 +19,9 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -25,9 +30,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture,
-    IBlockColor {
+public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture {
 
     public static final PropertyBool ON_BAR = PropertyBool.create("on_bar");
 
@@ -60,10 +67,19 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
                 ItemStack itemStack = playerIn.getHeldItem(hand);
                 GelType gelType = GelType.getGelType(itemStack.getMetadata());
                 getTE(worldIn, pos).setGelType(gelType);
-                playerIn.sendStatusMessage(new TextComponentString("Set light gel to " + gelType.getName()), false);
+                worldIn.notifyBlockUpdate(pos, state, state, 3);
+                playerIn.sendStatusMessage(new TextComponentString("Set light gel to " + getTE(worldIn, pos).getGelType().getName()), false);
+                NBTTagCompound nbtTagCompound = new NBTTagCompound();
+                nbtTagCompound.setInteger("x", pos.getX());
+                nbtTagCompound.setInteger("y", pos.getY());
+                nbtTagCompound.setInteger("z", pos.getZ());
+                nbtTagCompound.setInteger("gelType", gelType.getId());
+                TheatricalPacketHandler.INSTANCE.sendToAll(new UpdateLightPacket(nbtTagCompound));
+                return true;
             }else if(playerIn.getHeldItem(hand).getItem() == Items.AIR){
                 playerIn.sendStatusMessage(new TextComponentString("Light gel is " +
                     getTE(worldIn, pos).getGelType().getName()), false);
+                return true;
             }
         }
         return super
@@ -79,6 +95,8 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
     }
+
+
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
         EntityLivingBase placer, ItemStack stack) {
@@ -108,21 +126,17 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
         return new BlockStateContainer(this, ON_BAR, FACING);
     }
 
-    public int getUInt32(byte[] bytes) {
-        int value =
-            ((bytes[0] & 0xFF) <<  0) |
-                ((bytes[1] & 0xFF) <<  8) |
-                ((bytes[2] & 0xFF) << 16) |
-                ((bytes[3] & 0xFF) << 24);
-        return value;
+    @Override
+    public void registerModels() {
+        super.registerModels();
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFresnel.class, new FresnelTESR());
+    }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+        return false;
     }
 
-    @Override
-    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn,
-        @Nullable BlockPos pos, int tintIndex) {
-        TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) worldIn.getTileEntity(pos);
-        return 0xb4713d;
-    }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {

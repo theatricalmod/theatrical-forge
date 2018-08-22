@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "theatrical:bar"
+    "model": "theatrical:ladder-bar"
   },
   "variants": {
     "normal": [{}],

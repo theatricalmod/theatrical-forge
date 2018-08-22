@@ -2,6 +2,7 @@ package com.georlegacy.general.theatrical.proxy;
 
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 /**
  * Client Proxy for Theatrical
@@ -16,7 +17,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerColorBlocks() {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(TheatricalBlocks.blockFresnel, TheatricalBlocks.blockFresnel);
+
     }
+
+    @Override
+    public void preInit() {
+    }
+
 
 }

@@ -13,4 +13,6 @@ public abstract class CommonProxy {
 
     public abstract void registerColorBlocks();
 
+    public abstract void preInit();
+
 }
