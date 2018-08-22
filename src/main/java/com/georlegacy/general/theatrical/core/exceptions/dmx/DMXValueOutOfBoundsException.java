@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.packets;
+package com.georlegacy.general.theatrical.core.exceptions.dmx;
 
-import com.georlegacy.general.theatrical.util.Reference;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+public class DMXValueOutOfBoundsException extends IllegalArgumentException {
 
-public class TheatricalPacketHandler {
+    public DMXValueOutOfBoundsException() {
+        super();
+    }
 
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(
-        Reference.MOD_ID);
+    public DMXValueOutOfBoundsException(String message) {
+        super(message);
+    }
+
+    public DMXValueOutOfBoundsException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public DMXValueOutOfBoundsException(Throwable cause) {
+        super(cause);
+    }
 
 }

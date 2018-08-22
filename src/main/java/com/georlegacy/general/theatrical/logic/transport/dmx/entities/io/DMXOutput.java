@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.packets;
+package com.georlegacy.general.theatrical.logic.transport.dmx.entities.io;
 
-import com.georlegacy.general.theatrical.util.Reference;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import com.georlegacy.general.theatrical.logic.transport.dmx.entities.DMXUniverse;
 
-public class TheatricalPacketHandler {
+/**
+ * DMX Output from controller/fixture
+ *
+ * @author James Conway
+ */
+public class DMXOutput {
 
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(
-        Reference.MOD_ID);
+    private final DMXUniverse universe;
+
+    public DMXOutput(DMXUniverse universe) {
+        this.universe = universe;
+    }
+
+    public DMXUniverse getUniverse() {
+        return universe;
+    }
 
 }
