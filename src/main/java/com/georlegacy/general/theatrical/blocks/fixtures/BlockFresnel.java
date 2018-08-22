@@ -82,12 +82,12 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return super.
+        return super.getStateFromMeta(meta).withProperty(ON_BAR, meta == 1);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return this.getMetaFromState(state) + (state.getValue(ON_BAR) ? 1 : 0);
+        return super.getMetaFromState(state) + (state.getValue(ON_BAR) ? 1 : 0);
     }
 
     @Override

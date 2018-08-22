@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "theatrical:fresnel"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "on_bar": {
+      "true": {
+        "model": "theatrical:fresnel_bar"
+      },
+      "false": {
+        "model": "theatrical:fresnel"
+      }
+    },
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    }
+  }
+}

@@ -34,7 +34,7 @@ public class TheatricalItems {
 
     public static void registerGelRenderers() {
         for (GelType gelType : GelType.values())
-            registerItemRenderer(GEL_ITEM, gelType.getId(), "gel_" + gelType.getId());
+            registerItemRenderer(GEL_ITEM, gelType.getId(), "gel/gel_" + gelType.getId());
     }
 
 
