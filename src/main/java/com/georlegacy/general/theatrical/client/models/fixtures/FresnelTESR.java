@@ -19,6 +19,7 @@ package com.georlegacy.general.theatrical.client.models.fixtures;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import java.awt.Color;
+import java.nio.ByteBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,9 +45,12 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
 
     private void renderLight(TileEntityFresnel tileEntityFresnel){
         Color color = Color.decode(tileEntityFresnel.getGelType().getHex());
-//        System.out.print(color.getRed() + ", "+ color.getGreen() + ", "+  color.getBlue());
-        GL11.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-        GL11.glBegin(GL11.GL_LINE_STRIP);
+//        System.out.print(tileEntityFresnel.getGelType().getName());
+        GL11.glEnable(GL11.GL_BLEND);
+        byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.decode(tileEntityFresnel.getGelType().getHex())).array();
+//        GL11.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 10);
+        GL11.glColor4ub(bytes[1],bytes[2],bytes[3], (byte) 100);
+        GL11.glBegin(GL11.GL_QUAD_STRIP);
         switch(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
             BlockFresnel.FACING)){
             case EAST:
@@ -57,8 +61,10 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
                 GL11.glVertex3d(0.7, 0.45, 0.96);
                 GL11.glVertex3d(0.7, 0.05, 0.96);
                 GL11.glVertex3d(0.3,0.05, 0.96);
-                break;
+                GL11.glVertex3d(0.3, 0.45, 0.96);
+            break;
         }
         GL11.glEnd();
+        GL11.glDisable(GL11.GL_BLEND);
     }
 }
