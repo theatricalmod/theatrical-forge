@@ -6,8 +6,8 @@
 	"elements": [
 		{
 			"name": "Tube",
-			"from": [0, 8, 7],
-			"to": [16, 10, 9],
+			"from": [0, 15, 7],
+			"to": [16, 17, 9],
 			"faces": {
 				"north": {"uv": [0, 0, 16, 2], "texture": "#0"},
 				"east": {"uv": [0, 0, 2, 2], "texture": "#0"},
@@ -17,5 +17,15 @@
 				"down": {"uv": [0, 0, 16, 2], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"translation": [8.5, 3.5, -1.5],
+			"rotation": [0, 0, 90]
+		},
+		"gui": {
+			"rotation": [0, 57, 13],
+			"translation": [1, -7, 0]
+		}
+	}
 }
