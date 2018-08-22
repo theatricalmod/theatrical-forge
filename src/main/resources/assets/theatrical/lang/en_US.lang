@@ -8,6 +8,7 @@ tile.fresnel.name=Harmony F Fresnel
 tile.bar.name=Rigging Bar
 tile.ladder_bar.name=Rigging Ladder Bar
 
+item.blank_gel.name=Blank Gel
 item.gel.0.name=Clear (0)
 item.gel.1.name=Light Bastard Amber (1)
 item.gel.2.name=Bastard Amber (2)

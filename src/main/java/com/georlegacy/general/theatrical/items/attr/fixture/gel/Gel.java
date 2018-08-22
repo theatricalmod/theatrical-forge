@@ -64,6 +64,8 @@ public class Gel extends Item implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalItems.registerGelRenderers();
+        for (GelType gelType : GelType.values())
+            TheatricalItems.registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_" + gelType.getId());
     }
+
 }

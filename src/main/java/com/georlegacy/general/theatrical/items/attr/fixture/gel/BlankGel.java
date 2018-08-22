@@ -16,16 +16,24 @@
 
 package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 
+import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.item.Item;
 
-public class BlankGel extends Item {
+public class BlankGel extends Item implements IHasModel {
 
     public BlankGel() {
         this
                 .setRegistryName("theatrical", "blank_gel")
                 .setUnlocalizedName("blank_gel")
-                .setMaxStackSize(64).setCreativeTab(CreativeTabs.GELS_TAB);
+                .setMaxStackSize(64)
+                .setCreativeTab(CreativeTabs.GELS_TAB);
+    }
+
+    @Override
+    public void registerModels() {
+        TheatricalItems.registerItemRenderer(this, 0, "gel/base/blank_gel");
     }
 
 }
