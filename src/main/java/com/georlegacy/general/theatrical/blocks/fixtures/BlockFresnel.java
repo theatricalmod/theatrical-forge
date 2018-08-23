@@ -33,6 +33,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -78,7 +79,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
                                     EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
                                     float hitZ) {
         if(!worldIn.isRemote){
-            if(!playerIn.isSneaking()){
+            if(!playerIn.isSneaking() && playerIn.getHeldItemMainhand().getItem().equals(Item.getItemById(0))){
                 playerIn.openGui(TheatricalMain.instance, TheatricalGuiHandler.FRENSEL, worldIn, pos.getX(), pos.getY(), pos.getZ());
             }
         }
