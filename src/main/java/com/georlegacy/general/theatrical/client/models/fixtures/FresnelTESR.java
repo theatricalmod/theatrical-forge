@@ -47,13 +47,36 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         Color color = Color.decode(tileEntityFresnel.getGelType().getHex());
 //        System.out.print(tileEntityFresnel.getGelType().getName());
         GL11.glEnable(GL11.GL_BLEND);
+//        GL11.glDisable(GL11.GL_DEPTH_TEST);
         byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.decode(tileEntityFresnel.getGelType().getHex())).array();
 //        GL11.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 10);
         GL11.glColor4ub(bytes[1],bytes[2],bytes[3], (byte) 100);
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         switch(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
             BlockFresnel.FACING)){
+            case NORTH:
+                GL11.glVertex3d(0.3,0.05, 0.04);
+                GL11.glVertex3d(0.3,0.45, 0.04);
+                GL11.glVertex3d(0.7, 0.45, 0.04);
+                GL11.glVertex3d(0.7, 0.05, 0.04);
+                GL11.glVertex3d(0.3,0.05, 0.04);
+                GL11.glVertex3d(0.3, 0.45, 0.04);
+                break;
             case EAST:
+                GL11.glVertex3d(0.96,0.05, 0.3);
+                GL11.glVertex3d(0.96,0.45, 0.3);
+                GL11.glVertex3d(0.96, 0.45, 0.7);
+                GL11.glVertex3d(0.96, 0.05, 0.7);
+                GL11.glVertex3d(0.96,0.05, 0.3);
+                GL11.glVertex3d(0.96, 0.45, 0.3);
+                break;
+            case WEST:
+                GL11.glVertex3d(0.04,0.05, 0.3);
+                GL11.glVertex3d(0.04,0.45, 0.3);
+                GL11.glVertex3d(0.04, 0.45, 0.7);
+                GL11.glVertex3d(0.04, 0.05, 0.7);
+                GL11.glVertex3d(0.04,0.05, 0.3);
+                GL11.glVertex3d(0.04, 0.45, 0.3);
                 break;
             case SOUTH:
                 GL11.glVertex3d(0.3,0.05, 0.96);
@@ -66,5 +89,6 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         }
         GL11.glEnd();
         GL11.glDisable(GL11.GL_BLEND);
+//        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 }
