@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.client.models.fixtures;
 
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import java.awt.Color;
 import java.nio.ByteBuffer;
@@ -44,13 +45,16 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
     }
 
     private void renderLight(TileEntityFresnel tileEntityFresnel){
-        Color color = Color.decode(tileEntityFresnel.getGelType().getHex());
 //        System.out.print(tileEntityFresnel.getGelType().getName());
         GL11.glEnable(GL11.GL_BLEND);
 //        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.decode(tileEntityFresnel.getGelType().getHex())).array();
-//        GL11.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 10);
-        GL11.glColor4ub(bytes[1],bytes[2],bytes[3], (byte) 100);
+        GelType gelType = tileEntityFresnel.getGelType();
+        if(gelType != GelType.CLEAR){
+            byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.decode(tileEntityFresnel.getGelType().getHex())).array();
+            GL11.glColor4ub(bytes[1],bytes[2],bytes[3], (byte) 100);
+        }else{
+            GL11.glColor4d(0, 0, 0, 0);
+        }
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         switch(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
             BlockFresnel.FACING)){

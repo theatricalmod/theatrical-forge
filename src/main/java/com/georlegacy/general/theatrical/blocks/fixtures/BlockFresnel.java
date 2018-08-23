@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
+import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
@@ -24,6 +25,7 @@ import com.georlegacy.general.theatrical.packets.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.util.TheatricalGuiHandler;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -75,25 +77,9 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
                                     EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
                                     float hitZ) {
-        if (!worldIn.isRemote) {
-            if (playerIn.getHeldItem(hand).getItem() instanceof Gel) {
-                ItemStack itemStack = playerIn.getHeldItem(hand);
-                GelType gelType = GelType.getGelType(itemStack.getMetadata());
-                getTE(worldIn, pos).setGelType(gelType);
-                worldIn.notifyBlockUpdate(pos, state, state, 3);
-                playerIn.sendStatusMessage(new TextComponentString("Set light gel to " +
-                        getTE(worldIn, pos).getGelType().getName()), false);
-                NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                nbtTagCompound.setInteger("x", pos.getX());
-                nbtTagCompound.setInteger("y", pos.getY());
-                nbtTagCompound.setInteger("z", pos.getZ());
-                nbtTagCompound.setInteger("gelType", gelType.getId());
-                TheatricalPacketHandler.INSTANCE.sendToAll(new UpdateLightPacket(nbtTagCompound));
-                return true;
-            } else if (playerIn.getHeldItem(hand).getItem() == Items.AIR) {
-                playerIn.sendStatusMessage(new TextComponentString("Light gel is " +
-                        getTE(worldIn, pos).getGelType().getName()), false);
-                return true;
+        if(!worldIn.isRemote){
+            if(!playerIn.isSneaking()){
+                playerIn.openGui(TheatricalMain.instance, TheatricalGuiHandler.FRENSEL, worldIn, pos.getX(), pos.getY(), pos.getZ());
             }
         }
         return super
