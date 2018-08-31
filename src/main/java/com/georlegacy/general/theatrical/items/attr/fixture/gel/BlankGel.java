@@ -19,21 +19,25 @@ package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
+import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlankGel extends Item implements IHasModel {
 
     public BlankGel() {
         this
-                .setRegistryName("theatrical", "blank_gel")
+                .setRegistryName(Reference.MOD_ID, "blank_gel")
                 .setUnlocalizedName("blank_gel")
                 .setMaxStackSize(64)
                 .setCreativeTab(CreativeTabs.GELS_TAB);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
-        TheatricalItems.registerItemRenderer(this, 0, "gel/base/blank_gel");
+        TheatricalItems.registerItemRenderer(this, 0, "gel/widgets/blank_gel");
     }
 
 }

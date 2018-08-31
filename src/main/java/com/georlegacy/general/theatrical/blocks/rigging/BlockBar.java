@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.blocks.rigging;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;

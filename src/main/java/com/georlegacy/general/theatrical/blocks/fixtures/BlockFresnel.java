@@ -18,36 +18,30 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
 import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
-import com.georlegacy.general.theatrical.packets.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
+import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import com.georlegacy.general.theatrical.util.TheatricalGuiHandler;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture {
@@ -61,7 +55,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
         return new TileEntityFresnel();
     }
 
@@ -78,10 +72,8 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
                                     EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
                                     float hitZ) {
-        if(!worldIn.isRemote){
-            if(!playerIn.isSneaking() && playerIn.getHeldItemMainhand().getItem().equals(Item.getItemById(0))){
-                playerIn.openGui(TheatricalMain.instance, TheatricalGuiHandler.FRENSEL, worldIn, pos.getX(), pos.getY(), pos.getZ());
-            }
+        if (!worldIn.isRemote) {
+            playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_FRESNEL.getNid(), worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
         return super
                 .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);

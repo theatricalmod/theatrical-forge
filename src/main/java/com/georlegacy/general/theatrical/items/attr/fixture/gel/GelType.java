@@ -197,12 +197,12 @@ public enum GelType {
     ROYAL_LAVENDER("Royal Lavender", 357, "#8A2BFF"),
     ROSE_INDIGO("Rose Indigo", 358, "#8E0AEA"),
     MEDIUM_VIOLET("Medium Violet", 359, "#8E0AEA"),
-//MISSING #360 - INTENTIONAL?
+
     HEMSLEY_BLUE("Hemsley Blue", 361, "#669EFC"),
     TIPTON_BLUE("Tipton Blue", 362, "#A7BCFF"),
     AQUAMARINE("Aquamarine", 363, "#ABE9FF"),
     BLUE_BELL("Blue Bell", 364, "#8CA9FF"),
-//MISSING #365 - INTENTIONAL?
+
     JORDAN_BLUE("Jordan Blue", 366, "#29C0F9"),
     SLATE_BLUE("Slate Blue", 367, "#44A5FF"),
     WINKLER_BLUE("Winkler Blue", 368, "#448AFF"),
@@ -216,7 +216,7 @@ public enum GelType {
     BERMUDA_BLUE("Bermuda Blue", 376, "#0087B1"),
     IRIS_PURPLE("Iris Purple", 377, "#7124FF"),
     ALICE_BLUE("Alice Blue", 378, "#8474FD"),
-//MISSING #381 - INTENTIONAL?
+
     CONGO_BLUE("Congo Blue", 382, "#250070"),
     SAPPHIRE_BLUE("Sapphire Blue", 383, "#0022D1"),
     MIDNIGHT_BLUE("Midnight Blue", 384, "#0500D0"),

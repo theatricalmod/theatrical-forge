@@ -20,6 +20,7 @@ import com.georlegacy.general.theatrical.core.exceptions.dmx.DMXValueOutOfBounds
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * DMXUniverse contains 512 channels and is the main transport core for transportation
@@ -28,12 +29,16 @@ import java.util.Set;
  */
 public class DMXUniverse {
 
+    private final UUID uuid;
+
     private DMXChannel[] channels;
 
     private final Set<DMXNetworkPlane> networkPlanes;
     private final Set<DMXThruPlane> thruPlanes;
 
     public DMXUniverse() {
+        this.uuid = UUID.randomUUID();
+
         this.channels = new DMXChannel[512];
         this.networkPlanes = new HashSet<>();
         this.thruPlanes = new HashSet<>();

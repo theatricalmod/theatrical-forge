@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.guis.base;
+package com.georlegacy.general.theatrical.blocks.fixtures.base;
 
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraft.tileentity.TileEntity;
 
-public class SlotGel extends SlotItemHandler {
+public interface IFixture {
 
+    Class<? extends TileEntity> getTileEntity();
 
-    public SlotGel(IItemHandler itemHandler, int index, int xPosition,
-        int yPosition) {
-        super(itemHandler, index, xPosition, yPosition);
-    }
-
-    @Override
-    public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() instanceof Gel;
-    }
 }

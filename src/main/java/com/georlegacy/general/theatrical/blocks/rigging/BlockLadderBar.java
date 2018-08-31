@@ -17,19 +17,13 @@
 package com.georlegacy.general.theatrical.blocks.rigging;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
-import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.blocks.fixtures.IFixture;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;

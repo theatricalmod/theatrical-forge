@@ -18,6 +18,7 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -39,9 +40,12 @@ public class TheatricalItems {
     public static final Gel ITEM_GEL = new Gel();
     public static final BlankGel ITEM_BLANK_GEL = new BlankGel();
 
+    public static final BlankGobo ITEM_BLANK_GOBO = new BlankGobo();
+
     static {
         ITEMS.add(ITEM_GEL);
         ITEMS.add(ITEM_BLANK_GEL);
+        ITEMS.add(ITEM_BLANK_GOBO);
     }
 
     public static void registerItemRenderer(Item item, int meta, String fileName) {

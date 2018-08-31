@@ -16,10 +16,7 @@
 
 package com.georlegacy.general.theatrical.tabs.base;
 
-import com.georlegacy.general.theatrical.tabs.FixturesTab;
-import com.georlegacy.general.theatrical.tabs.GelsTab;
-import com.georlegacy.general.theatrical.tabs.RiggingTab;
-import com.georlegacy.general.theatrical.tabs.TheatricalMainTab;
+import com.georlegacy.general.theatrical.tabs.*;
 
 public class CreativeTabs {
 
@@ -29,6 +26,7 @@ public class CreativeTabs {
 
     public static final FixturesTab FIXTURES_TAB = new FixturesTab();
     public static final GelsTab GELS_TAB = new GelsTab();
+    public static final GobosTab GOBOS_TAB = new GobosTab();
     public static final RiggingTab RIGGING_TAB = new RiggingTab();
 
 }

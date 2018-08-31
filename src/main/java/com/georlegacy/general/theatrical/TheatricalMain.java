@@ -16,12 +16,12 @@
 
 package com.georlegacy.general.theatrical;
 
+import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.packets.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
-import com.georlegacy.general.theatrical.util.TheatricalGuiHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

@@ -1,5 +1,6 @@
 
 itemGroup.theatrical_gels=Lighting Gels
+itemGroup.theatrical_gobos=Lighting Gobos
 itemGroup.theatrical_fixtures=Lighting Fixtures
 itemGroup.theatrical_rigging=Rigging/Truss
 
@@ -196,3 +197,5 @@ item.gel.393.name=Emerald Green (393)
 item.gel.395.name=Teal Green (395)
 item.gel.397.name=Pale Grey (397)
 item.gel.398.name=Neutral Grey (398)
+
+item.blank_gobo.name=Blank Gobo
