@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.items.attr.fixture.gel;
+package com.georlegacy.general.theatrical.armor.utility;
 
+import com.georlegacy.general.theatrical.armor.materials.FixtureDetailArmorMaterial;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.init.TheatricalArmorMaterials;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.util.Reference;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
 
-public class BlankGel extends Item implements IHasModel {
+public class FixtureDetailHelmetItem extends ItemArmor implements IHasModel {
 
-    public BlankGel() {
+    public FixtureDetailHelmetItem() {
+        super(TheatricalArmorMaterials.getByClass(FixtureDetailArmorMaterial.class), 0, EntityEquipmentSlot.HEAD);
         this
-                .setRegistryName(Reference.MOD_ID, "blank_gel")
-                .setUnlocalizedName("blank_gel")
-                .setMaxStackSize(64)
-                .setCreativeTab(CreativeTabs.GELS_TAB);
+                .setUnlocalizedName("fixture_detail_helmet")
+                .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet")
+                .setCreativeTab(CreativeTabs.MAIN_TAB);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
-        TheatricalItems.registerItemRenderer(this, 0, "gel/base/blank_gel");
+        TheatricalItems.registerItemRenderer(this, 0, "armor/utility/fixture_detail_helmet");
     }
 
 }

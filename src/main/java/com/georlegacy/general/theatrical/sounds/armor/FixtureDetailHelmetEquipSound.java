@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.proxy;
+package com.georlegacy.general.theatrical.sounds.armor;
 
-/**
- * Client Proxy for Theatrical
- *
- * @author James Conway
- */
-public class ClientProxy extends CommonProxy {
+import com.georlegacy.general.theatrical.util.Reference;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 
-    @Override
-    public void registerModelBakeryVariants() {
+public class FixtureDetailHelmetEquipSound extends SoundEvent {
+
+    public FixtureDetailHelmetEquipSound() {
+        super(new ResourceLocation(Reference.MOD_ID, "fixture_detail_helmet_equip"));
+        this
+                .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet_equip");
     }
-
-    @Override
-    public void registerColorBlocks() {
-    }
-
-    @Override
-    public void preInit() {
-    }
-
 
 }

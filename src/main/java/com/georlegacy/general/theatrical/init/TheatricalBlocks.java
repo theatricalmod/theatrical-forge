@@ -30,6 +30,7 @@ public class TheatricalBlocks {
     public static final List<Block> BLOCKS = new ArrayList<>();
 
     public static BlockFresnel BLOCK_FRESNEL = new BlockFresnel();
+
     public static BlockBar BLOCK_BAR = new BlockBar();
     public static BlockLadderBar BLOCK_LADDER_BAR = new BlockLadderBar();
 

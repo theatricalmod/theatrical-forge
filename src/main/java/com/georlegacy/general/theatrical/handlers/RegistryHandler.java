@@ -20,9 +20,11 @@ import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,13 +57,20 @@ public class RegistryHandler {
     }
 
     @SubscribeEvent
+    public static void onSoundEventRegister(RegistryEvent.Register<SoundEvent> event) {
+        TheatricalSoundEvents.SOUNDS.forEach(sound -> {
+            event.getRegistry().register(sound);
+        });
+    }
+
+    @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
         for (Item item : TheatricalItems.ITEMS)
             if (item instanceof IHasModel)
                 ((IHasModel) item).registerModels();
         for (Block block : TheatricalBlocks.BLOCKS)
             if(block instanceof IHasModel)
-                ((IHasModel)block).registerModels();
+                ((IHasModel) block).registerModels();
     }
 
 }

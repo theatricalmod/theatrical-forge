@@ -1,0 +1,7 @@
+{
+  "fixture_detail_helmet_equip": {
+    "category": "item",
+    "subtitle": "theatrical.subtitle.fixtureDetailHelmetEquip",
+    "sounds": [ "theatrical:armor/fixture_detail_helmet_equip" ]
+  }
+}

@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.init;
 
+import com.georlegacy.general.theatrical.armor.utility.FixtureDetailHelmetItem;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
@@ -42,10 +43,15 @@ public class TheatricalItems {
 
     public static final BlankGobo ITEM_BLANK_GOBO = new BlankGobo();
 
+    public static final FixtureDetailHelmetItem ITEM_FIXTURE_DETAIL_HELMET = new FixtureDetailHelmetItem();
+
     static {
         ITEMS.add(ITEM_GEL);
         ITEMS.add(ITEM_BLANK_GEL);
+
         ITEMS.add(ITEM_BLANK_GOBO);
+
+        ITEMS.add(ITEM_FIXTURE_DETAIL_HELMET);
     }
 
     public static void registerItemRenderer(Item item, int meta, String fileName) {

@@ -18,7 +18,7 @@ public class BlankGobo extends Item implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalItems.registerItemRenderer(this, 0, "gobo/widgets/blank_gobo");
+        TheatricalItems.registerItemRenderer(this, 0, "gobo/base/blank_gobo");
     }
 
 }
