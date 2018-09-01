@@ -21,6 +21,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
+@Deprecated // should all be sorted tabs, sorry ocd
 public class TheatricalMainTab extends CreativeTabs {
 
     public TheatricalMainTab() {
