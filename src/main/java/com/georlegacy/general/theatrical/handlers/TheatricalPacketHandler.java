@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.packets;
+package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraftforge.fml.common.network.NetworkRegistry;

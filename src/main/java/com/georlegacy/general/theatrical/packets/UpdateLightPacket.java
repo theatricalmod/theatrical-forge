@@ -17,23 +17,15 @@
 package com.georlegacy.general.theatrical.packets;
 
 import io.netty.buffer.ByteBuf;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class UpdateLightPacket implements IMessage {
 
+    private UpdateLightPacket() { }
+
     private NBTTagCompound tag;
-
-    public UpdateLightPacket(){
-
-    }
-
-    public UpdateLightPacket(NBTTagCompound tag){
-        this.tag = tag;
-    }
 
     public NBTTagCompound getTag() {
         return tag;
@@ -48,4 +40,5 @@ public class UpdateLightPacket implements IMessage {
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeTag(buf, tag);
     }
+
 }
