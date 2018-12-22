@@ -20,7 +20,7 @@ import com.georlegacy.general.theatrical.tabs.*;
 
 public class CreativeTabs {
 
-    //TODO: DO NOT WANT TO USE V
+    //TODO: DO NOT WANT TO USE
     public static final TheatricalMainTab MAIN_TAB = new TheatricalMainTab();
 
 

@@ -19,12 +19,12 @@ package com.georlegacy.general.theatrical.client.models.fixtures;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import java.awt.Color;
-import java.nio.ByteBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+
+import java.nio.ByteBuffer;
 
 @SideOnly(Side.CLIENT)
 public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
