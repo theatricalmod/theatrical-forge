@@ -1,5 +1,5 @@
 # Theatrical
-##Fixtures
+## Fixtures
 * Fresnels
 * PARs
 * Cantarta Profiles
@@ -10,7 +10,7 @@
 * Moving Wash
 * Moving Profile
 
-##Etc
+## Etc
 * Truss/Rigging 
 * Proscenium Components?
 * Curtains
@@ -22,7 +22,7 @@
 * Followspots
 * Bar Winches
 
-##Connectivity
+## Connectivity
 * Artnet/sACN?
 * Ethernet cables
 * DMX Cables
@@ -37,7 +37,7 @@
 * IR
 * CANs
 
-##Sound
+## Sound
 * Sound Desks (digital and analog)
 * Speakers
 * Mics
