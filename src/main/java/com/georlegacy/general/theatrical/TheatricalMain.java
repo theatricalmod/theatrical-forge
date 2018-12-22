@@ -20,7 +20,7 @@ import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacketHandler;
+import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
