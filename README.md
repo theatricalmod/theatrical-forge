@@ -1,3 +1,6 @@
+<a href="https://ci.615283.net/viewType.html?buildTypeId=myID&guest=1"> 
+<img src="https://ci.615283.net/app/rest/builds/buildType(id:myID)/statusIcon"/>
+</a>
 # Theatrical
 ## Fixtures
 * Fresnels
