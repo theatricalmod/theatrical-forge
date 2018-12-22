@@ -9,7 +9,7 @@ buildscript {
 }
 
 apply plugin: 'application'
-applicationDefaultJvmArgs = ["-Xms2048m", "-Xmx2048m"];
+applicationDefaultJvmArgs = ["-Xms4096m", "-Xmx4096m"];
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
