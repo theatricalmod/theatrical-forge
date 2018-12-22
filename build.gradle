@@ -14,7 +14,6 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 version = "1.0"
 group = "com.georlegacy.general.theatrical" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "theatrical"
-mainClassName = "TheatricalMain"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
