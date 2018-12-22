@@ -1,6 +1,5 @@
-<a href="https://ci.615283.net/viewType.html?buildTypeId=myID&guest=1"> 
-<img src="https://ci.615283.net/app/rest/builds/buildType(id:myID)/statusIcon"/>
-</a>
+[![](https://ci.615283.net/app/rest/builds/builds/id:Theatrical_Build/statusIcon)](https://ci.615283.net/viewType.html?buildTypeId=Theatrical_Build&guest=1)
+
 # Theatrical
 ## Fixtures
 * Fresnels
