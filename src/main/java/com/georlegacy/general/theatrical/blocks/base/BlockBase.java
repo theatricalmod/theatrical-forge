@@ -32,7 +32,7 @@ public class BlockBase extends Block implements IHasModel {
         super(Material.ROCK);
         this.name = name;
         setUnlocalizedName(name);
-        setCreativeTab(CreativeTabs.MAIN_TAB);
+        setCreativeTab(CreativeTabs.TESTING_TAB);
         setRegistryName(name);
 
         TheatricalBlocks.BLOCKS.add(this);

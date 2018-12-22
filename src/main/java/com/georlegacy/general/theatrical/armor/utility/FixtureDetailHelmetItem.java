@@ -32,7 +32,7 @@ public class FixtureDetailHelmetItem extends ItemArmor implements IHasModel {
         this
                 .setUnlocalizedName("fixture_detail_helmet")
                 .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet")
-                .setCreativeTab(CreativeTabs.MAIN_TAB);
+                .setCreativeTab(CreativeTabs.TESTING_TAB);
     }
 
     @Override
