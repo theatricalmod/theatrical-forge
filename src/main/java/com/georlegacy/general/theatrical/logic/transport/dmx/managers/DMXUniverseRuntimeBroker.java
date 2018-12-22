@@ -30,12 +30,12 @@ public class DMXUniverseRuntimeBroker {
     public DMXUniverseRuntimeBroker() {
         this.managedUniverses = new HashSet<>();
 
-        this.managedUniverses.addAll(findUniverses());
+        //this.managedUniverses.addAll(findUniverses());
     }
 
     private Collection<DMXUniverse> findUniverses() {
         //Todo
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
 }
