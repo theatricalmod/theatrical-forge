@@ -38,6 +38,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GL11.glTranslated(x, y, z);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+
 // you will need to supply your own position vectors
         renderLight(te);
         GL11.glPopAttrib();

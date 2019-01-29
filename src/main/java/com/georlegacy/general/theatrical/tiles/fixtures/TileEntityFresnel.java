@@ -46,6 +46,7 @@ public class TileEntityFresnel extends TileEntity {
 
         @Override
         protected void onLoad() {
+            TileEntityFresnel.this.markDirty();
             gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
     };
@@ -76,6 +77,22 @@ public class TileEntityFresnel extends TileEntity {
         //Write your data into the nbtTag
         nbtTag.setTag("items", itemStackHandler.serializeNBT());
         return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound nbtTagCompound = super.getUpdateTag();
+        nbtTagCompound.setTag("items", itemStackHandler.serializeNBT());
+        return nbtTagCompound;
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        if (tag.hasKey("items")) {
+            itemStackHandler.deserializeNBT((NBTTagCompound) tag.getTag("items"));
+            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
+        }
     }
 
     @Override
