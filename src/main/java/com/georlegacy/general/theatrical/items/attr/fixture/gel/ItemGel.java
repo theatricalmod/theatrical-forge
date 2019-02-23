@@ -33,7 +33,7 @@ public class ItemGel extends Item implements IHasModel {
     public ItemGel() {
         this
                 .setRegistryName("theatrical", "gel")
-                .setUnlocalizedName("gel")
+                .setTranslationKey("gel")
                 .setMaxStackSize(64)
                 .setMaxDamage(0)
                 .setHasSubtypes(true).setCreativeTab(
@@ -43,7 +43,7 @@ public class ItemGel extends Item implements IHasModel {
     @Nonnull
     @Override
     public String getUnlocalizedNameInefficiently(ItemStack stack) {
-        return this.getUnlocalizedName() + "." + GelType.getGelType(stack.getMetadata()).getId();
+        return this.getTranslationKey() + "." + GelType.getGelType(stack.getMetadata()).getId();
     }
 
     @SideOnly(Side.CLIENT)
@@ -63,9 +63,9 @@ public class ItemGel extends Item implements IHasModel {
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getTranslationKey(ItemStack stack) {
         GelType gelType = GelType.getGelType(stack.getMetadata());
-        return this.getUnlocalizedName() + "." + gelType.getId();
+        return this.getTranslationKey() + "." + gelType.getId();
     }
 
     @SideOnly(Side.CLIENT)

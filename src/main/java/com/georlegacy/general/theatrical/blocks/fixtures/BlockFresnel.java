@@ -19,8 +19,10 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
+import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
+import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.block.Block;
@@ -32,6 +34,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -75,7 +78,17 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
                                     EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
                                     float hitZ) {
         if (!worldIn.isRemote) {
-            playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_FRESNEL.getNid(), worldIn, pos.getX(), pos.getY(), pos.getZ());
+            if(!playerIn.isSneaking()) {
+                playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_FRESNEL.getNid(), worldIn,
+                    pos.getX(), pos.getY(), pos.getZ());
+            }else {
+                if(state.getValue(ON_BAR)){
+                    worldIn.setBlockToAir(pos);
+                    worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_BAR.getDefaultState().withProperty(
+                        BlockBar.AXIS, state.getValue(FACING)), 2);
+                    return true;
+                }
+            }
         }
         return super
                 .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
@@ -102,7 +115,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public IBlockState getStateFromMeta(int meta) {
         int bool = meta >> 2;
         int facing = meta & 3;
-        EnumFacing facing1 = EnumFacing.getFront((facing) + 2);
+        EnumFacing facing1 = EnumFacing.byIndex((facing) + 2);
 
         return this.getDefaultState().withProperty(FACING, facing1).withProperty(ON_BAR, bool == 1);
     }
@@ -125,6 +138,11 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public void registerModels() {
         super.registerModels();
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFresnel.class, new FresnelTESR());
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override

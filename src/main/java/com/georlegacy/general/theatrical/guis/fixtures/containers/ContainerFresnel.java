@@ -1,13 +1,16 @@
 package com.georlegacy.general.theatrical.guis.fixtures.containers;
 
 import com.georlegacy.general.theatrical.guis.widgets.GelSlot;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
+import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -31,12 +34,12 @@ public class ContainerFresnel extends Container {
         for(int row = 0; row < 3; ++row){
             for(int col = 0; col < 9; ++col){
                 this.addSlotToContainer(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18,
-                        84 + row * 18));
+                        121 + row * 18));
             }
         }
         for( int row = 0; row < 9; ++row){
             int x = 8 + row * 18;
-            int y = 142;
+            int y = 179;
             this.addSlotToContainer(new Slot(playerInventory, row, x, y));
         }
     }
@@ -81,6 +84,17 @@ public class ContainerFresnel extends Container {
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return tileEntityFresnel.canInteractWith(playerIn);
+    }
+
+    public void setPan(int pan){
+        tileEntityFresnel.setPan(pan);
+        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tileEntityFresnel.getTilt(), pan, tileEntityFresnel.getPos()));
+    }
+
+    public void setTilt(int tilt){
+        tileEntityFresnel.setTilt(tilt);
+        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tilt,
+            tileEntityFresnel.getPan(), tileEntityFresnel.getPos()));
     }
 
 }

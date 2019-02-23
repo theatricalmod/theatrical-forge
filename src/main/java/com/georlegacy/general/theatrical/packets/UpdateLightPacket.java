@@ -18,27 +18,54 @@ package com.georlegacy.general.theatrical.packets;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class UpdateLightPacket implements IMessage {
 
-    private UpdateLightPacket() { }
+    public UpdateLightPacket(){}
 
-    private NBTTagCompound tag;
 
-    public NBTTagCompound getTag() {
-        return tag;
+    public UpdateLightPacket(int tilt, int pan, BlockPos blockPos) {
+        this.tilt = tilt;
+        this.pan = pan;
+        this.pos = blockPos;
+    }
+
+    private BlockPos pos;
+    private int tilt;
+    private int pan;
+
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public int getTilt() {
+        return tilt;
+    }
+
+    public int getPan() {
+        return pan;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        tag = ByteBufUtils.readTag(buf);
+        tilt = buf.readInt();
+        pan = buf.readInt();
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
+        pos = new BlockPos(x, y, z);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, tag);
+        buf.writeInt(tilt);
+        buf.writeInt(pan);
+        buf.writeInt(pos.getX());
+        buf.writeInt(pos.getY());
+        buf.writeInt(pos.getZ());
     }
 
 }

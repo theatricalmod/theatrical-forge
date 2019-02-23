@@ -11,7 +11,7 @@ public class BlankGobo extends Item implements IHasModel {
     public BlankGobo() {
         this
                 .setRegistryName(Reference.MOD_ID, "blank_gobo")
-                .setUnlocalizedName("blank_gobo")
+                .setTranslationKey("blank_gobo")
                 .setMaxStackSize(16)
                 .setCreativeTab(CreativeTabs.GOBOS_TAB);
     }

@@ -24,12 +24,14 @@ import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockLog.EnumAxis;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +40,11 @@ import net.minecraft.world.World;
 
 public class BlockBar extends BlockBase {
 
-    public static final PropertyEnum<BlockLog.EnumAxis> AXIS = PropertyEnum.create("axis", BlockLog.EnumAxis.class);
+    public static final PropertyDirection AXIS =PropertyDirection.create("axis",
+        Plane.HORIZONTAL);
+
+    private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
+    private final AxisAlignedBB Z_BOX =  new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
 
     public BlockBar() {
         super("bar");
@@ -51,10 +57,13 @@ public class BlockBar extends BlockBase {
         float hitZ) {
         if(!worldIn.isRemote){
             if(Block.getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IFixture){
-                worldIn.setBlockToAir(pos);
-                worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
-                    BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING, playerIn.getHorizontalFacing().getOpposite()), 2);
-                return true;
+                if(playerIn.getHorizontalFacing().getAxis() == state.getValue(AXIS).getAxis()){
+                    worldIn.setBlockToAir(pos);
+                    worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
+                        BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING,
+                        playerIn.getHorizontalFacing()), 2);
+                    return true;
+                }
             }
         }
         return super
@@ -65,9 +74,9 @@ public class BlockBar extends BlockBase {
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing,
         float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         if(facing.getAxis().isHorizontal()){
-            return this.getDefaultState().withProperty(AXIS, EnumAxis.fromFacingAxis(facing.getOpposite().getAxis()));
+            return this.getDefaultState().withProperty(AXIS, facing.getOpposite());
         }else {
-            return this.getDefaultState().withProperty(AXIS, EnumAxis.fromFacingAxis(placer.getHorizontalFacing().getOpposite().getAxis()));
+            return this.getDefaultState().withProperty(AXIS,placer.getHorizontalFacing().getOpposite());
         }
     }
 
@@ -85,16 +94,7 @@ public class BlockBar extends BlockBase {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
-        switch(state.getValue(AXIS)){
-            case Z:
-                axisAlignedBB = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
-                break;
-            case X:
-                axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
-                break;
-        }
-        return axisAlignedBB;
+        return state.getValue(AXIS).getAxis() == EnumFacing.Axis.X ? X_BOX : Z_BOX;
     }
 
     @Override
@@ -104,12 +104,12 @@ public class BlockBar extends BlockBase {
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(AXIS, EnumAxis.values()[meta]);
+        return getDefaultState().withProperty(AXIS, EnumFacing.byIndex(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(AXIS).ordinal();
+        return state.getValue(AXIS).getIndex();
     }
 
 }

@@ -29,7 +29,7 @@ public class BlankGel extends Item implements IHasModel {
     public BlankGel() {
         this
                 .setRegistryName(Reference.MOD_ID, "blank_gel")
-                .setUnlocalizedName("blank_gel")
+                .setTranslationKey("blank_gel")
                 .setMaxStackSize(64)
                 .setCreativeTab(CreativeTabs.GELS_TAB);
     }

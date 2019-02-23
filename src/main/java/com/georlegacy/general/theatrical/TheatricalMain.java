@@ -17,17 +17,21 @@
 package com.georlegacy.general.theatrical;
 
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
+import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
 import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
+import dan200.computercraft.core.computer.Computer;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import static com.georlegacy.general.theatrical.util.Reference.*;
@@ -37,7 +41,7 @@ import static com.georlegacy.general.theatrical.util.Reference.*;
  *
  * @author James Conway
  */
-@Mod(modid = MOD_ID, name = NAME, version = VERSION)
+@Mod(modid = MOD_ID, name = NAME, version = VERSION, dependencies = "after:computercraft")
 public class TheatricalMain {
 
     @Mod.Instance
@@ -46,18 +50,26 @@ public class TheatricalMain {
     @SidedProxy(clientSide = CLIENT_PROXY_CLASS, serverSide = COMMON_PROXY_CLASS)
     public static CommonProxy proxy;
 
+
     @Mod.EventHandler
     public static void PreInit(FMLPreInitializationEvent event) {
         proxy.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TheatricalGuiHandler());
     }
 
+    private static void initComputer(){
+        ComputerCraftIntegration.init();
+    }
+
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         proxy.registerModelBakeryVariants();
         proxy.registerColorBlocks();
-        TheatricalPacketHandler.INSTANCE.registerMessage(UpdateLightPacketHandler.class, UpdateLightPacket.class, 0,
-            Side.CLIENT);
+        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateLightPacketHandler(), UpdateLightPacket.class, 0,
+            Side.SERVER);
+        if(Loader.isModLoaded("computercraft")){
+            initComputer();
+        }
     }
 
     @Mod.EventHandler

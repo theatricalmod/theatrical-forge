@@ -7,8 +7,10 @@
     "normal": [{}],
     "inventory": [{}],
     "axis": {
-      "x": {},
-      "z": {"y": 270}
+      "north": {},
+      "south": {},
+      "east": {"y": 90},
+      "west": {"y": 90}
     }
   }
 }

@@ -29,7 +29,7 @@ public class FixturesTab extends CreativeTabs {
     }
 
     @Override
-    public ItemStack getTabIconItem() {
+    public ItemStack createIcon() {
         return new ItemStack(Item.getItemFromBlock(TheatricalBlocks.BLOCK_FRESNEL));
     }
 

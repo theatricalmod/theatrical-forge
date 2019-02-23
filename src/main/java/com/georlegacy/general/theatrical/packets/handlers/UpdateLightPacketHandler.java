@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.packets.handlers;
 
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -31,11 +32,11 @@ public class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPack
     @Override
     public IMessage onMessage(UpdateLightPacket message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(() -> {
-            Minecraft.getMinecraft().world.markChunkDirty(new BlockPos(
-                    message.getTag().getInteger("x"),
-                    message.getTag().getInteger("y"),
-                    message.getTag().getInteger("z")
-            ), null);
+            BlockPos blockPos = message.getPos();
+            TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) Minecraft.getMinecraft().world.getTileEntity(blockPos);
+            tileEntityFresnel.setTilt(message.getTilt());
+            tileEntityFresnel.setPan(message.getPan());
+            Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileEntityFresnel);
         });
         return null;
     }

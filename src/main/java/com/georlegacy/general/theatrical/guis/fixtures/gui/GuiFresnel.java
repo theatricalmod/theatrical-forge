@@ -1,23 +1,32 @@
 package com.georlegacy.general.theatrical.guis.fixtures.gui;
 
-import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import com.georlegacy.general.theatrical.util.Reference;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
+    import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
+    import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+    import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+    import com.georlegacy.general.theatrical.util.Reference;
+    import net.minecraft.client.gui.inventory.GuiContainer;
+    import net.minecraft.client.renderer.GlStateManager;
+    import net.minecraft.client.resources.I18n;
+    import net.minecraft.util.ResourceLocation;
+    import net.minecraftforge.fml.client.config.GuiSlider;
 
 public class GuiFresnel extends GuiContainer {
 
     private static final ResourceLocation background = new ResourceLocation(Reference.MOD_ID,
-            "textures/gui/frensel.png");
+        "textures/gui/frensel.png");
     private ContainerFresnel inventoryPlayer;
+    private TileEntityFresnel tileEntityFresnel;
+
+    private GuiSlider tiltSlider;
+    private GuiSlider panSlider;
 
     public GuiFresnel(TileEntityFresnel tileEntityFresnel, ContainerFresnel inventorySlotsIn) {
         super(inventorySlotsIn);
         this.inventoryPlayer = inventorySlotsIn;
+        this.tileEntityFresnel = tileEntityFresnel;
+
+        this.xSize = 176;
+        this.ySize = 203;
     }
 
     @Override
@@ -31,9 +40,9 @@ public class GuiFresnel extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(TheatricalBlocks.BLOCK_FRESNEL.getUnlocalizedName() + ".name");
+        String name = I18n.format(TheatricalBlocks.BLOCK_FRESNEL.getTranslationKey() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
-        fontRenderer.drawString("ItemGel", xSize / 2 - fontRenderer.getStringWidth("ItemGel") / 2, ySize - 143 /*(height + 11)*/, 0x404040);
+        fontRenderer.drawString("Gel", xSize / 2 - fontRenderer.getStringWidth("Gel") / 2, ySize - 183 /*(height + 11)*/, 0x404040);
         fontRenderer.drawString(inventoryPlayer.getPlayerInventory().getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
     }
 
@@ -41,5 +50,21 @@ public class GuiFresnel extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        int width = this.width / 2;
+        int height = this.height / 2;
+        int centerX = (this.width / 2) - 256 / 2;
+        int centerY = (this.height / 2) - 158 / 2;
+        this.tiltSlider = this.addButton(new GuiSlider(15, centerX + 53, centerY + 35, 150, 20, "", "", -180, 180, this.tileEntityFresnel.getTilt(), false, true,  (guiSlider -> this.inventoryPlayer.setTilt(guiSlider.getValueInt()))));
+        this.panSlider = this.addButton(new GuiSlider(16, centerX + 53, centerY + 65, 150, 20, "", "", -180, 180, this.tileEntityFresnel.getPan(), false, true,  (guiSlider -> this.inventoryPlayer.setPan(guiSlider.getValueInt()))));
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
     }
 }

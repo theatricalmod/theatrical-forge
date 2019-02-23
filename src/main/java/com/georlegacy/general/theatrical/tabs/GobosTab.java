@@ -13,7 +13,7 @@ public class GobosTab extends CreativeTabs {
     }
 
     @Override
-    public ItemStack getTabIconItem() {
+    public ItemStack createIcon() {
         return new ItemStack(TheatricalItems.ITEM_BLANK_GOBO, 0, 0);
     }
 
