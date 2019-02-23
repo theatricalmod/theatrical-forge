@@ -23,6 +23,7 @@ import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -51,6 +52,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public BlockFresnel() {
         super("fresnel");
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
+        this.setLightLevel(0.5F);
     }
 
     @Nullable

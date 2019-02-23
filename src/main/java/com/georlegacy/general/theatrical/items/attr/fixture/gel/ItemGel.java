@@ -28,9 +28,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-public class Gel extends Item implements IHasModel {
+public class ItemGel extends Item implements IHasModel {
 
-    public Gel() {
+    public ItemGel() {
         this
                 .setRegistryName("theatrical", "gel")
                 .setUnlocalizedName("gel")
@@ -72,7 +72,7 @@ public class Gel extends Item implements IHasModel {
     @Override
     public void registerModels() {
         for (GelType gelType : GelType.values())
-            TheatricalItems.registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_" + gelType.getId());
+            TheatricalItems.registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_0");
     }
 
 }

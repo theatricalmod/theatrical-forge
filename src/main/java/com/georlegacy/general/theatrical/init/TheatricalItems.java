@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.armor.utility.FixtureDetailHelmetItem;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -38,7 +38,7 @@ public class TheatricalItems {
 
     public static final List<Item> ITEMS = new ArrayList<Item>();
 
-    public static final Gel ITEM_GEL = new Gel();
+    public static final ItemGel ITEM_GEL = new ItemGel();
     public static final BlankGel ITEM_BLANK_GEL = new BlankGel();
 
     public static final BlankGobo ITEM_BLANK_GOBO = new BlankGobo();

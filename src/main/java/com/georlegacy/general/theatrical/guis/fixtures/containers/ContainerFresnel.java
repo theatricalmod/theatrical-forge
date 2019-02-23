@@ -1,7 +1,7 @@
 package com.georlegacy.general.theatrical.guis.fixtures.containers;
 
 import com.georlegacy.general.theatrical.guis.widgets.GelSlot;
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -60,7 +60,7 @@ public class ContainerFresnel extends Container {
         if(slot != null && slot.getHasStack()){
             ItemStack itemStack1 = slot.getStack();
             itemStack = itemStack1.copy();
-            if(itemStack1.getItem() instanceof Gel){
+            if(itemStack1.getItem() instanceof ItemGel){
                 if(index < 1){
                     if(!this.mergeItemStack(itemStack1, 1, this.inventorySlots.size(), true)){
                         return null;

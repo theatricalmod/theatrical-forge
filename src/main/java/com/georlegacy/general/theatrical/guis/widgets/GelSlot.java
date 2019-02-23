@@ -16,7 +16,7 @@
 
 package com.georlegacy.general.theatrical.guis.widgets;
 
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.Gel;
+import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -32,7 +32,7 @@ public class GelSlot extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return stack.getItem() instanceof Gel;
+        return stack.getItem() instanceof ItemGel;
     }
 
 }

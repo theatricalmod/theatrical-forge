@@ -24,15 +24,20 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityFresnel extends TileEntity {
+
     public static final int SIZE = 1;
     private GelType gelType = GelType.CLEAR;
+    private int pan, tilt = 0;
 
     // This item handler will hold our nine inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -56,18 +61,28 @@ public class TileEntityFresnel extends TileEntity {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox(){
+        return INFINITE_EXTENT_AABB;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("items")) {
             itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
             gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
+        pan = compound.getInteger("pan");
+        tilt = compound.getInteger("tilt");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
+        compound.setInteger("pan", pan);
+        compound.setInteger("tilt", tilt);
         return compound;
     }
 
@@ -76,13 +91,22 @@ public class TileEntityFresnel extends TileEntity {
         NBTTagCompound nbtTag = new NBTTagCompound();
         //Write your data into the nbtTag
         nbtTag.setTag("items", itemStackHandler.serializeNBT());
+        nbtTag.setInteger("tilt", tilt);
+        nbtTag.setInteger("pan", pan);
         return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
     }
 
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound nbtTagCompound = super.getUpdateTag();
         nbtTagCompound.setTag("items", itemStackHandler.serializeNBT());
+        nbtTagCompound.setInteger("pan", pan);
+        nbtTagCompound.setInteger("tilt", tilt);
         return nbtTagCompound;
     }
 
@@ -93,6 +117,8 @@ public class TileEntityFresnel extends TileEntity {
             itemStackHandler.deserializeNBT((NBTTagCompound) tag.getTag("items"));
             gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
+        tilt = tag.getInteger("tilt");
+        pan = tag.getInteger("pan");
     }
 
     @Override
@@ -102,6 +128,8 @@ public class TileEntityFresnel extends TileEntity {
             itemStackHandler.deserializeNBT((NBTTagCompound) tag.getTag("items"));
             gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
+        tilt = tag.getInteger("tilt");
+        pan = tag.getInteger("pan");
         //Handle your Data
     }
 

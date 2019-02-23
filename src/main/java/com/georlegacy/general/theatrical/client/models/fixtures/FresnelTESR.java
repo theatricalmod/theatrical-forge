@@ -16,10 +16,27 @@
 
 package com.georlegacy.general.theatrical.client.models.fixtures;
 
+import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import java.awt.Color;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -29,71 +46,100 @@ import java.nio.ByteBuffer;
 @SideOnly(Side.CLIENT)
 public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
 
+    private static final int LIGHTMAP = 0xF000F0;
+
     @Override
     public void render(TileEntityFresnel te, double x, double y, double z, float partialTicks,
-        int destroyStage, float alpha) {
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-// because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
-        GL11.glTranslated(x, y, z);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-
-// you will need to supply your own position vectors
-        renderLight(te);
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+        int destroyStage, float a) {
+        EnumFacing direction = te.getWorld().getBlockState(te.getPos()).getValue(BlockDirectional.FACING);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.glNormal3f(0F, 1F, 0F);
+        GlStateManager.translate(0.5F, 0.5F, 0.5F);
+        GlStateManager.rotate(180F, 0F, 0F, 1F);
+        GlStateManager.rotate(direction.getHorizontalAngle()+ 180F, 0F, 1F, 0F);
+        GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+        GlStateManager.disableLighting();
+        BlockPos blockPos = te.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 10);
+        BlockPos start = te.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
+        RayTraceResult result = te.getWorld().rayTraceBlocks(new Vec3d(start.getX(), start.getY(), start.getZ()), new Vec3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+        double distance = 10;
+        if(result != null) {
+            distance = result.hitVec.distanceTo(new Vec3d(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ()));
+        }
+        renderLightBeam(te, partialTicks, 0.4f, 0.25, distance, te.getGelType().getHex());
+        GlStateManager.popMatrix();
     }
 
-    private void renderLight(TileEntityFresnel tileEntityFresnel){
-//        System.out.print(tileEntityFresnel.getGelType().getName());
-        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GelType gelType = tileEntityFresnel.getGelType();
-        if(gelType != GelType.CLEAR){
-            byte[] bytes = ByteBuffer.allocate(4).putInt(Integer.decode(tileEntityFresnel.getGelType().getHex())).array();
-            GL11.glColor4ub(bytes[1],bytes[2],bytes[3], (byte) 100);
-        }else{
-            GL11.glColor4d(0, 0, 0, 0);
-        }
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        switch(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
-            BlockFresnel.FACING)){
-            case NORTH:
-                GL11.glVertex3d(0.3,0.05, 0.04);
-                GL11.glVertex3d(0.3,0.45, 0.04);
-                GL11.glVertex3d(0.7, 0.45, 0.04);
-                GL11.glVertex3d(0.7, 0.05, 0.04);
-                GL11.glVertex3d(0.3,0.05, 0.04);
-                GL11.glVertex3d(0.3, 0.45, 0.04);
-                break;
-            case EAST:
-                GL11.glVertex3d(0.96,0.05, 0.3);
-                GL11.glVertex3d(0.96,0.45, 0.3);
-                GL11.glVertex3d(0.96, 0.45, 0.7);
-                GL11.glVertex3d(0.96, 0.05, 0.7);
-                GL11.glVertex3d(0.96,0.05, 0.3);
-                GL11.glVertex3d(0.96, 0.45, 0.3);
-                break;
-            case WEST:
-                GL11.glVertex3d(0.04,0.05, 0.3);
-                GL11.glVertex3d(0.04,0.45, 0.3);
-                GL11.glVertex3d(0.04, 0.45, 0.7);
-                GL11.glVertex3d(0.04, 0.05, 0.7);
-                GL11.glVertex3d(0.04,0.05, 0.3);
-                GL11.glVertex3d(0.04, 0.45, 0.3);
-                break;
-            case SOUTH:
-                GL11.glVertex3d(0.3,0.05, 0.96);
-                GL11.glVertex3d(0.3,0.45, 0.96);
-                GL11.glVertex3d(0.7, 0.45, 0.96);
-                GL11.glVertex3d(0.7, 0.05, 0.96);
-                GL11.glVertex3d(0.3,0.05, 0.96);
-                GL11.glVertex3d(0.3, 0.45, 0.96);
-            break;
-        }
-        GL11.glEnd();
-        GL11.glDisable(GL11.GL_BLEND);
-//        GL11.glEnable(GL11.GL_DEPTH_TEST);
+    @Override
+    public boolean isGlobalRenderer(TileEntityFresnel te) {
+        return true;
+    }
+
+    public void renderLightBeam(TileEntityFresnel tileEntityFresnel, float partialTicks, float alpha, double beamSize, double length, int color){
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder render = tessellator.getBuffer();
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        int a = (int)(alpha * 255);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.5, 0.8, 0);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.disableCull();
+        //GlStateManager.translate(startX- TileEntityRendererDispatcher.staticPlayerX, startY-TileEntityRendererDispatcher.staticPlayerY, startZ-TileEntityRendererDispatcher.staticPlayerZ);
+        GlStateManager.disableTexture2D();
+        render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        double width = beamSize;
+        
+        render.pos( width,  width,  -length).color(r, g, b, a).endVertex();
+        render.pos( width,  width,  0).color(r, g, b, a).endVertex();
+        render.pos( width,  -width,  0).color(r, g, b, a).endVertex();
+        render.pos( width,  -width,  -length).color(r, g, b, a).endVertex();
+
+        render.pos( -width,  -width,  -length).color(r, g, b, a).endVertex();
+        render.pos( -width,  -width,  0).color(r, g, b, a).endVertex();
+        render.pos( -width, width,  0).color(r, g, b, a).endVertex();
+        render.pos( -width,  width,  -length).color(r, g, b, a).endVertex();
+
+        render.pos( -width,  width,  -length).color(r, g, b, a).endVertex();
+        render.pos( -width,   width,  0).color(r, g, b, a).endVertex();
+        render.pos( width,   width,  0).color(r, g, b, a).endVertex();
+        render.pos( width,   width,  -length).color(r, g, b, a).endVertex();
+
+        render.pos( width,  -width,  -length).color(r, g, b, a).endVertex();
+        render.pos( width,  -width,  0).color(r, g, b, a).endVertex();
+        render.pos( -width,  -width,  0).color(r, g, b, a).endVertex();
+        render.pos( -width,  -width,   -length).color(r, g, b, a).endVertex();
+
+//        render.pos( length,  width,  width).color(r, g, b, a).endVertex();
+//        render.pos( 0,  width,  width).color(r, g, b, a).endVertex();
+//        render.pos( 0,  -width,  width).color(r, g, b, a).endVertex();
+//        render.pos( length,  -width,  width).color(r, g, b, a).endVertex();
+//
+//        render.pos( length,  -width,  -width).color(r, g, b, a).endVertex();
+//        render.pos( 0,  -width,  -width).color(r, g, b, a).endVertex();
+//        render.pos( 0, width,  -width).color(r, g, b, a).endVertex();
+//        render.pos( length,  width,  -width).color(r, g, b, a).endVertex();
+//
+//        render.pos( length,  width,   -width).color(r, g, b, a).endVertex();
+//        render.pos( 0,   width,  -width).color(r, g, b, a).endVertex();
+//        render.pos( 0,   width,  width).color(r, g, b, a).endVertex();
+//        render.pos( length,   width,  width).color(r, g, b, a).endVertex();
+//
+//        render.pos( length,  -width,  width).color(r, g, b, a).endVertex();
+//        render.pos( 0,  -width,  width).color(r, g, b, a).endVertex();
+//        render.pos( 0,  -width,  -width).color(r, g, b, a).endVertex();
+//        render.pos( length,  -width,   -width).color(r, g, b, a).endVertex();
+        
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+//        GlStateManager.disableDepth();
+        GlStateManager.enableCull();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
     }
 }

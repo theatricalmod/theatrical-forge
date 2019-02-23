@@ -33,7 +33,7 @@ public class GuiFresnel extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String name = I18n.format(TheatricalBlocks.BLOCK_FRESNEL.getUnlocalizedName() + ".name");
         fontRenderer.drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
-        fontRenderer.drawString("Gel", xSize / 2 - fontRenderer.getStringWidth("Gel") / 2, ySize - 143 /*(height + 11)*/, 0x404040);
+        fontRenderer.drawString("ItemGel", xSize / 2 - fontRenderer.getStringWidth("ItemGel") / 2, ySize - 143 /*(height + 11)*/, 0x404040);
         fontRenderer.drawString(inventoryPlayer.getPlayerInventory().getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
     }
 
