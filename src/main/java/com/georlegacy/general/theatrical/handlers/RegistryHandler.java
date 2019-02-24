@@ -16,24 +16,18 @@
 
 package com.georlegacy.general.theatrical.handlers;
 
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -59,8 +53,8 @@ public class RegistryHandler {
     public static void onBlockRegister(RegistryEvent.Register<Block> event){
         event.getRegistry().registerAll(TheatricalBlocks.BLOCKS.toArray(new Block[0]));
         TheatricalBlocks.BLOCKS.forEach(block -> {
-            if(block instanceof IFixture){
-                IFixture fixture = (IFixture) block;
+            if(block instanceof IHasTileEntity){
+                IHasTileEntity fixture = (IHasTileEntity) block;
                 GameRegistry.registerTileEntity(fixture.getTileEntity(), block.getRegistryName());
             }
         });

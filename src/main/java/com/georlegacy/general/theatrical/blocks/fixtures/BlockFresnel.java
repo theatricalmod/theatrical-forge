@@ -18,14 +18,13 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IFixture;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.client.models.fixtures.FresnelTESR;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -48,7 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IFixture {
+public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IHasTileEntity {
 
     public static final PropertyBool ON_BAR = PropertyBool.create("on_bar");
 
@@ -157,4 +156,18 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0, 0, 1, 1.1, 1);
         return axisAlignedBB;
     }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntityFresnel tileEntityFresnel  = (TileEntityFresnel) worldIn.getTileEntity(pos);
+        if(tileEntityFresnel != null){
+            worldIn.setBlockToAir(tileEntityFresnel.getLightBlock());
+        }
+        super.breakBlock(worldIn, pos, state);
+    }
+
+//    @Override
+//    public void onPlayerDestroy(World worldIn, BlockPos pos, IBlockState state) {
+//
+//    }
 }

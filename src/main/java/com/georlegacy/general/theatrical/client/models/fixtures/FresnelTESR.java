@@ -16,41 +16,33 @@
 
 package com.georlegacy.general.theatrical.client.models.fixtures;
 
+import static net.minecraft.util.EnumFacing.Axis.X;
+import static net.minecraft.util.EnumFacing.Axis.Z;
+
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
-import java.awt.Color;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.nio.ByteBuffer;
-
 @SideOnly(Side.CLIENT)
 public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
 
-    private static final int LIGHTMAP = 0xF000F0;
+    private static float lastBrightnessX, lastBrightnessY;
+
 
     @Override
     public void render(TileEntityFresnel te, double x, double y, double z, float partialTicks,
@@ -63,28 +55,37 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.disableLighting();
         GlStateManager.translate(0.5F, 0, -.5F);
         GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
-        GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks, 0, 0, 1);
+        GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks, direction.getAxis() == Z ? 1 : 0, 0, direction.getAxis() == X ? 1 : 0);
         GlStateManager.translate(-.5F, 0, 0.5F);
         renderLight(te);
-        BlockPos blockPos = te.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 10);
-        BlockPos start = te.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
-        RayTraceResult result = te.getWorld().rayTraceBlocks(new Vec3d(start.getX(), start.getY(), start.getZ()), new Vec3d(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-        double distance = 7;
-        if(result != null) {
-            distance = result.hitVec.distanceTo(new Vec3d(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ()));
-        }
+        double distance = te.getDistance();
         GlStateManager.translate(0F, -1.5F, -1F);
         GlStateManager.translate(0.5F, .5F, .5F);
         float angle = direction.getHorizontalAngle()+ 180F;
         GlStateManager.rotate(-angle, 0F, 1F, 0F);
         GlStateManager.translate(-.5F, -.5F, -.5F);
-        renderLightBeam(te, partialTicks, 0.4f, 0.25, distance, te.getGelType().getHex());
+        renderLightBeam(te, partialTicks, ((te.getPower() / 255) * 0.4f), 0.25, distance, te.getGelType().getHex());
         GlStateManager.popMatrix();
     }
 
     @Override
     public boolean isGlobalRenderer(TileEntityFresnel te) {
         return true;
+    }
+
+
+    public void drawLine(TileEntityFresnel te, Vec3d start, Vec3d end){
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder render = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+        render.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+//        render.pos(0,0,0).color(255, 0, 0, 255).endVertex();
+//        render.pos(10,1 , 10).color(255, 0, 0, 255).endVertex();
+        render.pos(start.x ,start.y, start.z).color(0, 0, 255, 255).endVertex();
+        render.pos(end.x, end.y, end.z).color(255, 0, 0, 255).endVertex();
+        tessellator.draw();
+        GlStateManager.popMatrix();
     }
 
     public void renderLight(TileEntityFresnel te){
@@ -111,6 +112,23 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.popMatrix();
     }
 
+    public static void pushBrightness(int u, int t)
+    {
+        lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, u, t);
+    }
+
+    public static void pushMaxBrightness()
+    {
+        pushBrightness(240, 240);
+    }
+
+    public static void popBrightness()
+    {
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+    }
+
     public void renderLightBeam(TileEntityFresnel tileEntityFresnel, float partialTicks, float alpha, double beamSize, double length, int color){
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder render = tessellator.getBuffer();
@@ -118,6 +136,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
         int a = (int)(alpha * 255);
+        pushMaxBrightness();
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.5, 0.8, 0);
         GlStateManager.disableLighting();
@@ -127,7 +146,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         float ref = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
         GlStateManager.alphaFunc(GL11.GL_ALWAYS, 0);
 //        GlStateManager.depthMask(false);
-        GlStateManager.disableCull();
+        GlStateManager.enableCull();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         //GlStateManager.translate(startX- TileEntityRendererDispatcher.staticPlayerX, startY-TileEntityRendererDispatcher.staticPlayerY, startZ-TileEntityRendererDispatcher.staticPlayerZ);
         GlStateManager.disableTexture2D();
@@ -174,7 +193,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
 //        render.pos( 0,  -width,  -width).color(r, g, b, a).endVertex();
 //        render.pos( length,  -width,   -width).color(r, g, b, a).endVertex();
 
-//        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()), tileEntityFresnel.getPos(), tileEntityFresnel.getWorld(), render);
+//        Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getLightBlock()), tileEntityFresnel.getLightBlock(), tileEntityFresnel.getWorld(), render);
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.enableTexture2D();
@@ -183,8 +202,9 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.disableBlend();
 //        GlStateManager.disableDepth();
-        GlStateManager.enableCull();
+//        GlStateManager.disableCull();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
+        popBrightness();
     }
 }

@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.init;
 
+import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 
 import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
@@ -28,6 +29,9 @@ import net.minecraft.block.Block;
 public class TheatricalBlocks {
 
     public static final List<Block> BLOCKS = new ArrayList<>();
+
+
+    public static BlockIlluminator BLOCK_ILLUMINATOR = new BlockIlluminator();
 
     public static BlockFresnel BLOCK_FRESNEL = new BlockFresnel();
 

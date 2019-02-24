@@ -1,7 +1,9 @@
 package com.georlegacy.general.theatrical.guis.fixtures.gui;
 
     import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
+    import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
     import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+    import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
     import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
     import com.georlegacy.general.theatrical.util.Reference;
     import net.minecraft.client.gui.inventory.GuiContainer;
@@ -19,6 +21,8 @@ public class GuiFresnel extends GuiContainer {
 
     private GuiSlider tiltSlider;
     private GuiSlider panSlider;
+
+    private int pan, tilt = 0;
 
     public GuiFresnel(TileEntityFresnel tileEntityFresnel, ContainerFresnel inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -59,12 +63,16 @@ public class GuiFresnel extends GuiContainer {
         int height = this.height / 2;
         int centerX = (this.width / 2) - 256 / 2;
         int centerY = (this.height / 2) - 158 / 2;
-        this.tiltSlider = this.addButton(new GuiSlider(15, centerX + 53, centerY + 35, 150, 20, "", "", -180, 180, this.tileEntityFresnel.getTilt(), false, true,  (guiSlider -> this.inventoryPlayer.setTilt(guiSlider.getValueInt()))));
-        this.panSlider = this.addButton(new GuiSlider(16, centerX + 53, centerY + 65, 150, 20, "", "", -180, 180, this.tileEntityFresnel.getPan(), false, true,  (guiSlider -> this.inventoryPlayer.setPan(guiSlider.getValueInt()))));
+        this.pan = tileEntityFresnel.getPan();
+        this.tilt = tileEntityFresnel.getTilt();
+        this.tiltSlider = this.addButton(new GuiSlider(15, centerX + 53, centerY + 35, 150, 20, "", "", -180, 180, tilt, false, true,  (guiSlider -> this.tilt = guiSlider.getValueInt())));
+        this.panSlider = this.addButton(new GuiSlider(16, centerX + 53, centerY + 65, 150, 20, "", "", -180, 180, pan, false, true,  (guiSlider -> this.pan = guiSlider.getValueInt())));
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
+        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tilt,
+            pan, tileEntityFresnel.getPower(), tileEntityFresnel.getPos()));
     }
 }

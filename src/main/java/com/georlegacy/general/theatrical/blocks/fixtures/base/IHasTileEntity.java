@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.blocks.fixtures.base;
 
 import net.minecraft.tileentity.TileEntity;
 
-public interface IFixture {
+public interface IHasTileEntity {
 
     Class<? extends TileEntity> getTileEntity();
 

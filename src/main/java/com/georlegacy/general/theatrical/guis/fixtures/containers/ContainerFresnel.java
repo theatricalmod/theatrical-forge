@@ -85,16 +85,4 @@ public class ContainerFresnel extends Container {
     public boolean canInteractWith(EntityPlayer playerIn) {
         return tileEntityFresnel.canInteractWith(playerIn);
     }
-
-    public void setPan(int pan){
-        tileEntityFresnel.setPan(pan);
-        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tileEntityFresnel.getTilt(), pan, tileEntityFresnel.getPos()));
-    }
-
-    public void setTilt(int tilt){
-        tileEntityFresnel.setTilt(tilt);
-        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tilt,
-            tileEntityFresnel.getPan(), tileEntityFresnel.getPos()));
-    }
-
 }

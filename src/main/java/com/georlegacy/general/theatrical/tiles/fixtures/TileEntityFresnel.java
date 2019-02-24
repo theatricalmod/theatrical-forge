@@ -16,13 +16,20 @@
 
 package com.georlegacy.general.theatrical.tiles.fixtures;
 
+import com.georlegacy.general.theatrical.api.IFixture;
+import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
+import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.tile.TileIlluminator;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,9 +40,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,14 +53,20 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 @Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "computercraft")
-public class TileEntityFresnel extends TileEntity implements IPeripheral, ITickable {
+public class TileEntityFresnel extends TileEntity implements IPeripheral, ITickable, IFixture {
 
     public static final int SIZE = 1;
     private GelType gelType = GelType.CLEAR;
     private int pan, tilt = 0;
     private int focus = 6;
+    private double distance = 7;
+    private float power = 0;
+
+    private long timer = 0;
 
     public int prevTilt, prevPan, prevFocus = 0;
+
+    private BlockPos lightBlock;
 
     // This item handler will hold our nine inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -70,6 +85,38 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         }
     };
 
+    public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound){
+        if(nbtTagCompound == null){
+            nbtTagCompound = new NBTTagCompound();
+        }
+        nbtTagCompound.setTag("items", itemStackHandler.serializeNBT());
+        nbtTagCompound.setInteger("pan", this.pan);
+        nbtTagCompound.setInteger("tilt", this.tilt);
+        nbtTagCompound.setInteger("focus", this.focus);
+        nbtTagCompound.setInteger("prevPan", prevPan);
+        nbtTagCompound.setInteger("prevTilt", prevTilt);
+        nbtTagCompound.setInteger("prevFocus", prevFocus);
+        nbtTagCompound.setLong("timer", timer);
+        nbtTagCompound.setFloat("power", power);
+        return nbtTagCompound;
+    }
+
+    public void readNBT(NBTTagCompound nbtTagCompound){
+        if (nbtTagCompound.hasKey("items")) {
+            itemStackHandler.deserializeNBT((NBTTagCompound) nbtTagCompound.getTag("items"));
+            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
+        }
+        pan = nbtTagCompound.getInteger("pan");
+        tilt = nbtTagCompound.getInteger("tilt");
+        focus = nbtTagCompound.getInteger("focus");
+        prevPan = nbtTagCompound.getInteger("prevPan");
+        prevTilt = nbtTagCompound.getInteger("prevTilt");
+        prevFocus = nbtTagCompound.getInteger("prevFocus");
+        timer = nbtTagCompound.getLong("timer");
+        power = nbtTagCompound.getFloat("power");
+    }
+
+
     public GelType getGelType() {
         return gelType;
     }
@@ -86,77 +133,45 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        readNBT(compound);
         super.readFromNBT(compound);
-        if (compound.hasKey("items")) {
-            itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
-        }
-        pan = compound.getInteger("pan");
-        tilt = compound.getInteger("tilt");
-        focus = compound.getInteger("focus");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        compound.setTag("items", itemStackHandler.serializeNBT());
-        compound.setInteger("pan", pan);
-        compound.setInteger("tilt", tilt);
-        compound.setInteger("focus", focus);
-        return compound;
+        compound = getNBT(compound);
+        return super.writeToNBT(compound);
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket(){
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        //Write your data into the nbtTag
-        nbtTag.setTag("items", itemStackHandler.serializeNBT());
-        nbtTag.setInteger("tilt", tilt);
-        nbtTag.setInteger("pan", pan);
-        nbtTag.setInteger("focus", focus);
-        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
-    }
-
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
+        return new SPacketUpdateTileEntity(getPos(), 1, getNBT(null));
     }
 
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound nbtTagCompound = super.getUpdateTag();
-        nbtTagCompound.setTag("items", itemStackHandler.serializeNBT());
-        nbtTagCompound.setInteger("pan", pan);
-        nbtTagCompound.setInteger("tilt", tilt);
-        nbtTagCompound.setInteger("focus", focus);
+        nbtTagCompound = getNBT(nbtTagCompound);
         return nbtTagCompound;
     }
 
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        if (tag.hasKey("items")) {
-            itemStackHandler.deserializeNBT((NBTTagCompound) tag.getTag("items"));
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
-        }
-        tilt = tag.getInteger("tilt");
-        pan = tag.getInteger("pan");
-        focus = tag.getInteger("focus");
+        readNBT(tag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
         NBTTagCompound tag = pkt.getNbtCompound();
-        if (tag.hasKey("items")) {
-            itemStackHandler.deserializeNBT((NBTTagCompound) tag.getTag("items"));
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
-        }
-        tilt = tag.getInteger("tilt");
-        pan = tag.getInteger("pan");
-        focus = tag.getInteger("focus");
+        readNBT(tag);
         //Handle your Data
     }
 
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState,
         IBlockState newSate) {
@@ -222,7 +237,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     @Nonnull
     @Override
     public String[] getMethodNames() {
-        return new String[]{"setPan", "setTilt", "setFocus", "getPan", "getTilt", "getFocus"};
+        return new String[]{"setPan", "setTilt", "setFocus", "getPan", "getTilt", "getFocus", "setPower"};
     }
 
     @Method(modid = "computercraft")
@@ -247,6 +262,9 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
                 return new Object[]{this.getTilt()};
             case 5:
                 return new Object[]{this.getFocus()};
+            case 6:
+                this.setPower(((Number) args[0]).floatValue());
+            break;
         }
         return null;
     }
@@ -256,10 +274,93 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         return iPeripheral != null && iPeripheral.getType().equals(this.getType());
     }
 
+    public final Vec3d getVectorForRotation(float pitch, float yaw)
+    {
+        float f = MathHelper.cos(-yaw * 0.017453292F - (float)Math.PI);
+        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float)Math.PI);
+        float f2 = -MathHelper.cos(-pitch * 0.017453292F);
+        float f3 = MathHelper.sin(-pitch * 0.017453292F);
+        return new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
+    }
+
+    public double doRayTrace(TileEntityFresnel tileEntityFresnel){
+        if(!(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getBlock() instanceof BlockFresnel)){
+            return 0;
+        }
+        EnumFacing direction = tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
+            BlockDirectional.FACING);
+        float horizontalAngle = direction.getOpposite().getHorizontalAngle();
+        float lookingAngle = -(horizontalAngle + tileEntityFresnel.getPan());
+        float tilt = tileEntityFresnel.getTilt();
+        Vec3d look = getVectorForRotation(-tilt, lookingAngle);
+        double distance = 7;
+        BlockPos start = tileEntityFresnel.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
+        BlockPos blockPos = start.add(look.x * distance, look.y * distance, look.z * distance);
+        RayTraceResult result = tileEntityFresnel.getWorld().rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, true);
+        BlockPos lightPos = blockPos;
+        if(result != null) {
+            distance = result.hitVec.distanceTo(new Vec3d(tileEntityFresnel.getPos()));
+            if(!result.getBlockPos().equals(tileEntityFresnel.getPos())){
+                if(!result.getBlockPos().equals(tileEntityFresnel.getLightBlock())){
+                    lightPos = result.getBlockPos().offset(direction.getOpposite(), 1);
+                }else {
+                    return distance;
+                }
+            }
+        }
+        if(lightPos.equals(tileEntityFresnel.getPos())) {
+            return distance;
+        }
+        if(!(world.getBlockState(lightPos).getBlock() instanceof BlockAir) && !(world.getBlockState(lightPos).getBlock() instanceof BlockIlluminator)){
+            lightPos = lightPos.add(0,1 ,0);
+        }
+        if(getLightBlock() != null && getLightBlock() != lightPos){
+            getWorld().setBlockToAir(tileEntityFresnel.getLightBlock());
+        }
+        setLightBlock(lightPos);
+        getWorld().setBlockState(lightPos,
+            TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState());
+        TileEntity tileEntity = getWorld().getTileEntity(lightPos);
+        if(tileEntity != null){
+            TileIlluminator illuminator = (TileIlluminator) tileEntity;
+            illuminator.setController(tileEntityFresnel.getPos());
+        }
+        return distance;
+    }
+
     @Override
     public void update() {
         prevFocus = focus;
         prevPan = pan;
         prevTilt = tilt;
+        timer++;
+        if(timer >= 20){
+            this.distance = doRayTrace(this);
+            timer = 0;
+        }
+    }
+
+    @Override
+    public float getPower() {
+        return power;
+    }
+
+    public BlockPos getLightBlock() {
+        return lightBlock;
+    }
+
+    public void setLightBlock(BlockPos lightBlock) {
+        this.lightBlock = lightBlock;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setPower(float power) {
+        this.power = power;
+        this.markDirty();
+        if(!world.isRemote)
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
     }
 }

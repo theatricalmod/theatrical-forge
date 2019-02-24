@@ -27,15 +27,17 @@ public class UpdateLightPacket implements IMessage {
     public UpdateLightPacket(){}
 
 
-    public UpdateLightPacket(int tilt, int pan, BlockPos blockPos) {
+    public UpdateLightPacket(int tilt, int pan, float power, BlockPos blockPos) {
         this.tilt = tilt;
         this.pan = pan;
         this.pos = blockPos;
+        this.power = power;
     }
 
     private BlockPos pos;
     private int tilt;
     private int pan;
+    private float power;
 
     public BlockPos getPos() {
         return pos;
@@ -49,10 +51,15 @@ public class UpdateLightPacket implements IMessage {
         return pan;
     }
 
+    public float getPower() {
+        return power;
+    }
+
     @Override
     public void fromBytes(ByteBuf buf) {
         tilt = buf.readInt();
         pan = buf.readInt();
+        power = buf.readFloat();
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
@@ -63,6 +70,7 @@ public class UpdateLightPacket implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(tilt);
         buf.writeInt(pan);
+        buf.writeFloat(power);
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());

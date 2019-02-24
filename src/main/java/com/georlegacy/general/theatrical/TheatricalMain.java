@@ -23,7 +23,6 @@ import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
-import dan200.computercraft.core.computer.Computer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -31,7 +30,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import static com.georlegacy.general.theatrical.util.Reference.*;
