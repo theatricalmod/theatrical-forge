@@ -399,7 +399,9 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public void setPower(float power) {
         this.power = power;
         this.markDirty();
-        world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+        if(lightBlock != null) {
+            world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+        }
         if (!world.isRemote) {
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
         }

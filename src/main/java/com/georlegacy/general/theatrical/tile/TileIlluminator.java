@@ -96,6 +96,9 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
     @Optional.Method(modid = "albedo")
     @Override
     public Light provideLight() {
+        if(controller == null){
+            return null;
+        }
         TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world.getTileEntity(controller);
         if (tileEntityFresnel == null) {
             return null;
