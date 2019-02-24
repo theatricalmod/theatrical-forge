@@ -17,8 +17,8 @@
 package com.georlegacy.general.theatrical.logic.transport.dmx.entities.fixture;
 
 /**
- * Assignments to relative channels within a fixture for example a dimmer fixture may have an assignment
- * of {@code relativeChannel=1;<br>assignmentDescription=Intensity;}
+ * Assignments to relative channels within a fixture for example a dimmer fixture may have an
+ * assignment of {@code relativeChannel=1;<br>assignmentDescription=Intensity;}
  *
  * @author James Conway
  */

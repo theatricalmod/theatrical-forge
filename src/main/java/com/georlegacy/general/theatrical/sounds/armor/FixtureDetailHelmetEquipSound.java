@@ -25,7 +25,7 @@ public class FixtureDetailHelmetEquipSound extends SoundEvent {
     public FixtureDetailHelmetEquipSound() {
         super(new ResourceLocation(Reference.MOD_ID, "fixture_detail_helmet_equip"));
         this
-                .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet_equip");
+            .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet_equip");
     }
 
 }

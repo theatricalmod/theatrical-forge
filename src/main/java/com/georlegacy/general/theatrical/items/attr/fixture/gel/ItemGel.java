@@ -19,6 +19,7 @@ package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.GelsTab;
+import javax.annotation.Nonnull;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,17 +27,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-
 public class ItemGel extends Item implements IHasModel {
 
     public ItemGel() {
         this
-                .setRegistryName("theatrical", "gel")
-                .setTranslationKey("gel")
-                .setMaxStackSize(64)
-                .setMaxDamage(0)
-                .setHasSubtypes(true).setCreativeTab(
+            .setRegistryName("theatrical", "gel")
+            .setTranslationKey("gel")
+            .setMaxStackSize(64)
+            .setMaxDamage(0)
+            .setHasSubtypes(true).setCreativeTab(
             com.georlegacy.general.theatrical.tabs.base.CreativeTabs.GELS_TAB);
     }
 
@@ -49,7 +48,7 @@ public class ItemGel extends Item implements IHasModel {
     @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if(!(tab instanceof GelsTab)){
+        if (!(tab instanceof GelsTab)) {
             return;
         }
         NonNullList<ItemStack> itemStacks = NonNullList.create();
@@ -71,8 +70,10 @@ public class ItemGel extends Item implements IHasModel {
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
-        for (GelType gelType : GelType.values())
-            TheatricalItems.registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_0");
+        for (GelType gelType : GelType.values()) {
+            TheatricalItems
+                .registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_0");
+        }
     }
 
 }

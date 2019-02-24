@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class BlockIlluminator extends BlockBase implements ITileEntityProvider, IHasTileEntity {
 
-    private final AxisAlignedBB EMPTY = new AxisAlignedBB(0, 0, 0,0 , 0, 0);
+    private final AxisAlignedBB EMPTY = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
 
     public BlockIlluminator() {
@@ -84,22 +84,22 @@ public class BlockIlluminator extends BlockBase implements ITileEntityProvider, 
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if(!(world.getTileEntity(pos) instanceof TileIlluminator)){
+        if (!(world.getTileEntity(pos) instanceof TileIlluminator)) {
             return 0;
         }
         TileIlluminator tileIlluminator = (TileIlluminator) world.getTileEntity(pos);
-        if(tileIlluminator == null){
+        if (tileIlluminator == null) {
             return 0;
         }
-        if(tileIlluminator.getController() == null){
+        if (tileIlluminator.getController() == null) {
             return 0;
         }
         IFixture fixture = (IFixture) world.getTileEntity(tileIlluminator.getController());
-        if(fixture != null){
+        if (fixture != null) {
             float val = (fixture.getPower() / 255F);
             int thing = (int) (val * 15F);
             return thing;
-        }else{
+        } else {
             return 0;
         }
     }

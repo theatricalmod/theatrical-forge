@@ -24,7 +24,6 @@ import com.georlegacy.general.theatrical.logic.transport.dmx.entities.io.DMXOutp
  * Network Plane, used on desk DMX interfaces for DMX I/O
  *
  * @author James Conway
- *
  * @see DMXOutput
  * @see DMXInput
  */
@@ -47,17 +46,21 @@ public class DMXNetworkPlane {
     }
 
     public DMXOutput getOutput(int index) {
-        if (index > (outputs.length - 1) || index < 0)
-            throw new DMXValueOutOfBoundsException("There are only " + outputs.length + " outputs on this plane");
-        else
+        if (index > (outputs.length - 1) || index < 0) {
+            throw new DMXValueOutOfBoundsException(
+                "There are only " + outputs.length + " outputs on this plane");
+        } else {
             return outputs[index];
+        }
     }
 
     public DMXInput getInput(int index) {
-        if (index > (inputs.length - 1) || index < 0)
-            throw new DMXValueOutOfBoundsException("There are only " + inputs.length + " inputs on this plane");
-        else
+        if (index > (inputs.length - 1) || index < 0) {
+            throw new DMXValueOutOfBoundsException(
+                "There are only " + inputs.length + " inputs on this plane");
+        } else {
             return inputs[index];
+        }
     }
 
 }

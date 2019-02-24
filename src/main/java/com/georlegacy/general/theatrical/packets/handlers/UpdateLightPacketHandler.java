@@ -26,31 +26,34 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPacket, IMessage> {
 
     @Override
     public IMessage onMessage(UpdateLightPacket message, MessageContext ctx) {
-        if(ctx.side == Side.CLIENT){
+        if (ctx.side == Side.CLIENT) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 BlockPos blockPos = message.getPos();
-                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) Minecraft.getMinecraft().world.getTileEntity(blockPos);
+                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) Minecraft
+                    .getMinecraft().world.getTileEntity(blockPos);
                 tileEntityFresnel.setTilt(message.getTilt());
                 tileEntityFresnel.setPan(message.getPan());
                 tileEntityFresnel.setPower(message.getPower());
                 Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileEntityFresnel);
             });
-        }else {
+        } else {
             ctx.getServerHandler().player.server.addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
-                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world.getTileEntity(blockPos);
+                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world
+                    .getTileEntity(blockPos);
                 tileEntityFresnel.setTilt(message.getTilt());
                 tileEntityFresnel.setPan(message.getPan());
                 tileEntityFresnel.setPower(message.getPower());
                 world.markChunkDirty(blockPos, tileEntityFresnel);
-                TheatricalPacketHandler.INSTANCE.sendToAll(new UpdateLightPacket(tileEntityFresnel.getTilt(), tileEntityFresnel.getPan(), tileEntityFresnel.getPower(), tileEntityFresnel.getPos()));
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateLightPacket(tileEntityFresnel.getTilt(), tileEntityFresnel.getPan(),
+                        tileEntityFresnel.getPower(), tileEntityFresnel.getPos()));
             });
         }
         return null;

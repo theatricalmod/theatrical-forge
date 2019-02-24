@@ -21,13 +21,12 @@ import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
 import com.georlegacy.general.theatrical.util.Reference;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Item store for Theatrical items
@@ -55,7 +54,9 @@ public class TheatricalItems {
     }
 
     public static void registerItemRenderer(Item item, int meta, String fileName) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, fileName), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, meta,
+            new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, fileName),
+                "inventory"));
     }
 
 

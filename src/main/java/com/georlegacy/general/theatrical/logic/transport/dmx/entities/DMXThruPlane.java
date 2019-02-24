@@ -27,7 +27,8 @@ public class DMXThruPlane {
 
     private final com.georlegacy.general.theatrical.logic.transport.dmx.entities.io.DMXOutput output;
 
-    public DMXThruPlane(DMXUniverse universe, com.georlegacy.general.theatrical.logic.transport.dmx.entities.io.DMXOutput output) {
+    public DMXThruPlane(DMXUniverse universe,
+        com.georlegacy.general.theatrical.logic.transport.dmx.entities.io.DMXOutput output) {
         this.universe = universe;
         this.output = output;
     }

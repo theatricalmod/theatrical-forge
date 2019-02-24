@@ -17,9 +17,7 @@
 package com.georlegacy.general.theatrical.logic.transport.dmx.managers;
 
 import com.georlegacy.general.theatrical.logic.transport.dmx.entities.DMXUniverse;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,7 +32,7 @@ public class DMXUniverseRuntimeBroker {
     }
 
     private Collection<DMXUniverse> findUniverses() {
-        //Todo
+        //TODO: Finish the Universe code.
         return null;
     }
 

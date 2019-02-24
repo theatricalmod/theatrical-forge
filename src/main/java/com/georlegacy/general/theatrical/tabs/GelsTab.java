@@ -19,14 +19,13 @@ package com.georlegacy.general.theatrical.tabs;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.util.Reference;
 import com.google.common.collect.Ordering;
+import java.util.Comparator;
+import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import scala.actors.threadpool.Arrays;
-
-import java.util.Comparator;
-import java.util.List;
 
 public class GelsTab extends CreativeTabs {
 
@@ -43,7 +42,8 @@ public class GelsTab extends CreativeTabs {
     @Override
     public void displayAllRelevantItems(NonNullList<ItemStack> itemStacks) {
         super.displayAllRelevantItems(itemStacks);
-        List<Item> order = Arrays.asList(new Item[]{TheatricalItems.ITEM_BLANK_GEL, TheatricalItems.ITEM_GEL});
+        List<Item> order = Arrays
+            .asList(new Item[]{TheatricalItems.ITEM_BLANK_GEL, TheatricalItems.ITEM_GEL});
         Comparator<ItemStack> comparator = Ordering.explicit(order).onResultOf(ItemStack::getItem);
         itemStacks.sort(comparator);
     }

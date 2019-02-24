@@ -23,7 +23,6 @@ import com.georlegacy.general.theatrical.logic.transport.dmx.entities.event.subs
  * Event called when the value is changed in a {@link com.georlegacy.general.theatrical.logic.transport.dmx.entities.DMXChannel}
  *
  * @author James Conway
- *
  * @see DMXChannelValueSetEventSubscriber
  */
 public class DMXChannelValueSetEvent {

@@ -22,7 +22,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class UpdateIlluminatorPacket implements IMessage {
 
-    public UpdateIlluminatorPacket(){}
+    public UpdateIlluminatorPacket() {
+    }
 
 
     public UpdateIlluminatorPacket(BlockPos illuminator, BlockPos controller) {

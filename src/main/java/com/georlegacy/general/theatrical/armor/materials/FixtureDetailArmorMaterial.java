@@ -24,7 +24,7 @@ public class FixtureDetailArmorMaterial extends SingleArmorMaterial {
 
     @Override
     public int[] getDamageReductions() {
-        return new int[]{0,0,0,0};
+        return new int[]{0, 0, 0, 0};
     }
 
     @Override

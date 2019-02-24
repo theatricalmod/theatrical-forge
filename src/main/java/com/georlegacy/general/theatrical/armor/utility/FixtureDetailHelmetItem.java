@@ -28,11 +28,12 @@ import net.minecraft.item.ItemArmor;
 public class FixtureDetailHelmetItem extends ItemArmor implements IHasModel {
 
     public FixtureDetailHelmetItem() {
-        super(TheatricalArmorMaterials.getByClass(FixtureDetailArmorMaterial.class), 0, EntityEquipmentSlot.HEAD);
+        super(TheatricalArmorMaterials.getByClass(FixtureDetailArmorMaterial.class), 0,
+            EntityEquipmentSlot.HEAD);
         this
-                .setTranslationKey("fixture_detail_helmet")
-                .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet")
-                .setCreativeTab(CreativeTabs.TESTING_TAB);
+            .setTranslationKey("fixture_detail_helmet")
+            .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet")
+            .setCreativeTab(CreativeTabs.TESTING_TAB);
     }
 
     @Override

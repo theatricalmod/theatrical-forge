@@ -17,7 +17,6 @@
 package com.georlegacy.general.theatrical.logic.transport.dmx.entities;
 
 import com.georlegacy.general.theatrical.core.exceptions.dmx.DMXValueOutOfBoundsException;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -49,8 +48,9 @@ public class DMXUniverse {
     }
 
     public DMXChannel getChannel(int index) {
-        if (index > 511 || index < 0)
+        if (index > 511 || index < 0) {
             throw new DMXValueOutOfBoundsException("There are only 512 channels in this universe");
+        }
         return channels[index];
     }
 

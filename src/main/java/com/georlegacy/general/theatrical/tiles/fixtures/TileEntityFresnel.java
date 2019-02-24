@@ -24,7 +24,6 @@ import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tile.TileIlluminator;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -79,17 +78,18 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
             // We need to tell the tile entity that something has changed so
             // that the chest contents is persisted
             TileEntityFresnel.this.markDirty();
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(slot).getMetadata());
+            gelType = GelType.getGelType(itemStackHandler.getStackInSlot(slot).getMetadata());
         }
+
         @Override
         protected void onLoad() {
             TileEntityFresnel.this.markDirty();
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
+            gelType = GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
     };
 
-    public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound){
-        if(nbtTagCompound == null){
+    public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
+        if (nbtTagCompound == null) {
             nbtTagCompound = new NBTTagCompound();
         }
         nbtTagCompound.setTag("items", itemStackHandler.serializeNBT());
@@ -104,10 +104,10 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         return nbtTagCompound;
     }
 
-    public void readNBT(NBTTagCompound nbtTagCompound){
+    public void readNBT(NBTTagCompound nbtTagCompound) {
         if (nbtTagCompound.hasKey("items")) {
             itemStackHandler.deserializeNBT((NBTTagCompound) nbtTagCompound.getTag("items"));
-            gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
+            gelType = GelType.getGelType(itemStackHandler.getStackInSlot(0).getMetadata());
         }
         pan = nbtTagCompound.getInteger("pan");
         tilt = nbtTagCompound.getInteger("tilt");
@@ -130,7 +130,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
 
     @Override
     @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getRenderBoundingBox(){
+    public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
@@ -147,7 +147,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket(){
+    public SPacketUpdateTileEntity getUpdatePacket() {
         return new SPacketUpdateTileEntity(getPos(), 1, getNBT(null));
     }
 
@@ -165,15 +165,15 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         float val = (power / 255F);
         int prevThing = (int) (val * 15F);
         NBTTagCompound tag = pkt.getNbtCompound();
         readNBT(tag);
         float val2 = (power / 255F);
         int prevThing2 = (int) (val2 * 15F);
-        if(prevThing2 != prevThing){
-            if(world != null && lightBlock != null){
+        if (prevThing2 != prevThing) {
+            if (world != null && lightBlock != null) {
                 world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
             }
         }
@@ -183,6 +183,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
     }
+
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState,
         IBlockState newSate) {
@@ -216,8 +217,9 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public void setPan(int pan) {
         this.pan = pan;
         this.markDirty();
-        if(!world.isRemote)
+        if (!world.isRemote) {
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        }
     }
 
     public int getTilt() {
@@ -227,15 +229,17 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public void setTilt(int tilt) {
         this.tilt = tilt;
         this.markDirty();
-        if(!world.isRemote)
+        if (!world.isRemote) {
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        }
     }
 
     public void setFocus(int focus) {
         this.focus = focus;
         this.markDirty();
-        if(!world.isRemote)
+        if (!world.isRemote) {
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        }
     }
 
     @Nonnull
@@ -247,7 +251,8 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     @Nonnull
     @Override
     public String[] getMethodNames() {
-        return new String[]{"setPan", "setTilt", "setFocus", "getPan", "getTilt", "getFocus", "setPower"};
+        return new String[]{"setPan", "setTilt", "setFocus", "getPan", "getTilt", "getFocus",
+            "setPower"};
     }
 
     @Method(modid = "computercraft")
@@ -256,16 +261,16 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public Object[] callMethod(@Nonnull IComputerAccess cpu,
         @Nonnull ILuaContext ctx, int method, @Nonnull Object[] args)
         throws LuaException, InterruptedException {
-        switch(method){
+        switch (method) {
             case 0:
                 this.setPan(((Number) args[0]).intValue());
-            break;
+                break;
             case 1:
                 this.setTilt(((Number) args[0]).intValue());
-            break;
+                break;
             case 2:
                 this.setFocus(((Number) args[0]).intValue());
-            break;
+                break;
             case 3:
                 return new Object[]{this.getPan()};
             case 4:
@@ -274,7 +279,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
                 return new Object[]{this.getFocus()};
             case 6:
                 this.setPower(((Number) args[0]).floatValue());
-            break;
+                break;
         }
         return null;
     }
@@ -284,17 +289,16 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         return iPeripheral != null && iPeripheral.getType().equals(this.getType());
     }
 
-    public final Vec3d getVectorForRotation(float pitch, float yaw)
-    {
-        float f = MathHelper.cos(-yaw * 0.017453292F - (float)Math.PI);
-        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float)Math.PI);
+    public final Vec3d getVectorForRotation(float pitch, float yaw) {
+        float f = MathHelper.cos(-yaw * 0.017453292F - (float) Math.PI);
+        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
         float f2 = -MathHelper.cos(-pitch * 0.017453292F);
         float f3 = MathHelper.sin(-pitch * 0.017453292F);
-        return new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
+        return new Vec3d((double) (f1 * f2), (double) f3, (double) (f * f2));
     }
 
-    public double doRayTrace(){
-        if(!(world.getBlockState(pos).getBlock() instanceof BlockFresnel)){
+    public double doRayTrace() {
+        if (!(world.getBlockState(pos).getBlock() instanceof BlockFresnel)) {
             return 0;
         }
         EnumFacing direction = world.getBlockState(pos).getValue(
@@ -304,53 +308,61 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         float tilt = getTilt();
         Vec3d look = getVectorForRotation(-tilt, lookingAngle);
         double distance = 7;
-        BlockPos start = pos.offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
+        BlockPos start = pos
+            .offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()),
+                1);
         BlockPos blockPos = start.add(look.x * distance, look.y * distance, look.z * distance);
-        RayTraceResult result = world.rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, true);
+        RayTraceResult result = world
+            .rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, true);
         BlockPos lightPos = blockPos;
-        if(result != null) {
+        if (result != null) {
             distance = result.hitVec.distanceTo(new Vec3d(pos));
-            if(!result.getBlockPos().equals(pos)){
-                if(!result.getBlockPos().equals(getLightBlock())){
+            if (!result.getBlockPos().equals(pos)) {
+                if (!result.getBlockPos().equals(getLightBlock())) {
                     lightPos = result.getBlockPos().offset(direction.getOpposite(), 1);
-                }else {
+                } else {
                     return distance;
                 }
             }
         }
-        if(lightPos.equals(pos)) {
+        if (lightPos.equals(pos)) {
             return distance;
         }
-        if(!(world.getBlockState(lightPos).getBlock() instanceof BlockAir) && !(world.getBlockState(lightPos).getBlock() instanceof BlockIlluminator)){
-            lightPos = lightPos.add(0,1 ,0);
+        if (!(world.getBlockState(lightPos).getBlock() instanceof BlockAir) && !(world
+            .getBlockState(lightPos).getBlock() instanceof BlockIlluminator)) {
+            lightPos = lightPos.add(0, 1, 0);
         }
-        if(lightPos.equals(lightBlock)){
-            if(world.getBlockState(lightBlock).getBlock() instanceof BlockAir){
+        if (lightPos.equals(lightBlock)) {
+            if (world.getBlockState(lightBlock).getBlock() instanceof BlockAir) {
                 world.setBlockState(lightPos,
                     TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
                 TileEntity tileEntity = world.getTileEntity(lightPos);
-                if(tileEntity != null){
+                if (tileEntity != null) {
                     TileIlluminator illuminator = (TileIlluminator) tileEntity;
                     illuminator.setController(pos);
-                    if(world.isRemote)
-                        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                    if (world.isRemote) {
+                        TheatricalPacketHandler.INSTANCE
+                            .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                    }
                 }
             }
             return distance;
         }
-        if(getLightBlock() != null && getLightBlock() != lightPos){
+        if (getLightBlock() != null && getLightBlock() != lightPos) {
             world.setBlockToAir(getLightBlock());
         }
         setLightBlock(lightPos);
         world.setBlockState(lightPos,
             TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
         TileEntity tileEntity = world.getTileEntity(lightPos);
-        if(tileEntity != null){
+        if (tileEntity != null) {
             TileIlluminator illuminator = (TileIlluminator) tileEntity;
             illuminator.setController(pos);
             world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
-            if(world.isRemote)
-                TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+            if (world.isRemote) {
+                TheatricalPacketHandler.INSTANCE
+                    .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+            }
         }
         return distance;
     }
@@ -361,7 +373,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         prevPan = pan;
         prevTilt = tilt;
         timer++;
-        if(timer >= 20){
+        if (timer >= 20) {
             this.distance = doRayTrace();
             timer = 0;
         }
@@ -388,7 +400,8 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         this.power = power;
         this.markDirty();
         world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
-        if (!world.isRemote)
+        if (!world.isRemote) {
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        }
     }
 }

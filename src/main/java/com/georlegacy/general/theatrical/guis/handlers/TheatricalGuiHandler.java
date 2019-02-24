@@ -16,9 +16,10 @@ public class TheatricalGuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y,
         int z) {
-        switch(GUIID.getByNid(id)){
+        switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
-                return new ContainerFresnel(player.inventory, (TileEntityFresnel) world.getTileEntity(new BlockPos(x, y, z)));
+                return new ContainerFresnel(player.inventory,
+                    (TileEntityFresnel) world.getTileEntity(new BlockPos(x, y, z)));
             default:
                 return null;
         }
@@ -28,9 +29,11 @@ public class TheatricalGuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y,
         int z) {
-        switch(GUIID.getByNid(id)){
+        switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
-                return new GuiFresnel((TileEntityFresnel)world.getTileEntity(new BlockPos(x, y, z)), (ContainerFresnel) getServerGuiElement(id, player, world, x, y, z));
+                return new GuiFresnel(
+                    (TileEntityFresnel) world.getTileEntity(new BlockPos(x, y, z)),
+                    (ContainerFresnel) getServerGuiElement(id, player, world, x, y, z));
             default:
                 return null;
         }

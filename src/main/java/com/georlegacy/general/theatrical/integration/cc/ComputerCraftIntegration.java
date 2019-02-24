@@ -13,14 +13,16 @@ import net.minecraft.world.World;
 public class ComputerCraftIntegration {
 
 
-    public static void init(){
+    public static void init() {
         ComputerCraftAPI.registerPeripheralProvider(new IPeripheralProvider() {
             @Nullable
             @Override
             public IPeripheral getPeripheral(@Nonnull World world, @Nonnull BlockPos blockPos,
                 @Nonnull EnumFacing enumFacing) {
                 TileEntity te = world.getTileEntity(blockPos);
-                return te != null && te.getClass().getName().startsWith("com.georlegacy.general.theatrical") && te instanceof IPeripheral ? (IPeripheral) te : null;
+                return te != null && te.getClass().getName()
+                    .startsWith("com.georlegacy.general.theatrical") && te instanceof IPeripheral
+                    ? (IPeripheral) te : null;
             }
         });
     }

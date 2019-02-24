@@ -18,40 +18,40 @@ package com.georlegacy.general.theatrical.packets.handlers;
 
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tile.TileIlluminator;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class UpdateIlluminatorPacketHandler implements IMessageHandler<UpdateIlluminatorPacket, IMessage> {
+public class UpdateIlluminatorPacketHandler implements
+    IMessageHandler<UpdateIlluminatorPacket, IMessage> {
 
     @Override
     public IMessage onMessage(UpdateIlluminatorPacket message, MessageContext ctx) {
-        if(ctx.side == Side.SERVER) {
+        if (ctx.side == Side.SERVER) {
             ctx.getServerHandler().player.server.addScheduledTask(() -> {
                 BlockPos blockPos = message.getIlluminator();
                 TileIlluminator tileIlluminator = (TileIlluminator) ctx.getServerHandler().player
                     .getServerWorld().getTileEntity(blockPos);
-                if(tileIlluminator == null){
+                if (tileIlluminator == null) {
                     return;
                 }
                 tileIlluminator.setController(message.getController());
                 ctx.getServerHandler().player
                     .getServerWorld().markChunkDirty(blockPos, tileIlluminator);
-                TheatricalPacketHandler.INSTANCE.sendToAll(new UpdateIlluminatorPacket(message.getIlluminator(), message.getController()));
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateIlluminatorPacket(message.getIlluminator(), message.getController()));
             });
         } else {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 BlockPos blockPos = message.getIlluminator();
-                TileIlluminator tileIlluminator = (TileIlluminator) Minecraft.getMinecraft().world.getTileEntity(blockPos);
-                if(tileIlluminator == null){
+                TileIlluminator tileIlluminator = (TileIlluminator) Minecraft.getMinecraft().world
+                    .getTileEntity(blockPos);
+                if (tileIlluminator == null) {
                     return;
                 }
                 tileIlluminator.setController(message.getController());

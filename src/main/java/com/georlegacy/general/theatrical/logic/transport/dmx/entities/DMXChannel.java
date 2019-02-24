@@ -19,13 +19,11 @@ package com.georlegacy.general.theatrical.logic.transport.dmx.entities;
 import com.georlegacy.general.theatrical.core.exceptions.dmx.DMXValueOutOfBoundsException;
 import com.georlegacy.general.theatrical.logic.transport.dmx.entities.event.DMXChannelValueSetEvent;
 import com.georlegacy.general.theatrical.logic.transport.dmx.entities.event.subscribers.DMXChannelValueSetEventSubscriber;
-
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * One of the 512 channels stored in a {@link DMXUniverse}</br>
- * Stores a percentage value
+ * One of the 512 channels stored in a {@link DMXUniverse}</br> Stores a percentage value
  *
  * @author James Conway
  */
@@ -44,22 +42,26 @@ public class DMXChannel {
     }
 
     public void setValue(double value) {
-        if (value > 100 || value < 0)
-            throw new DMXValueOutOfBoundsException("The value you provided was not a valid percentile");
-        else
+        if (value > 100 || value < 0) {
+            throw new DMXValueOutOfBoundsException(
+                "The value you provided was not a valid percentile");
+        } else {
             setAbsoluteValue(value);
+        }
     }
 
     public boolean incrementValue() {
-        if (value > 99)
+        if (value > 99) {
             return false;
+        }
         setAbsoluteValue(value + 1d);
         return true;
     }
 
     public boolean decrementValue() {
-        if (value < 1)
+        if (value < 1) {
             return false;
+        }
         setAbsoluteValue(value - 1d);
         return true;
     }
@@ -94,9 +96,9 @@ public class DMXChannel {
         double previousValue = this.value;
         this.value = value;
         callDMXChannelValueSetEvent(new DMXChannelValueSetEvent(
-                this,
-                previousValue,
-                value
+            this,
+            previousValue,
+            value
         ));
     }
 

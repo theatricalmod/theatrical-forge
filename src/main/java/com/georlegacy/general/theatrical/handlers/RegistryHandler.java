@@ -46,14 +46,15 @@ public class RegistryHandler {
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(TheatricalItems.ITEMS.toArray(new Item[0]));
-        TheatricalBlocks.BLOCKS.forEach(block -> event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName())));
+        TheatricalBlocks.BLOCKS.forEach(block -> event.getRegistry()
+            .register(new ItemBlock(block).setRegistryName(block.getRegistryName())));
     }
 
     @SubscribeEvent
-    public static void onBlockRegister(RegistryEvent.Register<Block> event){
+    public static void onBlockRegister(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll(TheatricalBlocks.BLOCKS.toArray(new Block[0]));
         TheatricalBlocks.BLOCKS.forEach(block -> {
-            if(block instanceof IHasTileEntity){
+            if (block instanceof IHasTileEntity) {
                 IHasTileEntity fixture = (IHasTileEntity) block;
                 GameRegistry.registerTileEntity(fixture.getTileEntity(), block.getRegistryName());
             }
@@ -61,14 +62,14 @@ public class RegistryHandler {
     }
 
     @SubscribeEvent
-    public static void registerColors(ColorHandlerEvent.Block event){
+    public static void registerColors(ColorHandlerEvent.Block event) {
         event.getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
-            if(pos == null || worldIn == null){
+            if (pos == null || worldIn == null) {
                 return 0xFFFFFFFF;
             }
-            if(tintIndex == 0) {
+            if (tintIndex == 0) {
                 TileEntity tileEntity = worldIn.getTileEntity(pos);
-                if(tileEntity instanceof TileEntityFresnel){
+                if (tileEntity instanceof TileEntityFresnel) {
                     return 0xFF000000 | ((TileEntityFresnel) tileEntity).getGelType().getHex();
                 }
             }
@@ -77,8 +78,10 @@ public class RegistryHandler {
     }
 
     @SubscribeEvent
-    public static void registerColors(ColorHandlerEvent.Item event){
-        event.getItemColors().registerItemColorHandler((stack, tintIndex) -> 0xFF000000 | GelType.getGelType(stack.getMetadata()).getHex(), TheatricalItems.ITEM_GEL);
+    public static void registerColors(ColorHandlerEvent.Item event) {
+        event.getItemColors().registerItemColorHandler(
+            (stack, tintIndex) -> 0xFF000000 | GelType.getGelType(stack.getMetadata()).getHex(),
+            TheatricalItems.ITEM_GEL);
     }
 
     @SubscribeEvent
@@ -90,12 +93,16 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
-        for (Item item : TheatricalItems.ITEMS)
-            if (item instanceof IHasModel)
+        for (Item item : TheatricalItems.ITEMS) {
+            if (item instanceof IHasModel) {
                 ((IHasModel) item).registerModels();
-        for (Block block : TheatricalBlocks.BLOCKS)
-            if(block instanceof IHasModel)
+            }
+        }
+        for (Block block : TheatricalBlocks.BLOCKS) {
+            if (block instanceof IHasModel) {
                 ((IHasModel) block).registerModels();
+            }
+        }
     }
 
 }

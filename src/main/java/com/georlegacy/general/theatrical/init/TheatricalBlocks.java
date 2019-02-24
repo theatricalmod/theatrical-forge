@@ -18,12 +18,10 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-
 import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockLadderBar;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.block.Block;
 
 public class TheatricalBlocks {

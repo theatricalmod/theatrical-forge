@@ -17,16 +17,15 @@
 package com.georlegacy.general.theatrical.guis.widgets;
 
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-
 public class GelSlot extends SlotItemHandler {
 
     public GelSlot(IItemHandler itemHandler, int index, int xPosition,
-                   int yPosition) {
+        int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
     }
 

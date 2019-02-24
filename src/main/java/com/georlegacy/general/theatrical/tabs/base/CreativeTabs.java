@@ -16,13 +16,13 @@
 
 package com.georlegacy.general.theatrical.tabs.base;
 
-import com.georlegacy.general.theatrical.tabs.*;
+import com.georlegacy.general.theatrical.tabs.FixturesTab;
+import com.georlegacy.general.theatrical.tabs.GelsTab;
+import com.georlegacy.general.theatrical.tabs.GobosTab;
+import com.georlegacy.general.theatrical.tabs.RiggingTab;
+import com.georlegacy.general.theatrical.tabs.TheatricalMainTab;
 
 public class CreativeTabs {
-
-    //TODO: DO NOT WANT TO USE (only for testing)
-    public static final TheatricalMainTab TESTING_TAB = new TheatricalMainTab();
-
 
     public static final FixturesTab FIXTURES_TAB = new FixturesTab();
     public static final GelsTab GELS_TAB = new GelsTab();

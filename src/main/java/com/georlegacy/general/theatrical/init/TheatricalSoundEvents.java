@@ -17,10 +17,9 @@
 package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.sounds.armor.FixtureDetailHelmetEquipSound;
-import net.minecraft.util.SoundEvent;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.util.SoundEvent;
 
 public class TheatricalSoundEvents {
 

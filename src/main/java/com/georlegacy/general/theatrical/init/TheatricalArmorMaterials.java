@@ -2,13 +2,12 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.armor.materials.FixtureDetailArmorMaterial;
 import com.georlegacy.general.theatrical.armor.materials.base.SingleArmorMaterial;
-import net.minecraft.item.ItemArmor;
-import net.minecraftforge.common.util.EnumHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.item.ItemArmor;
+import net.minecraftforge.common.util.EnumHelper;
 
 public class TheatricalArmorMaterials {
 
@@ -22,16 +21,16 @@ public class TheatricalArmorMaterials {
 
         for (SingleArmorMaterial preArmorMaterial : PRE_MATERIALS) {
             MATERIALS.put(preArmorMaterial.getPreClass(),
-                    EnumHelper.addArmorMaterial
-                            (
-                                    preArmorMaterial.getName(),
-                                    preArmorMaterial.getTextureName(),
-                                    preArmorMaterial.getDurability(),
-                                    preArmorMaterial.getDamageReductions(),
-                                    preArmorMaterial.getEnchantability(),
-                                    preArmorMaterial.getSound(),
-                                    preArmorMaterial.getToughness()
-                            ));
+                EnumHelper.addArmorMaterial
+                    (
+                        preArmorMaterial.getName(),
+                        preArmorMaterial.getTextureName(),
+                        preArmorMaterial.getDurability(),
+                        preArmorMaterial.getDamageReductions(),
+                        preArmorMaterial.getEnchantability(),
+                        preArmorMaterial.getSound(),
+                        preArmorMaterial.getToughness()
+                    ));
         }
     }
 

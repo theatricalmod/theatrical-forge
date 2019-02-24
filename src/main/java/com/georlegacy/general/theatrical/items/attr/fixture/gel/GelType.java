@@ -256,9 +256,9 @@ public enum GelType {
         this.hex = hex;
     }
 
-    public static GelType getGelType(int id){
-        for(GelType gelType : values()){
-            if(gelType.getId() == id){
+    public static GelType getGelType(int id) {
+        for (GelType gelType : values()) {
+            if (gelType.getId() == id) {
                 return gelType;
             }
         }

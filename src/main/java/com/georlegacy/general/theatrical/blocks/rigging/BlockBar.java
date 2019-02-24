@@ -37,11 +37,11 @@ import net.minecraft.world.World;
 
 public class BlockBar extends BlockBase {
 
-    public static final PropertyDirection AXIS =PropertyDirection.create("axis",
+    public static final PropertyDirection AXIS = PropertyDirection.create("axis",
         Plane.HORIZONTAL);
 
     private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
-    private final AxisAlignedBB Z_BOX =  new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
+    private final AxisAlignedBB Z_BOX = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
 
     public BlockBar() {
         super("bar");
@@ -52,13 +52,15 @@ public class BlockBar extends BlockBase {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
         EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
-        if(!worldIn.isRemote){
-            if(Block.getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IHasTileEntity){
-                if(playerIn.getHorizontalFacing().getAxis() == state.getValue(AXIS).getAxis()){
+        if (!worldIn.isRemote) {
+            if (Block
+                .getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IHasTileEntity) {
+                if (playerIn.getHorizontalFacing().getAxis() == state.getValue(AXIS).getAxis()) {
                     worldIn.setBlockToAir(pos);
-                    worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
-                        BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING,
-                        playerIn.getHorizontalFacing()), 2);
+                    worldIn.setBlockState(pos,
+                        TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
+                            BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING,
+                            playerIn.getHorizontalFacing()), 2);
                     return true;
                 }
             }
@@ -70,10 +72,11 @@ public class BlockBar extends BlockBase {
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing,
         float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        if(facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             return this.getDefaultState().withProperty(AXIS, facing.getOpposite());
-        }else {
-            return this.getDefaultState().withProperty(AXIS,placer.getHorizontalFacing().getOpposite());
+        } else {
+            return this.getDefaultState()
+                .withProperty(AXIS, placer.getHorizontalFacing().getOpposite());
         }
     }
 

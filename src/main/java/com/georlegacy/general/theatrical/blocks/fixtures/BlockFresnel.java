@@ -25,6 +25,8 @@ import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -43,9 +45,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BlockFresnel extends BlockDirectional implements ITileEntityProvider, IHasTileEntity {
 
@@ -73,23 +72,24 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
-                                    EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-                                    float hitZ) {
+        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
         if (!worldIn.isRemote) {
-            if(!playerIn.isSneaking()) {
+            if (!playerIn.isSneaking()) {
                 playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_FRESNEL.getNid(), worldIn,
                     pos.getX(), pos.getY(), pos.getZ());
-            }else {
-                if(state.getValue(ON_BAR)){
+            } else {
+                if (state.getValue(ON_BAR)) {
                     worldIn.setBlockToAir(pos);
-                    worldIn.setBlockState(pos, TheatricalBlocks.BLOCK_BAR.getDefaultState().withProperty(
-                        BlockBar.AXIS, state.getValue(FACING)), 2);
+                    worldIn.setBlockState(pos,
+                        TheatricalBlocks.BLOCK_BAR.getDefaultState().withProperty(
+                            BlockBar.AXIS, state.getValue(FACING)), 2);
                     return true;
                 }
             }
         }
         return super
-                .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+            .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
-                                EntityLivingBase placer, ItemStack stack) {
+        EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state.withProperty(ON_BAR, false), placer, stack);
     }
 
@@ -145,7 +145,8 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos,
+        EnumFacing side) {
         return false;
     }
 
@@ -158,8 +159,8 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileEntityFresnel tileEntityFresnel  = (TileEntityFresnel) worldIn.getTileEntity(pos);
-        if(tileEntityFresnel != null){
+        TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) worldIn.getTileEntity(pos);
+        if (tileEntityFresnel != null) {
             worldIn.setBlockToAir(tileEntityFresnel.getLightBlock());
         }
         super.breakBlock(worldIn, pos, state);
@@ -173,7 +174,7 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if(world.getTileEntity(pos) instanceof TileEntityFresnel) {
+        if (world.getTileEntity(pos) instanceof TileEntityFresnel) {
             TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world.getTileEntity(pos);
             if (tileEntityFresnel != null) {
                 return (int) (tileEntityFresnel.getPower() * 4 / 255);

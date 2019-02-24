@@ -42,10 +42,12 @@ public class BlockLadderBar extends BlockBase {
     @Override
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing,
         float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        if(facing.getAxis().isHorizontal()){
-            return this.getDefaultState().withProperty(AXIS, EnumAxis.fromFacingAxis(facing.getOpposite().getAxis()));
-        }else {
-            return this.getDefaultState().withProperty(AXIS, EnumAxis.fromFacingAxis(placer.getHorizontalFacing().getOpposite().getAxis()));
+        if (facing.getAxis().isHorizontal()) {
+            return this.getDefaultState()
+                .withProperty(AXIS, EnumAxis.fromFacingAxis(facing.getOpposite().getAxis()));
+        } else {
+            return this.getDefaultState().withProperty(AXIS,
+                EnumAxis.fromFacingAxis(placer.getHorizontalFacing().getOpposite().getAxis()));
         }
     }
 
@@ -64,7 +66,7 @@ public class BlockLadderBar extends BlockBase {
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
-        switch(state.getValue(AXIS)){
+        switch (state.getValue(AXIS)) {
             case Z:
                 axisAlignedBB = new AxisAlignedBB(0, 0, 0.4, 1, 0.7, 0.6);
                 break;

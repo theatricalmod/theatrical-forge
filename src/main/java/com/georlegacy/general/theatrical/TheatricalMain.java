@@ -16,10 +16,16 @@
 
 package com.georlegacy.general.theatrical;
 
+import static com.georlegacy.general.theatrical.util.Reference.CLIENT_PROXY_CLASS;
+import static com.georlegacy.general.theatrical.util.Reference.COMMON_PROXY_CLASS;
+import static com.georlegacy.general.theatrical.util.Reference.MOD_ID;
+import static com.georlegacy.general.theatrical.util.Reference.NAME;
+import static com.georlegacy.general.theatrical.util.Reference.VERSION;
+
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
 import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
-import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateIlluminatorPacketHandler;
@@ -33,8 +39,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-
-import static com.georlegacy.general.theatrical.util.Reference.*;
 
 /**
  * Main class for Theatrical
@@ -57,7 +61,7 @@ public class TheatricalMain {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TheatricalGuiHandler());
     }
 
-    private static void initComputer(){
+    private static void initComputer() {
         ComputerCraftIntegration.init();
     }
 
@@ -65,13 +69,16 @@ public class TheatricalMain {
     public static void init(FMLInitializationEvent event) {
         proxy.registerModelBakeryVariants();
         proxy.registerColorBlocks();
-        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateLightPacketHandler(), UpdateLightPacket.class, 0,
-            Side.SERVER);
-        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
-            Side.SERVER);
-        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
-            Side.CLIENT);
-        if(Loader.isModLoaded("computercraft")){
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateLightPacketHandler(), UpdateLightPacket.class, 0,
+                Side.SERVER);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+                Side.SERVER);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+                Side.CLIENT);
+        if (Loader.isModLoaded("computercraft")) {
             initComputer();
         }
     }
