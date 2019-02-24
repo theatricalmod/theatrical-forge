@@ -2,6 +2,9 @@ package com.georlegacy.general.theatrical.tile;
 
 import com.georlegacy.general.theatrical.api.IFixture;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import elucent.albedo.lighting.ILightProvider;
+import elucent.albedo.lighting.Light;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -13,8 +16,10 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.Optional;
 
-public class TileIlluminator extends TileEntity {
+@Optional.Interface(iface="elucent.albedo.lighting.ILightProvider", modid="albedo")
+public class TileIlluminator extends TileEntity implements ILightProvider {
 
     private BlockPos controller;
 
@@ -24,42 +29,36 @@ public class TileIlluminator extends TileEntity {
             nbtTagCompound = new NBTTagCompound();
         }
         if(controller != null){
-            nbtTagCompound.setInteger("x", controller.getX());
-            nbtTagCompound.setInteger("y", controller.getY());
-            nbtTagCompound.setInteger("z", controller.getZ());
+            nbtTagCompound.setInteger("controllerX", controller.getX());
+            nbtTagCompound.setInteger("controllerY", controller.getY());
+            nbtTagCompound.setInteger("controllerZ", controller.getZ());
         }
         return nbtTagCompound;
     }
 
     public void readNBT(NBTTagCompound nbtTagCompound){
-        int x = nbtTagCompound.getInteger("x");
-        int y = nbtTagCompound.getInteger("y");
-        int z = nbtTagCompound.getInteger("z");
+        int x = nbtTagCompound.getInteger("controllerX");
+        int y = nbtTagCompound.getInteger("controllerY");
+        int z = nbtTagCompound.getInteger("controllerZ");
         controller = new BlockPos(x, y, z);
     }
 
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        readNBT(compound);
         super.readFromNBT(compound);
-        this.readNBT(compound);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
         compound = getNBT(compound);
-        return compound;
+        return super.writeToNBT(compound);
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket(){
         return new SPacketUpdateTileEntity(getPos(), 1, getNBT(null));
-    }
-
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
     }
 
     @Override
@@ -72,7 +71,7 @@ public class TileIlluminator extends TileEntity {
     @Override
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
-        this.readNBT(tag);
+        readNBT(tag);
     }
 
     @Override
@@ -83,8 +82,8 @@ public class TileIlluminator extends TileEntity {
 
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState,
-        IBlockState newSate) {
-        return (oldState.getBlock() != newSate.getBlock());
+        IBlockState newState) {
+        return (oldState.getBlock() != newState.getBlock());
     }
 
     public BlockPos getController() {
@@ -93,5 +92,23 @@ public class TileIlluminator extends TileEntity {
 
     public void setController(BlockPos controller) {
         this.controller = controller;
+        this.markDirty();
+        if(!world.isRemote)
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+    }
+
+    @Optional.Method(modid="albedo")
+    @Override
+    public Light provideLight() {
+        TileEntityFresnel tileEntityFresnel = (TileEntityFresnel)world.getTileEntity(controller);
+        if(tileEntityFresnel == null){
+            return null;
+        }
+        int value = world.getBlockState(pos).getLightValue(world, pos);
+        int color = tileEntityFresnel.getGelType().getHex();
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        return Light.builder().pos(pos).color(r, g, b,((tileEntityFresnel.getPower() * 0.009F) / 255)).radius(Math.max(value / 2, 1)).build();
     }
 }

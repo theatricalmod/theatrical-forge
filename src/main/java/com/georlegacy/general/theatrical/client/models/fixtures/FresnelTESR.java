@@ -64,7 +64,10 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         float angle = direction.getHorizontalAngle()+ 180F;
         GlStateManager.rotate(-angle, 0F, 1F, 0F);
         GlStateManager.translate(-.5F, -.5F, -.5F);
-        renderLightBeam(te, partialTicks, ((te.getPower() / 255) * 0.4f), 0.25, distance, te.getGelType().getHex());
+        if(te.getPower() > 0) {
+            renderLightBeam(te, partialTicks, ((te.getPower() / 255) * 0.4f), 0.25, distance,
+                te.getGelType().getHex());
+        }
         GlStateManager.popMatrix();
     }
 

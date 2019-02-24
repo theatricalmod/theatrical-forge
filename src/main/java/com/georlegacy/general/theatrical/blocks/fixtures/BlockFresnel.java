@@ -54,7 +54,6 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
     public BlockFresnel() {
         super("fresnel");
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
-        this.setLightLevel(0.5F);
     }
 
     @Nullable
@@ -170,4 +169,16 @@ public class BlockFresnel extends BlockDirectional implements ITileEntityProvide
 //    public void onPlayerDestroy(World worldIn, BlockPos pos, IBlockState state) {
 //
 //    }
+
+
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        if(world.getTileEntity(pos) instanceof TileEntityFresnel) {
+            TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world.getTileEntity(pos);
+            if (tileEntityFresnel != null) {
+                return (int) (tileEntityFresnel.getPower() * 4 / 255);
+            }
+        }
+        return super.getLightValue(state, world, pos);
+    }
 }

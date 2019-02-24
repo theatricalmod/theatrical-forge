@@ -20,7 +20,9 @@ import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
 import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
+import com.georlegacy.general.theatrical.packets.handlers.UpdateIlluminatorPacketHandler;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Loader;
@@ -65,6 +67,10 @@ public class TheatricalMain {
         proxy.registerColorBlocks();
         TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateLightPacketHandler(), UpdateLightPacket.class, 0,
             Side.SERVER);
+        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+            Side.SERVER);
+        TheatricalPacketHandler.INSTANCE.registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+            Side.CLIENT);
         if(Loader.isModLoaded("computercraft")){
             initComputer();
         }

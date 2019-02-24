@@ -6,7 +6,6 @@ import com.georlegacy.general.theatrical.tile.TileIlluminator;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -22,6 +21,7 @@ public class BlockIlluminator extends BlockBase implements ITileEntityProvider, 
     public BlockIlluminator() {
         super("illuminator");
         this.setBlockUnbreakable();
+        setLightLevel(15);
     }
 
     @Override
@@ -96,7 +96,9 @@ public class BlockIlluminator extends BlockBase implements ITileEntityProvider, 
         }
         IFixture fixture = (IFixture) world.getTileEntity(tileIlluminator.getController());
         if(fixture != null){
-            return 15;
+            float val = (fixture.getPower() / 255F);
+            int thing = (int) (val * 15F);
+            return thing;
         }else{
             return 0;
         }

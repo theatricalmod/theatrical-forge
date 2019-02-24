@@ -20,8 +20,11 @@ import com.georlegacy.general.theatrical.api.IFixture;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
+import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.tile.TileIlluminator;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -43,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional.Interface;
@@ -77,7 +81,6 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
             TileEntityFresnel.this.markDirty();
             gelType =  GelType.getGelType(itemStackHandler.getStackInSlot(slot).getMetadata());
         }
-
         @Override
         protected void onLoad() {
             TileEntityFresnel.this.markDirty();
@@ -163,9 +166,17 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
+        float val = (power / 255F);
+        int prevThing = (int) (val * 15F);
         NBTTagCompound tag = pkt.getNbtCompound();
         readNBT(tag);
-        //Handle your Data
+        float val2 = (power / 255F);
+        int prevThing2 = (int) (val2 * 15F);
+        if(prevThing2 != prevThing){
+            if(world != null && lightBlock != null){
+                world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+            }
+        }
     }
 
     @Override
@@ -179,7 +190,6 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     }
 
     public boolean canInteractWith(EntityPlayer playerIn) {
-        // If we are too far away from this tile entity you cannot use it
         return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
@@ -283,47 +293,64 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         return new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
     }
 
-    public double doRayTrace(TileEntityFresnel tileEntityFresnel){
-        if(!(tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getBlock() instanceof BlockFresnel)){
+    public double doRayTrace(){
+        if(!(world.getBlockState(pos).getBlock() instanceof BlockFresnel)){
             return 0;
         }
-        EnumFacing direction = tileEntityFresnel.getWorld().getBlockState(tileEntityFresnel.getPos()).getValue(
+        EnumFacing direction = world.getBlockState(pos).getValue(
             BlockDirectional.FACING);
         float horizontalAngle = direction.getOpposite().getHorizontalAngle();
-        float lookingAngle = -(horizontalAngle + tileEntityFresnel.getPan());
-        float tilt = tileEntityFresnel.getTilt();
+        float lookingAngle = -(horizontalAngle + getPan());
+        float tilt = getTilt();
         Vec3d look = getVectorForRotation(-tilt, lookingAngle);
         double distance = 7;
-        BlockPos start = tileEntityFresnel.getPos().offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
+        BlockPos start = pos.offset(EnumFacing.getFacingFromAxis(direction.getAxisDirection(), direction.getAxis()), 1);
         BlockPos blockPos = start.add(look.x * distance, look.y * distance, look.z * distance);
-        RayTraceResult result = tileEntityFresnel.getWorld().rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, true);
+        RayTraceResult result = world.rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, true);
         BlockPos lightPos = blockPos;
         if(result != null) {
-            distance = result.hitVec.distanceTo(new Vec3d(tileEntityFresnel.getPos()));
-            if(!result.getBlockPos().equals(tileEntityFresnel.getPos())){
-                if(!result.getBlockPos().equals(tileEntityFresnel.getLightBlock())){
+            distance = result.hitVec.distanceTo(new Vec3d(pos));
+            if(!result.getBlockPos().equals(pos)){
+                if(!result.getBlockPos().equals(getLightBlock())){
                     lightPos = result.getBlockPos().offset(direction.getOpposite(), 1);
                 }else {
                     return distance;
                 }
             }
         }
-        if(lightPos.equals(tileEntityFresnel.getPos())) {
+        if(lightPos.equals(pos)) {
             return distance;
         }
         if(!(world.getBlockState(lightPos).getBlock() instanceof BlockAir) && !(world.getBlockState(lightPos).getBlock() instanceof BlockIlluminator)){
             lightPos = lightPos.add(0,1 ,0);
         }
+        if(lightPos.equals(lightBlock)){
+            if(world.getBlockState(lightBlock).getBlock() instanceof BlockAir){
+                world.setBlockState(lightPos,
+                    TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
+                TileEntity tileEntity = world.getTileEntity(lightPos);
+                if(tileEntity != null){
+                    TileIlluminator illuminator = (TileIlluminator) tileEntity;
+                    illuminator.setController(pos);
+                    if(world.isRemote)
+                        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                }
+            }
+            return distance;
+        }
         if(getLightBlock() != null && getLightBlock() != lightPos){
-            getWorld().setBlockToAir(tileEntityFresnel.getLightBlock());
+            world.setBlockToAir(getLightBlock());
         }
         setLightBlock(lightPos);
-        getWorld().setBlockState(lightPos,
-            TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState());
-        TileEntity tileEntity = getWorld().getTileEntity(lightPos);
+        world.setBlockState(lightPos,
+            TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
+        TileEntity tileEntity = world.getTileEntity(lightPos);
         if(tileEntity != null){
             TileIlluminator illuminator = (TileIlluminator) tileEntity;
-            illuminator.setController(tileEntityFresnel.getPos());
+            illuminator.setController(pos);
+            world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+            if(world.isRemote)
+                TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
         }
         return distance;
     }
@@ -335,7 +362,7 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
         prevTilt = tilt;
         timer++;
         if(timer >= 20){
-            this.distance = doRayTrace(this);
+            this.distance = doRayTrace();
             timer = 0;
         }
     }
@@ -360,7 +387,8 @@ public class TileEntityFresnel extends TileEntity implements IPeripheral, ITicka
     public void setPower(float power) {
         this.power = power;
         this.markDirty();
-        if(!world.isRemote)
+        world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+        if (!world.isRemote)
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
     }
 }
