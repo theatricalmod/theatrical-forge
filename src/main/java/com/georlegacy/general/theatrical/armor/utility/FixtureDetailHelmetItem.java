@@ -32,8 +32,7 @@ public class FixtureDetailHelmetItem extends ItemArmor implements IHasModel {
             EntityEquipmentSlot.HEAD);
         this
             .setTranslationKey("fixture_detail_helmet")
-            .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet")
-            .setCreativeTab(CreativeTabs.TESTING_TAB);
+            .setRegistryName(Reference.MOD_ID, "fixture_detail_helmet");
     }
 
     @Override

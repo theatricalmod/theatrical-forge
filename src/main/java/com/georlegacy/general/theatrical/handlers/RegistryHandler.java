@@ -20,16 +20,36 @@ import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.entities.core.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.util.Reference;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map.Entry;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -103,6 +123,26 @@ public class RegistryHandler {
                 ((IHasModel) block).registerModels();
             }
         }
+    }
+
+    public static IBakedModel loadModel(ResourceLocation location){
+        try {
+            IModel iModel = ModelLoaderRegistry.getModel(location);
+            IBakedModel iBakedModel = iModel.bake(iModel.getDefaultState(), DefaultVertexFormats.BLOCK,
+                ModelLoader.defaultTextureGetter());
+            return iBakedModel;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onModelBake(ModelBakeEvent bakeEvent){
+        TheatricalModels.FRESNEL_BODY = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_body_only"));
+        TheatricalModels.FRESNEL_HOOK_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook_bar"));
+        TheatricalModels.FRESNEL_HANDLE = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_handle_only"));
+        TheatricalModels.FRESNEL_HOOK = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook"));
     }
 
 }

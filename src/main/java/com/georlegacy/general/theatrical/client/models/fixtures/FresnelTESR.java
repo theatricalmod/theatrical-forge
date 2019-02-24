@@ -20,6 +20,9 @@ import static net.minecraft.util.EnumFacing.Axis.X;
 import static net.minecraft.util.EnumFacing.Axis.Z;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
+import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -53,12 +56,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.glNormal3f(0F, 1F, 0F);
         GlStateManager.translate(0F, 1F, 1F);
         GlStateManager.disableLighting();
-        GlStateManager.translate(0.5F, 0, -.5F);
-        GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
-        GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks,
-            direction.getAxis() == Z ? 1 : 0, 0, direction.getAxis() == X ? 1 : 0);
-        GlStateManager.translate(-.5F, 0, 0.5F);
-        renderLight(te);
+        renderLight(te, direction, partialTicks);
         double distance = te.getDistance();
         GlStateManager.translate(0F, -1.5F, -1F);
         GlStateManager.translate(0.5F, .5F, .5F);
@@ -78,14 +76,31 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
     }
 
 
-    public void renderLight(TileEntityFresnel te) {
+    public void renderLight(TileEntityFresnel te, EnumFacing direction, float partialTicks) {
+        GlStateManager.translate(0.5F, 0, -.5F);
+        GlStateManager.rotate(direction.getHorizontalAngle() + 180, 0, 1, 0);
+        GlStateManager.translate(-.5F, 0, 0.5F);
+        renderHookBar(te);
+        GlStateManager.translate(0.5F, 0, -.5F);
+        GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
+        GlStateManager.translate(-.5F, 0, 0.5F);
+        renderLightHandle(te);
+        GlStateManager.translate(0.5F, -.5F, .5F);
+        GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks,
+            direction.getAxis() == Z ? 1 : 0, 0, direction.getAxis() == X ? 1 : 0);
+        GlStateManager.translate(-.5F, .5F, -0.5F);
+        renderLightBody(te);
+    }
+
+    public void renderHookBar(TileEntityFresnel te) {
         //TODO: Split the model up so we can rotate certain aspecrts
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
             .getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IBlockState state = getWorld().getBlockState(pos);
         state = state.getBlock().getActualState(state, getWorld(), pos);
-        IBakedModel model = blockrendererdispatcher.getModelForState(state);
+        boolean on_Bar = state.getValue(BlockFresnel.ON_BAR);
+        IBakedModel body = on_Bar ? TheatricalModels.FRESNEL_HOOK_BAR : TheatricalModels.FRESNEL_HOOK;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.pushMatrix();
@@ -97,7 +112,61 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         bufferbuilder.setTranslation(-pos.getX(), -1 - pos.getY(), -1 - pos.getZ());
         bufferbuilder.color(255, 255, 255, 255);
         blockrendererdispatcher.getBlockModelRenderer()
-            .renderModel(getWorld(), model, state, pos, bufferbuilder, false);
+            .renderModel(getWorld(), body, state, pos, bufferbuilder, false);
+        bufferbuilder.setTranslation(0, 0, 0);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+    }
+
+    public void renderLightHandle(TileEntityFresnel te) {
+        //TODO: Split the model up so we can rotate certain aspecrts
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
+            .getBlockRendererDispatcher();
+        BlockPos pos = te.getPos();
+        IBlockState state = getWorld().getBlockState(pos);
+        state = state.getBlock().getActualState(state, getWorld(), pos);
+        IBakedModel body = TheatricalModels.FRESNEL_HANDLE;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bufferbuilder.setTranslation(-pos.getX(), -1 - pos.getY(), -1 - pos.getZ());
+        bufferbuilder.color(255, 255, 255, 255);
+        blockrendererdispatcher.getBlockModelRenderer()
+            .renderModel(getWorld(), body, state, pos, bufferbuilder, false);
+        bufferbuilder.setTranslation(0, 0, 0);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+    }
+
+    public void renderLightBody(TileEntityFresnel te) {
+        //TODO: Split the model up so we can rotate certain aspecrts
+        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
+            .getBlockRendererDispatcher();
+        BlockPos pos = te.getPos();
+        IBlockState state = getWorld().getBlockState(pos);
+        state = state.getBlock().getActualState(state, getWorld(), pos);
+        IBakedModel body = TheatricalModels.FRESNEL_BODY;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bufferbuilder.setTranslation(-pos.getX(), -1 - pos.getY(), -1 - pos.getZ());
+        bufferbuilder.color(255, 255, 255, 255);
+        blockrendererdispatcher.getBlockModelRenderer()
+            .renderModel(getWorld(), body, state, pos, bufferbuilder, false);
         bufferbuilder.setTranslation(0, 0, 0);
         tessellator.draw();
         GlStateManager.disableBlend();
