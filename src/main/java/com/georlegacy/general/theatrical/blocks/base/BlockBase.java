@@ -16,10 +16,9 @@
 
 package com.georlegacy.general.theatrical.blocks.base;
 
-import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
-import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;

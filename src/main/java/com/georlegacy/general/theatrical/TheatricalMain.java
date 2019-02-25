@@ -25,7 +25,6 @@ import static com.georlegacy.general.theatrical.util.Reference.VERSION;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
-import com.georlegacy.general.theatrical.logic.transport.dmx.managers.DMXUniverseRuntimeBroker;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateIlluminatorPacketHandler;
@@ -87,15 +86,4 @@ public class TheatricalMain {
     public static void PostInit(FMLPostInitializationEvent event) {
 
     }
-
-    public TheatricalMain() {
-        this.dmxUniverseRuntimeBroker = new DMXUniverseRuntimeBroker();
-    }
-
-    private final DMXUniverseRuntimeBroker dmxUniverseRuntimeBroker;
-
-    public DMXUniverseRuntimeBroker getDmxUniverseRuntimeBroker() {
-        return dmxUniverseRuntimeBroker;
-    }
-
 }

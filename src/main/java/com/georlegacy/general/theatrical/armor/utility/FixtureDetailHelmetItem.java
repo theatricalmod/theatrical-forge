@@ -17,10 +17,9 @@
 package com.georlegacy.general.theatrical.armor.utility;
 
 import com.georlegacy.general.theatrical.armor.materials.FixtureDetailArmorMaterial;
-import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalArmorMaterials;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
-import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;

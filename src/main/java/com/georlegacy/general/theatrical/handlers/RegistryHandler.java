@@ -17,7 +17,7 @@
 package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalModels;

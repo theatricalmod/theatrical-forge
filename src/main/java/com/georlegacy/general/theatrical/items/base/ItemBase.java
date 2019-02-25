@@ -16,7 +16,7 @@
 
 package com.georlegacy.general.theatrical.items.base;
 
-import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;

@@ -19,7 +19,7 @@ package com.georlegacy.general.theatrical.tiles.fixtures;
 import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
-import com.georlegacy.general.theatrical.tile.TileRGBFixture;
+import com.georlegacy.general.theatrical.tiles.TileRGBFixture;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;

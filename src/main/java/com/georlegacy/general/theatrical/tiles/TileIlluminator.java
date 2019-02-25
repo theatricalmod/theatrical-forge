@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.tile;
+package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.util.FixtureUtils;
 import elucent.albedo.lighting.ILightProvider;
@@ -99,10 +99,10 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
         if(controller == null){
             return null;
         }
-        if(!(world.getTileEntity(controller) instanceof TileFixture)){
+        if(!(world.getTileEntity(controller) instanceof com.georlegacy.general.theatrical.tile.TileFixture)){
             return null;
         }
-        TileFixture tileFresnel = (TileFixture) world.getTileEntity(controller);
+        com.georlegacy.general.theatrical.tile.TileFixture tileFresnel = (com.georlegacy.general.theatrical.tile.TileFixture) world.getTileEntity(controller);
         if (tileFresnel == null) {
             return null;
         }

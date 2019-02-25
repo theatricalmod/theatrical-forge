@@ -20,7 +20,7 @@ import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
-import com.georlegacy.general.theatrical.tile.TileTungstenFixture;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;

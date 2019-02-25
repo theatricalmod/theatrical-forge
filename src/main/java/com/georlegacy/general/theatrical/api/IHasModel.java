@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.core.exceptions.dmx;
+package com.georlegacy.general.theatrical.api;
 
-public class DMXValueOutOfBoundsException extends IllegalArgumentException {
+public interface IHasModel {
 
-    public DMXValueOutOfBoundsException() {
-        super();
-    }
-
-    public DMXValueOutOfBoundsException(String message) {
-        super(message);
-    }
-
-    public DMXValueOutOfBoundsException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DMXValueOutOfBoundsException(Throwable cause) {
-        super(cause);
-    }
+    void registerModels();
 
 }

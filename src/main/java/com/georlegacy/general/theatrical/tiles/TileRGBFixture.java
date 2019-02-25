@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.tile;
+package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.api.IRGB;
 import javax.annotation.Nullable;

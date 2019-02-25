@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.items.attr.fixture.gobo;
 
-import com.georlegacy.general.theatrical.entities.core.IHasModel;
+import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.util.Reference;
