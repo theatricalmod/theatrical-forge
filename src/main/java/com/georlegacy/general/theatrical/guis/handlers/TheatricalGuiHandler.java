@@ -3,7 +3,7 @@ package com.georlegacy.general.theatrical.guis.handlers;
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
 import com.georlegacy.general.theatrical.guis.fixtures.gui.GuiFresnel;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +19,7 @@ public class TheatricalGuiHandler implements IGuiHandler {
         switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
                 return new ContainerFresnel(player.inventory,
-                    (TileEntityFresnel) world.getTileEntity(new BlockPos(x, y, z)));
+                    (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)));
             default:
                 return null;
         }
@@ -32,7 +32,7 @@ public class TheatricalGuiHandler implements IGuiHandler {
         switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
                 return new GuiFresnel(
-                    (TileEntityFresnel) world.getTileEntity(new BlockPos(x, y, z)),
+                    (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)),
                     (ContainerFresnel) getServerGuiElement(id, player, world, x, y, z));
             default:
                 return null;

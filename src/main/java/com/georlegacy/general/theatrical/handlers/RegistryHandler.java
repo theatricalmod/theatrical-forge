@@ -23,22 +23,11 @@ import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.util.Reference;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map.Entry;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
@@ -89,8 +78,8 @@ public class RegistryHandler {
             }
             if (tintIndex == 0) {
                 TileEntity tileEntity = worldIn.getTileEntity(pos);
-                if (tileEntity instanceof TileEntityFresnel) {
-                    return 0xFF000000 | ((TileEntityFresnel) tileEntity).getGelType().getHex();
+                if (tileEntity instanceof TileFresnel) {
+                    return 0xFF000000 | ((TileFresnel) tileEntity).getGel().getHex();
                 }
             }
             return 0;
@@ -143,6 +132,10 @@ public class RegistryHandler {
         TheatricalModels.FRESNEL_HOOK_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook_bar"));
         TheatricalModels.FRESNEL_HANDLE = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_handle_only"));
         TheatricalModels.FRESNEL_HOOK = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook"));
+
+        TheatricalModels.MOVING_HEAD_STATIC = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_static"));
+        TheatricalModels.MOVING_HEAD_PAN = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_pan"));
+        TheatricalModels.MOVING_HEAD_TILT = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_tilt"));
     }
 
 }

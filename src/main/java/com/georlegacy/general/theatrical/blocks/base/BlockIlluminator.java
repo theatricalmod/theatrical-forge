@@ -94,14 +94,21 @@ public class BlockIlluminator extends BlockBase implements ITileEntityProvider, 
         if (tileIlluminator.getController() == null) {
             return 0;
         }
-        IFixture fixture = (IFixture) world.getTileEntity(tileIlluminator.getController());
-        if (fixture != null) {
-            float val = (fixture.getPower() / 255F);
-            int thing = (int) (val * 15F);
-            return thing;
-        } else {
-            return 0;
+        if (world.getTileEntity(tileIlluminator.getController()) instanceof IFixture) {
+            IFixture fixture = (IFixture) world.getTileEntity(tileIlluminator.getController());
+            if (fixture != null) {
+                float val = (fixture.getPower() / 255F);
+                int thing = (int) (val * 15F);
+                return thing;
+            } else {
+                return 0;
+            }
         }
+        return 0;
     }
 
+    @Override
+    public boolean isCollidable() {
+        return false;
+    }
 }

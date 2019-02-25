@@ -2,7 +2,7 @@ package com.georlegacy.general.theatrical.guis.fixtures.containers;
 
 import com.georlegacy.general.theatrical.guis.widgets.GelSlot;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -13,11 +13,11 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFresnel extends Container {
 
-    private TileEntityFresnel tileEntityFresnel;
+    private TileFresnel tileFresnel;
     private IInventory playerInventory;
 
-    public ContainerFresnel(IInventory playerInventory, TileEntityFresnel tileEntityFresnel) {
-        this.tileEntityFresnel = tileEntityFresnel;
+    public ContainerFresnel(IInventory playerInventory, TileFresnel tileFresnel) {
+        this.tileFresnel = tileFresnel;
         addOwnSlots();
         addPlayerSlots(playerInventory);
         this.playerInventory = playerInventory;
@@ -42,13 +42,13 @@ public class ContainerFresnel extends Container {
     }
 
     private void addOwnSlots() {
-        IItemHandler iItemHandler = this.tileEntityFresnel
+        IItemHandler iItemHandler = this.tileFresnel
             .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                 null);
         GelSlot gelSlot = new GelSlot(iItemHandler, 0, 80, 35) {
             @Override
             public void onSlotChanged() {
-                tileEntityFresnel.markDirty();
+                tileFresnel.markDirty();
             }
         };
         addSlotToContainer(gelSlot);
@@ -81,6 +81,6 @@ public class ContainerFresnel extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return tileEntityFresnel.canInteractWith(playerIn);
+        return tileFresnel.canInteractWith(playerIn);
     }
 }

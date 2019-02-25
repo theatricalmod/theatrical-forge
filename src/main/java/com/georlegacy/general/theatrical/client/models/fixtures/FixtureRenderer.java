@@ -16,14 +16,9 @@
 
 package com.georlegacy.general.theatrical.client.models.fixtures;
 
-import static net.minecraft.util.EnumFacing.Axis.X;
-import static net.minecraft.util.EnumFacing.Axis.Z;
-
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
-import com.georlegacy.general.theatrical.init.TheatricalModels;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tile.TileFixture;
+import com.georlegacy.general.theatrical.util.FixtureUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -41,13 +36,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
+public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
 
     private static float lastBrightnessX, lastBrightnessY;
 
+    public FixtureRenderer() {
+    }
 
     @Override
-    public void render(TileEntityFresnel te, double x, double y, double z, float partialTicks,
+    public void render(TileFixture te, double x, double y, double z, float partialTicks,
         int destroyStage, float a) {
         EnumFacing direction = te.getWorld().getBlockState(te.getPos())
             .getValue(BlockDirectional.FACING);
@@ -58,39 +55,44 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.disableLighting();
         renderLight(te, direction, partialTicks);
         double distance = te.getDistance();
-        GlStateManager.translate(0F, -1.5F, -1F);
-        GlStateManager.translate(0.5F, .5F, .5F);
-        GlStateManager.translate(-.5F, -.5F, -.5F);
-        if (te.getPower() > 0) {
-            renderLightBeam(te, partialTicks, ((te.getPower() / 255) * 0.4f), 0.25, distance,
-                te.getGelType().getHex());
-        }
+        float[] startPos = te.getBeamStartPosition();
+        GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
+//        if (te.getPower() > 0) {
+            renderLightBeam(te, partialTicks, 0.4f, te.getBeamWidth(), distance,
+                FixtureUtils.getColorFromTE(te));
+//        }
         GlStateManager.popMatrix();
     }
 
+
+
     @Override
-    public boolean isGlobalRenderer(TileEntityFresnel te) {
+    public boolean isGlobalRenderer(TileFixture te) {
         return true;
     }
 
-
-    public void renderLight(TileEntityFresnel te, EnumFacing direction, float partialTicks) {
+    public void renderLight(TileFixture te, EnumFacing direction, float partialTicks) {
         GlStateManager.translate(0.5F, 0, -.5F);
         GlStateManager.rotate(direction.getHorizontalAngle() , 0, 1, 0);
         GlStateManager.translate(-.5F, 0, 0.5F);
         renderHookBar(te);
-        GlStateManager.translate(0.5F, 0, -.6F);
+        float[] pans = te.getPanRotationPosition();
+        GlStateManager.translate(pans[0], pans[1], pans[2]);
         GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
-        GlStateManager.translate(-.5F, 0, 0.6F);
+        GlStateManager.translate(-pans[0], -pans[1], -pans[2]);
         renderLightHandle(te);
-        GlStateManager.translate(0.7F, -.75F, -.64F);
+        float[] tilts = te.getTiltRotationPosition();
+        GlStateManager.translate(tilts[0], tilts[1], tilts[2]);
         GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks,
             1, 0, 0);
-        GlStateManager.translate(-.7F, .75F, 0.64F);
+        GlStateManager.translate(-tilts[0], -tilts[1], -tilts[2]);
         renderLightBody(te);
+        GlStateManager.translate(0.5F, 0, -.5F);
+        GlStateManager.rotate(te.getDefaultRotation(), 1, 0, 0);
+        GlStateManager.translate(-.5F, 0, 0.5F);
     }
 
-    public void renderModel(IBakedModel model, TileEntityFresnel te){
+    public void renderModel(IBakedModel model, TileFixture te){
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
             .getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
@@ -115,18 +117,16 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
         GlStateManager.popMatrix();
     }
 
-    public void renderHookBar(TileEntityFresnel te) {
-        IBlockState state = getWorld().getBlockState(te.getPos());
-        state = state.getBlock().getActualState(state, getWorld(), te.getPos());
-        renderModel(state.getValue(BlockFresnel.ON_BAR) ? TheatricalModels.FRESNEL_HOOK_BAR : TheatricalModels.FRESNEL_HOOK, te);
+    public void renderHookBar(TileFixture te) {
+        renderModel(te.getStaticModel(), te);
     }
 
-    public void renderLightHandle(TileEntityFresnel te) {
-       renderModel(TheatricalModels.FRESNEL_HANDLE, te);
+    public void renderLightHandle(TileFixture te) {
+       renderModel(te.getPanModel(), te);
     }
 
-    public void renderLightBody(TileEntityFresnel te) {
-        renderModel(TheatricalModels.FRESNEL_BODY, te);
+    public void renderLightBody(TileFixture te) {
+        renderModel(te.getTiltModel(), te);
     }
 
     public static void pushBrightness(int u, int t) {
@@ -144,7 +144,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
             lastBrightnessY);
     }
 
-    public void renderLightBeam(TileEntityFresnel tileEntityFresnel, float partialTicks,
+    public void renderLightBeam(TileFixture tileFresnel, float partialTicks,
         float alpha, double beamSize, double length, int color) {
         //TODO: Fix me so the lamps don't disappear when you look through me.
         Tessellator tessellator = Tessellator.getInstance();
@@ -171,7 +171,7 @@ public class FresnelTESR extends TileEntitySpecialRenderer<TileEntityFresnel> {
 
         render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         double width = beamSize;
-        double endMultiplier = tileEntityFresnel.getFocus();
+        double endMultiplier = width * tileFresnel.getFocus();
 
 
         //Do the actual beam vertexes

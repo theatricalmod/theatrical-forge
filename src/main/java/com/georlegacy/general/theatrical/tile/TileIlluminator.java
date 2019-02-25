@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.tile;
 
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.util.FixtureUtils;
 import elucent.albedo.lighting.ILightProvider;
 import elucent.albedo.lighting.Light;
 import javax.annotation.Nullable;
@@ -99,17 +99,20 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
         if(controller == null){
             return null;
         }
-        TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world.getTileEntity(controller);
-        if (tileEntityFresnel == null) {
+        if(!(world.getTileEntity(controller) instanceof TileFixture)){
+            return null;
+        }
+        TileFixture tileFresnel = (TileFixture) world.getTileEntity(controller);
+        if (tileFresnel == null) {
             return null;
         }
         int value = world.getBlockState(pos).getLightValue(world, pos);
-        int color = tileEntityFresnel.getGelType().getHex();
+        int color = FixtureUtils.getColorFromTE(tileFresnel);
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
         return Light.builder().pos(pos)
-            .color(r, g, b, ((tileEntityFresnel.getPower() * 0.009F) / 255))
+            .color(r, g, b, ((tileFresnel.getPower() * 0.009F) / 255))
             .radius(Math.max(value / 2, 1)).build();
     }
 }

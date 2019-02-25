@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.packets.handlers;
 
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,26 +34,24 @@ public class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPack
         if (ctx.side == Side.CLIENT) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 BlockPos blockPos = message.getPos();
-                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) Minecraft
+                TileFresnel tileFresnel = (TileFresnel) Minecraft
                     .getMinecraft().world.getTileEntity(blockPos);
-                tileEntityFresnel.setTilt(message.getTilt());
-                tileEntityFresnel.setPan(message.getPan());
-                tileEntityFresnel.setPower(message.getPower());
-                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileEntityFresnel);
+                tileFresnel.setTilt(message.getTilt());
+                tileFresnel.setPan(message.getPan());
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
             });
         } else {
             ctx.getServerHandler().player.server.addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
-                TileEntityFresnel tileEntityFresnel = (TileEntityFresnel) world
+                TileFresnel tileFresnel = (TileFresnel) world
                     .getTileEntity(blockPos);
-                tileEntityFresnel.setTilt(message.getTilt());
-                tileEntityFresnel.setPan(message.getPan());
-                tileEntityFresnel.setPower(message.getPower());
-                world.markChunkDirty(blockPos, tileEntityFresnel);
+                tileFresnel.setTilt(message.getTilt());
+                tileFresnel.setPan(message.getPan());
+                world.markChunkDirty(blockPos, tileFresnel);
                 TheatricalPacketHandler.INSTANCE.sendToAll(
-                    new UpdateLightPacket(tileEntityFresnel.getTilt(), tileEntityFresnel.getPan(),
-                        tileEntityFresnel.getPower(), tileEntityFresnel.getPos()));
+                    new UpdateLightPacket(tileFresnel.getTilt(), tileFresnel.getPan(),
+                        tileFresnel.getPower(), tileFresnel.getPos()));
             });
         }
         return null;

@@ -1,0 +1,46 @@
+{
+	"textures": {
+		"0": "theatrical:blocks/light_side",
+		"particle": "theatrical:blocks/light_side"
+	},
+	"elements": [
+		{
+			"name": "RotateBase",
+			"from": [5, 3, 5],
+			"to": [11, 4, 11],
+			"faces": {
+				"north": {"uv": [0, 0, 6, 1], "texture": "#0"},
+				"east": {"uv": [0, 0, 6, 1], "texture": "#0"},
+				"south": {"uv": [0, 0, 6, 1], "texture": "#0"},
+				"west": {"uv": [0, 0, 6, 1], "texture": "#0"},
+				"up": {"uv": [5, 5, 11, 11], "texture": "#0"},
+				"down": {"uv": [5, 5, 11, 11], "texture": "#0"}
+			}
+		},
+		{
+			"name": "RightSide",
+			"from": [11, 3, 5],
+			"to": [11.5, 9, 11],
+			"faces": {
+				"north": {"uv": [0, 0, 0.5, 5], "texture": "#0"},
+				"east": {"uv": [5, 5, 11, 10], "texture": "#0"},
+				"south": {"uv": [0, 0, 0.5, 5], "texture": "#0"},
+				"west": {"uv": [5, 5, 11, 10], "texture": "#0"},
+				"up": {"uv": [0, 0, 0.5, 6], "texture": "#0"},
+				"down": {"uv": [0, 0, 0.5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"from": [4.5, 3, 5],
+			"to": [5, 9, 11],
+			"faces": {
+				"north": {"uv": [0, 0, 0.5, 5], "texture": "#0"},
+				"east": {"uv": [5, 5, 11, 10], "texture": "#0"},
+				"south": {"uv": [0, 0, 0.5, 5], "texture": "#0"},
+				"west": {"uv": [5, 5, 11, 10], "texture": "#0"},
+				"up": {"uv": [0, 0, 0.5, 6], "texture": "#0"},
+				"down": {"uv": [0, 0, 0.5, 6], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -4,7 +4,7 @@ import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresn
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileEntityFresnel;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,17 +17,17 @@ public class GuiFresnel extends GuiContainer {
     private static final ResourceLocation background = new ResourceLocation(Reference.MOD_ID,
         "textures/gui/frensel.png");
     private ContainerFresnel inventoryPlayer;
-    private TileEntityFresnel tileEntityFresnel;
+    private TileFresnel tileFresnel;
 
     private GuiSlider tiltSlider;
     private GuiSlider panSlider;
 
     private int pan, tilt = 0;
 
-    public GuiFresnel(TileEntityFresnel tileEntityFresnel, ContainerFresnel inventorySlotsIn) {
+    public GuiFresnel(TileFresnel tileFresnel, ContainerFresnel inventorySlotsIn) {
         super(inventorySlotsIn);
         this.inventoryPlayer = inventorySlotsIn;
-        this.tileEntityFresnel = tileEntityFresnel;
+        this.tileFresnel = tileFresnel;
 
         this.xSize = 176;
         this.ySize = 203;
@@ -67,8 +67,8 @@ public class GuiFresnel extends GuiContainer {
         int height = this.height / 2;
         int centerX = (this.width / 2) - 256 / 2;
         int centerY = (this.height / 2) - 158 / 2;
-        this.pan = tileEntityFresnel.getPan();
-        this.tilt = tileEntityFresnel.getTilt();
+        this.pan = tileFresnel.getPan();
+        this.tilt = tileFresnel.getTilt();
         this.tiltSlider = this.addButton(
             new GuiSlider(15, centerX + 53, centerY + 35, 150, 20, "", "", -180, 180, tilt, false,
                 true, (guiSlider -> this.tilt = guiSlider.getValueInt())));
@@ -81,6 +81,6 @@ public class GuiFresnel extends GuiContainer {
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tilt,
-            pan, tileEntityFresnel.getPower(), tileEntityFresnel.getPos()));
+            pan, tileFresnel.getPower(), tileFresnel.getPos()));
     }
 }
