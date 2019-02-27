@@ -99,10 +99,10 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
         if(controller == null){
             return null;
         }
-        if(!(world.getTileEntity(controller) instanceof com.georlegacy.general.theatrical.tile.TileFixture)){
+        if(!(world.getTileEntity(controller) instanceof TileFixture)){
             return null;
         }
-        com.georlegacy.general.theatrical.tile.TileFixture tileFresnel = (com.georlegacy.general.theatrical.tile.TileFixture) world.getTileEntity(controller);
+        TileFixture tileFresnel = (TileFixture) world.getTileEntity(controller);
         if (tileFresnel == null) {
             return null;
         }
@@ -112,7 +112,7 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
         return Light.builder().pos(pos)
-            .color(r, g, b, ((tileFresnel.getPower() * 0.009F) / 255))
+            .color(r, g, b, ((tileFresnel.getIntensity() * 0.009F) / 255))
             .radius(Math.max(value / 2, 1)).build();
     }
 }

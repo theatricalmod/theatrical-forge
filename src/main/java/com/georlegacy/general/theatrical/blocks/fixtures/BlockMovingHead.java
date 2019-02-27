@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.client.models.fixtures.FixtureRenderer;
+import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
@@ -105,7 +105,7 @@ public class BlockMovingHead extends BlockDirectional implements ITileEntityProv
         if (world.getTileEntity(pos) instanceof TileFresnel) {
             TileMovingHead tileFresnel = (TileMovingHead) world.getTileEntity(pos);
             if (tileFresnel != null) {
-                return (int) (tileFresnel.getPower() * 4 / 255);
+                return (int) (tileFresnel.getIntensity() * 4 / 255);
             }
         }
         return super.getLightValue(state, world, pos);

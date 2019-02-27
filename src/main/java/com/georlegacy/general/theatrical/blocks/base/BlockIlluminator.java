@@ -2,7 +2,7 @@ package com.georlegacy.general.theatrical.blocks.base;
 
 import com.georlegacy.general.theatrical.api.IFixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.tile.TileIlluminator;
+import com.georlegacy.general.theatrical.tiles.TileIlluminator;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
@@ -97,7 +97,7 @@ public class BlockIlluminator extends BlockBase implements ITileEntityProvider, 
         if (world.getTileEntity(tileIlluminator.getController()) instanceof IFixture) {
             IFixture fixture = (IFixture) world.getTileEntity(tileIlluminator.getController());
             if (fixture != null) {
-                float val = (fixture.getPower() / 255F);
+                float val = (fixture.getIntensity() / 255F);
                 int thing = (int) (val * 15F);
                 return thing;
             } else {

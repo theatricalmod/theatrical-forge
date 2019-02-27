@@ -2,6 +2,8 @@ package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.api.IFixture;
 import com.georlegacy.general.theatrical.api.IFixtureModelProvider;
+import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
@@ -25,6 +27,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,6 +45,11 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     public int prevTilt, prevPan, prevFocus = 0;
 
     private BlockPos lightBlock;
+
+
+
+    public TileFixture(){}
+
 
 
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
@@ -272,7 +280,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     }
 
     @Override
-    public float getPower() {
+    public float getIntensity() {
         return 0;
     }
 
@@ -289,4 +297,6 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     public double getDistance() {
         return distance;
     }
+
+
 }

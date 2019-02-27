@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.packets.handlers;
 
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
-import com.georlegacy.general.theatrical.tile.TileIlluminator;
+import com.georlegacy.general.theatrical.tiles.TileIlluminator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;

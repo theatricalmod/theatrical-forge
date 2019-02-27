@@ -81,6 +81,6 @@ public class GuiFresnel extends GuiContainer {
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateLightPacket(tilt,
-            pan, tileFresnel.getPower(), tileFresnel.getPos()));
+            pan, tileFresnel.getIntensity(), tileFresnel.getPos()));
     }
 }

@@ -4,9 +4,13 @@ import com.georlegacy.general.theatrical.api.IRGB;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class TileRGBFixture extends TileFixture implements IRGB {
+public abstract class TileRGBFixture extends TileDMXAcceptor implements IRGB {
 
     private int red, green, blue = 0;
+
+    public TileRGBFixture(int channelCount, int channelStartPoint) {
+        super(channelCount, channelStartPoint);
+    }
 
     @Override
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {

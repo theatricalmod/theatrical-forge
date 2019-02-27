@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 
 public interface IFixture {
 
-    float getPower();
+    float getIntensity();
 
     float getMaxLightDistance();
 

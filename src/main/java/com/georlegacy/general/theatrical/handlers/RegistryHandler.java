@@ -18,6 +18,7 @@ package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.api.IHasModel;
+import com.georlegacy.general.theatrical.client.models.ModelCableLoader;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
@@ -100,6 +101,7 @@ public class RegistryHandler {
         });
     }
 
+
     @SubscribeEvent
     public static void onModelRegister(ModelRegistryEvent event) {
         for (Item item : TheatricalItems.ITEMS) {
@@ -112,6 +114,9 @@ public class RegistryHandler {
                 ((IHasModel) block).registerModels();
             }
         }
+        ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
+        ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_CABLE, ModelCableLoader.INSTANCE);
+        ModelLoader.setCustomModelResourceLocation(new ItemBlock(TheatricalBlocks.BLOCK_CABLE),0, ModelCableLoader.ID);
     }
 
     public static IBakedModel loadModel(ResourceLocation location){

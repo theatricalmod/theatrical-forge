@@ -17,71 +17,32 @@
 package com.georlegacy.general.theatrical.tiles.fixtures;
 
 import com.georlegacy.general.theatrical.api.HangableType;
+import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.tiles.TileRGBFixture;
-import dan200.computercraft.api.lua.ILuaContext;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.api.peripheral.IPeripheral;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.common.Optional.Interface;
-import net.minecraftforge.fml.common.Optional.Method;
 
-@Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "computercraft")
-public class TileMovingHead extends TileRGBFixture implements IPeripheral {
+public class TileMovingHead extends TileRGBFixture  {
 
-    @Nonnull
-    @Override
-    public String getType() {
-        return "moving_head";
+    private int channelStartPoint = 0;
+
+    /**
+     * 0 - Intensity
+     * 1 - Focus
+     * 2 - Pan
+     * 3 - Tilt
+     * 4 - Red
+     * 5 - Green
+     * 6 - Blue
+     */
+
+    public TileMovingHead() {
+        super(7, 0);
     }
-
-    @Nonnull
-    @Override
-    public String[] getMethodNames() {
-        return new String[]{"setPan", "setTilt", "setFocus", "getPan", "getTilt", "getFocus", "setColor"};
-    }
-
-    @Method(modid = "computercraft")
-    @Nullable
-    @Override
-    public Object[] callMethod(@Nonnull IComputerAccess cpu,
-        @Nonnull ILuaContext ctx, int method, @Nonnull Object[] args)
-        throws LuaException, InterruptedException {
-        switch (method) {
-            case 0:
-                this.setPan(((Number) args[0]).intValue());
-                break;
-            case 1:
-                this.setTilt(((Number) args[0]).intValue());
-                break;
-            case 2:
-                this.setFocus(((Number) args[0]).intValue());
-                break;
-            case 3:
-                return new Object[]{this.getPan()};
-            case 4:
-                return new Object[]{this.getTilt()};
-            case 5:
-                return new Object[]{this.getFocus()};
-            case 6:
-                this.setRed(((Number) args[0]).intValue());
-                this.setGreen(((Number) args[1]).intValue());
-                this.setBlue(((Number) args[2]).intValue());
-        }
-        return null;
-    }
-
-    @Override
-    public boolean equals(@Nullable IPeripheral iPeripheral) {
-        return iPeripheral != null && iPeripheral.getType().equals(this.getType());
-    }
-
 
     @Override
     public Class<? extends Block> getBlock() {
@@ -141,5 +102,40 @@ public class TileMovingHead extends TileRGBFixture implements IPeripheral {
     @Override
     public void setTilt(int tilt) {
         super.setTilt(MathHelper.clamp(tilt, -90, 90));
+    }
+
+    @Override
+    public int getRed() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(4);
+    }
+
+    @Override
+    public int getGreen() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(5);
+    }
+
+    @Override
+    public int getBlue() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6);
+    }
+
+    @Override
+    public int getPan() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2);
+    }
+
+    @Override
+    public int getTilt() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3);
+    }
+
+    @Override
+    public int getFocus() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1);
+    }
+
+    @Override
+    public float getIntensity() {
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(0);
     }
 }

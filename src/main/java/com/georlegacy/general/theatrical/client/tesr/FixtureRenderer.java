@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.client.models.fixtures;
+package com.georlegacy.general.theatrical.client.tesr;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.tile.TileFixture;
+import com.georlegacy.general.theatrical.tiles.TileFixture;
 import com.georlegacy.general.theatrical.util.FixtureUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -57,7 +57,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         double distance = te.getDistance();
         float[] startPos = te.getBeamStartPosition();
         GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
-//        if (te.getPower() > 0) {
+//        if (te.getIntensity() > 0) {
             renderLightBeam(te, partialTicks, 0.4f, te.getBeamWidth(), distance,
                 FixtureUtils.getColorFromTE(te));
 //        }

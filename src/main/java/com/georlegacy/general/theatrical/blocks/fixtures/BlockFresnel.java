@@ -20,7 +20,7 @@ import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
-import com.georlegacy.general.theatrical.client.models.fixtures.FixtureRenderer;
+import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
@@ -136,7 +136,7 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
         if (world.getTileEntity(pos) instanceof TileFresnel) {
             TileFresnel tileFresnel = (TileFresnel) world.getTileEntity(pos);
             if (tileFresnel != null) {
-                return (int) (tileFresnel.getPower() * 4 / 255);
+                return (int) (tileFresnel.getIntensity() * 4 / 255);
             }
         }
         return super.getLightValue(state, world, pos);

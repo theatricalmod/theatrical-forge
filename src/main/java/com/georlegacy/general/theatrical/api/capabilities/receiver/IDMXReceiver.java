@@ -1,17 +1,14 @@
 package com.georlegacy.general.theatrical.api.capabilities.receiver;
 
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
-import net.minecraft.nbt.NBTTagCompound;
 
 public interface IDMXReceiver {
 
-    NBTTagCompound serialize(NBTTagCompound nbtTagCompound);
+    int getChannelCount();
 
-    void deserialize(NBTTagCompound nbtTagCompound);
-
-    int getDMXChannels();
-
-    int getDMXStartPoint();
+    int getStartPoint();
 
     void receiveDMXValues(DMXUniverse dmxUniverse, int[] dmxChannels);
+
+    int getChannel(int index);
 }

@@ -51,7 +51,7 @@ public class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPack
                 world.markChunkDirty(blockPos, tileFresnel);
                 TheatricalPacketHandler.INSTANCE.sendToAll(
                     new UpdateLightPacket(tileFresnel.getTilt(), tileFresnel.getPan(),
-                        tileFresnel.getPower(), tileFresnel.getPos()));
+                        tileFresnel.getIntensity(), tileFresnel.getPos()));
             });
         }
         return null;
