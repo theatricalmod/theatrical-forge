@@ -53,7 +53,7 @@ import net.minecraftforge.fml.relauncher.Side;
  *
  * @author James Conway
  */
-@Mod(modid = MOD_ID, name = NAME, version = VERSION, dependencies = "after:computercraft")
+@Mod(modid = MOD_ID, name = NAME, version = VERSION, dependencies = "after:computercraft;after:mcmultipart")
 public class TheatricalMain {
 
     @Mod.Instance

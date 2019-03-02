@@ -3,6 +3,7 @@ package com.georlegacy.general.theatrical.client.models;
 import com.georlegacy.general.theatrical.blocks.cables.BlockCable;
 import com.georlegacy.general.theatrical.blocks.cables.BlockDMXCable;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
+import com.georlegacy.general.theatrical.util.ClientUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +95,7 @@ public class ModelCableBaked implements IBakedModel {
             }
         }
 
-        return quads;
+        return ClientUtils.optimize(quads);
     }
 
     @Override

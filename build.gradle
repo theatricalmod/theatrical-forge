@@ -25,6 +25,7 @@ repositories {
         name = "ComputerCraft"
         url = "http://cc.crzd.me/maven"
     }
+    maven { url "http://maven.amadornes.com/" }
 }
 
 minecraft {
@@ -62,6 +63,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     compileOnly "dan200.computercraft:ComputerCraft:1.80pr1-build5"
+    compileOnly "MCMultiPart2:MCMultiPart:2.5.3"
 }
 
 processResources {

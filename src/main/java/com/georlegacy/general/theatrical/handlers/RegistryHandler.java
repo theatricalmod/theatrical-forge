@@ -16,8 +16,8 @@
 
 package com.georlegacy.general.theatrical.handlers;
 
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.api.IHasModel;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.client.models.ModelCableLoader;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
@@ -52,6 +52,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 @Mod.EventBusSubscriber
 public class RegistryHandler {
+    private static final ResourceLocation LOC = new ResourceLocation("theatrical:mcmp");
+
 
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {

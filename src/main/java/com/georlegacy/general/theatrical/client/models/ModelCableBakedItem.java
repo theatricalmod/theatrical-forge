@@ -39,12 +39,12 @@ public class ModelCableBakedItem implements IBakedModel {
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isBuiltInRenderer() {
-        return true;
+        return false;
     }
 
     @Override
