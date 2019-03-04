@@ -27,8 +27,10 @@ import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
+import com.georlegacy.general.theatrical.packets.SendDMXPacket;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
+import com.georlegacy.general.theatrical.packets.handlers.SendDMXPacketHandler;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateIlluminatorPacketHandler;
 import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
@@ -121,6 +123,12 @@ public class TheatricalMain {
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
             .registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+                Side.CLIENT);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new SendDMXPacketHandler(), SendDMXPacket.class, 2,
+                Side.SERVER);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new SendDMXPacketHandler(), SendDMXPacket.class, 2,
                 Side.CLIENT);
         if (Loader.isModLoaded("computercraft")) {
             initComputer();

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "normal": {"model": "theatrical:dmx_interface"},
+    "inventory": {"model": "theatrical:dmx_interface"}
+  }
+}

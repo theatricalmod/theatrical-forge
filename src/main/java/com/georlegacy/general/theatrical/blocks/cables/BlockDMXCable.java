@@ -11,8 +11,10 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -173,5 +175,22 @@ public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHa
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
+        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        if(playerIn.isSneaking() && !worldIn.isRemote){
+            if(worldIn.getTileEntity(pos) instanceof TileDMXCable){
+                TileDMXCable tileDMXCable = (TileDMXCable) worldIn.getTileEntity(pos);
+                if(tileDMXCable.getUniverse() != null) {
+                    System.out.println(tileDMXCable.getUniverse().getUuid().toString());
+                    System.out.println(tileDMXCable.getUniverse().getDMXChannels());
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

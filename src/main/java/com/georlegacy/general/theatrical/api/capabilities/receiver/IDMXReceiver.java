@@ -1,6 +1,8 @@
 package com.georlegacy.general.theatrical.api.capabilities.receiver;
 
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public interface IDMXReceiver {
 
@@ -8,7 +10,9 @@ public interface IDMXReceiver {
 
     int getStartPoint();
 
-    void receiveDMXValues(DMXUniverse dmxUniverse, int[] dmxChannels);
+    void receiveDMXValues(World world, BlockPos pos, DMXUniverse dmxUniverse);
 
     int getChannel(int index);
+
+    void updateChannel(int index, int value);
 }

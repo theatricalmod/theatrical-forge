@@ -5,6 +5,9 @@ itemGroup.theatrical_fixtures=Lighting Fixtures
 itemGroup.theatrical_rigging=Rigging/Truss
 
 tile.fresnel.name=Harmony F Fresnel
+tile.moving_head.name=Moving Head
+tile.dmx_cable.name=DMX Cable
+tile.dmx_interface.name=DMX Interface
 
 tile.bar.name=Rigging Bar
 tile.ladder_bar.name=Rigging Ladder Bar

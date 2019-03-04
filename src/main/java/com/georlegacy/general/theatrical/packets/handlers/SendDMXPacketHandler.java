@@ -16,10 +16,13 @@
 
 package com.georlegacy.general.theatrical.packets.handlers;
 
+import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.tiles.TileFixture;
+import com.georlegacy.general.theatrical.packets.SendDMXPacket;
+import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
 import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -27,31 +30,35 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPacket, IMessage> {
+public class SendDMXPacketHandler implements IMessageHandler<SendDMXPacket, IMessage> {
 
     @Override
-    public IMessage onMessage(UpdateLightPacket message, MessageContext ctx) {
+    public IMessage onMessage(SendDMXPacket message, MessageContext ctx) {
         if (ctx.side == Side.CLIENT) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                BlockPos blockPos = message.getPos();
-                TileFixture tileFresnel = (TileFixture) Minecraft
+                BlockPos blockPos = message.getBlockPos();
+                TileEntity tileFresnel = Minecraft
                     .getMinecraft().world.getTileEntity(blockPos);
-                tileFresnel.setTilt(message.getTilt());
-                tileFresnel.setPan(message.getPan());
+                if(tileFresnel instanceof TileMovingHead){
+                    System.out.print(((TileMovingHead) tileFresnel).getPan());
+                }
+                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)){
+                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH).updateChannel(message.getChannel(), message.getValue());
+                }
                 Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
             });
         } else {
             ctx.getServerHandler().player.server.addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
-                BlockPos blockPos = message.getPos();
-                TileFixture tileFresnel = (TileFixture) world
+                BlockPos blockPos = message.getBlockPos();
+                TileEntity tileFresnel =  world
                     .getTileEntity(blockPos);
-                tileFresnel.setTilt(message.getTilt());
-                tileFresnel.setPan(message.getPan());
+                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)){
+                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH).updateChannel(message.getChannel(), message.getValue());
+                }
                 world.markChunkDirty(blockPos, tileFresnel);
                 TheatricalPacketHandler.INSTANCE.sendToAll(
-                    new UpdateLightPacket(tileFresnel.getTilt(), tileFresnel.getPan(),
-                        tileFresnel.getIntensity(), tileFresnel.getPos()));
+                    new SendDMXPacket(blockPos, message.getChannel(), message.getValue()));
             });
         }
         return null;

@@ -3,11 +3,21 @@ package com.georlegacy.general.theatrical.tiles;
 import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.packets.SendDMXPacket;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.Optional.Interface;
 
-public class TileDMXInterface extends TileEntity {
+@Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "computercraft")
+public class TileDMXInterface extends TileEntity implements IPeripheral {
 
     private final IDMXProvider idmxProvider;
 
@@ -31,4 +41,58 @@ public class TileDMXInterface extends TileEntity {
         return super.getCapability(capability, facing);
     }
 
+    @Nonnull
+    @Override
+    public String getType() {
+        return "dmx_interface";
+    }
+
+    @Nonnull
+    @Override
+    public String[] getMethodNames() {
+        return new String[]{"setChannel", "getChannel"};
+    }
+
+    @Nullable
+    @Override
+    public Object[] callMethod(@Nonnull IComputerAccess iComputerAccess,
+        @Nonnull ILuaContext iLuaContext, int method, @Nonnull Object[] args)
+        throws LuaException, InterruptedException {
+        switch (method) {
+            case 0:
+                this.idmxProvider.getUniverse(world).setChannel(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
+                this.sendDMXSignal(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
+                break;
+            case 1:
+                return new Object[]{this.idmxProvider.getUniverse(world).getChannel(((Number) args[0]).intValue())};
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(@Nullable IPeripheral iPeripheral) {
+        return iPeripheral != null && iPeripheral.getType().equals(this.getType());
+    }
+
+    public void sendDMXSignal(int channel, int value){
+        for(EnumFacing facing : EnumFacing.VALUES){
+            TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
+            if(tileEntity != null){
+                if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
+                    TheatricalPacketHandler.INSTANCE.sendToServer(new SendDMXPacket(tileEntity.getPos(), channel, value));
+                }
+            }
+        }
+    }
+
+    public void sendDMXSignal(){
+        for(EnumFacing facing : EnumFacing.VALUES){
+            TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
+            if(tileEntity != null){
+                if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
+                    tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()).receiveDMXValues(world, pos, this.idmxProvider.getUniverse(world));
+                }
+            }
+        }
+    }
 }

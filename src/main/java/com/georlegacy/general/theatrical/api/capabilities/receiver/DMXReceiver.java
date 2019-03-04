@@ -1,8 +1,12 @@
 package com.georlegacy.general.theatrical.api.capabilities.receiver;
 
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.packets.SendDMXPacket;
 import java.util.Arrays;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -37,8 +41,12 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public void receiveDMXValues(DMXUniverse dmxUniverse, int[] dmxChannels) {
-        this.dmxValues = Arrays.copyOfRange(dmxChannels, this.dmxStartPoint, this.dmxChannels);
+    public void receiveDMXValues(World world, BlockPos pos, DMXUniverse dmxUniverse) {
+        this.dmxValues = Arrays.copyOfRange(dmxUniverse.getDMXChannels(), this.dmxStartPoint, this.dmxChannels);
+        if(!world.isRemote)
+            for(int i = 0; i < dmxValues.length; i++){
+                TheatricalPacketHandler.INSTANCE.sendToAll(new SendDMXPacket(pos, i, dmxValues[i]));
+            }
     }
 
     @Override
@@ -61,5 +69,10 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
             return 0;
         }
         return dmxValues[index];
+    }
+
+    @Override
+    public void updateChannel(int index, int value) {
+        this.dmxValues[index] = value;
     }
 }

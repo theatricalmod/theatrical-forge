@@ -22,7 +22,7 @@ public class ModelCableBakedItem implements IBakedModel {
     public ModelCableBakedItem(ModelCableBaked p){
         parent = p;
         quads = new ArrayList<>();
-        quads.addAll(parent.north);
+        quads.addAll(parent.center);
         quads = Collections.unmodifiableList(ClientUtils.optimize(quads));
     }
 
