@@ -30,9 +30,12 @@ import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.packets.handlers.SendDMXPacketHandler;
-import com.georlegacy.general.theatrical.packets.handlers.UpdateIlluminatorPacketHandler;
-import com.georlegacy.general.theatrical.packets.handlers.UpdateLightPacketHandler;
+import com.georlegacy.general.theatrical.packets.handlers.client.SendDMXPacketClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.client.UpdateIlluminatorPacketClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.client.UpdateLightPacketClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.server.SendDMXPacketServerHandler;
+import com.georlegacy.general.theatrical.packets.handlers.server.UpdateIlluminatorPacketServerHandler;
+import com.georlegacy.general.theatrical.packets.handlers.server.UpdateLightPacketServerHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
@@ -116,19 +119,22 @@ public class TheatricalMain {
         proxy.registerModelBakeryVariants();
         proxy.registerColorBlocks();
         TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateLightPacketHandler(), UpdateLightPacket.class, 0,
+            .registerMessage(new UpdateLightPacketServerHandler(), UpdateLightPacket.class, 0,
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+            .registerMessage(new UpdateIlluminatorPacketServerHandler(), UpdateIlluminatorPacket.class, 1,
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateIlluminatorPacketHandler(), UpdateIlluminatorPacket.class, 1,
+            .registerMessage(new SendDMXPacketServerHandler(), SendDMXPacket.class, 2,
+                Side.SERVER);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateLightPacketClientHandler(), UpdateLightPacket.class, 3,
                 Side.CLIENT);
         TheatricalPacketHandler.INSTANCE
-            .registerMessage(new SendDMXPacketHandler(), SendDMXPacket.class, 2,
-                Side.SERVER);
+            .registerMessage(new UpdateIlluminatorPacketClientHandler(), UpdateIlluminatorPacket.class, 4,
+                Side.CLIENT);
         TheatricalPacketHandler.INSTANCE
-            .registerMessage(new SendDMXPacketHandler(), SendDMXPacket.class, 2,
+            .registerMessage(new SendDMXPacketClientHandler(), SendDMXPacket.class, 5,
                 Side.CLIENT);
         if (Loader.isModLoaded("computercraft")) {
             initComputer();
