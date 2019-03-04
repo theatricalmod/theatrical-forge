@@ -3,8 +3,7 @@ package com.georlegacy.general.theatrical.tiles;
 import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.packets.SendDMXPacket;
+import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -22,7 +21,7 @@ public class TileDMXInterface extends TileEntity implements IPeripheral {
     private final IDMXProvider idmxProvider;
 
     public TileDMXInterface() {
-        this.idmxProvider = new DMXProvider();
+        this.idmxProvider = new DMXProvider(new DMXUniverse());
     }
 
     @Override
@@ -79,18 +78,7 @@ public class TileDMXInterface extends TileEntity implements IPeripheral {
             TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
             if(tileEntity != null){
                 if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                    TheatricalPacketHandler.INSTANCE.sendToServer(new SendDMXPacket(tileEntity.getPos(), channel, value));
-                }
-            }
-        }
-    }
-
-    public void sendDMXSignal(){
-        for(EnumFacing facing : EnumFacing.VALUES){
-            TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
-            if(tileEntity != null){
-                if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                    tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()).receiveDMXValues(world, pos, this.idmxProvider.getUniverse(world));
+                    tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()).receiveDMXValues(this.idmxProvider.getUniverse(world).getDMXChannels(), facing.getOpposite(), world, tileEntity.getPos());
                 }
             }
         }

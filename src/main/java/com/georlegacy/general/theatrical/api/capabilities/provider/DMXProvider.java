@@ -1,6 +1,5 @@
 package com.georlegacy.general.theatrical.api.capabilities.provider;
 
-import com.georlegacy.general.theatrical.api.capabilities.DMXController;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -38,9 +37,6 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
 
     @Override
     public DMXUniverse getUniverse(World world) {
-        if(dmxUniverse == null){
-            dmxUniverse = DMXController.get(world).newUniverse();
-        }
         return dmxUniverse;
     }
 }

@@ -33,7 +33,6 @@ import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.client.SendDMXPacketClientHandler;
 import com.georlegacy.general.theatrical.packets.handlers.client.UpdateIlluminatorPacketClientHandler;
 import com.georlegacy.general.theatrical.packets.handlers.client.UpdateLightPacketClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.server.SendDMXPacketServerHandler;
 import com.georlegacy.general.theatrical.packets.handlers.server.UpdateIlluminatorPacketServerHandler;
 import com.georlegacy.general.theatrical.packets.handlers.server.UpdateLightPacketServerHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
@@ -123,9 +122,6 @@ public class TheatricalMain {
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
             .registerMessage(new UpdateIlluminatorPacketServerHandler(), UpdateIlluminatorPacket.class, 1,
-                Side.SERVER);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new SendDMXPacketServerHandler(), SendDMXPacket.class, 2,
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
             .registerMessage(new UpdateLightPacketClientHandler(), UpdateLightPacket.class, 3,

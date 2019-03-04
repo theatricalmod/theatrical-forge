@@ -18,31 +18,38 @@ package com.georlegacy.general.theatrical.packets.handlers.client;
 
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class SendDMXPacketClientHandler implements IMessageHandler<SendDMXPacket, IMessage> {
 
     @Override
     public IMessage onMessage(SendDMXPacket message, MessageContext ctx) {
-        Minecraft.getMinecraft().addScheduledTask(() -> {
-            BlockPos blockPos = message.getBlockPos();
-            TileEntity tileFresnel = Minecraft
-                .getMinecraft().world.getTileEntity(blockPos);
-            if(tileFresnel instanceof TileMovingHead){
-                System.out.print(((TileMovingHead) tileFresnel).getPan());
-            }
-            if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)){
-                tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH).updateChannel(message.getChannel(), message.getValue());
-            }
-            Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
-        });
+        if(ctx.side == Side.CLIENT) {
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                World world = Minecraft.getMinecraft().world;
+                BlockPos blockPos = message.getBlockPos();
+                TileEntity tileFresnel = Minecraft
+                    .getMinecraft().world.getTileEntity(blockPos);
+                if (tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)) {
+                    if(message.getData() != null){
+                        for(int i = 0; i < message.getData().length; i++){
+                            tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH).updateChannel(i, message.getData()[i]);
+                        }
+                    }
+                }
+                tileFresnel.markDirty();
+                world.notifyBlockUpdate(blockPos, world.getBlockState(blockPos), world.getBlockState(blockPos), 11);
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
+            });
+        }
         return null;
     }
 

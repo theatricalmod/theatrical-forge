@@ -1,10 +1,10 @@
 package com.georlegacy.general.theatrical.api.capabilities.receiver;
 
-import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
 import java.util.Arrays;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -19,6 +19,7 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     private int dmxStartPoint;
     private int dmxChannels;
     private int[] dmxValues;
+    private EnumFacing lastSignalFrom;
 
     public DMXReceiver(int dmxChannels, int dmxStartPoint){
         this.dmxChannels = dmxChannels;
@@ -41,12 +42,11 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public void receiveDMXValues(World world, BlockPos pos, DMXUniverse dmxUniverse) {
-        this.dmxValues = Arrays.copyOfRange(dmxUniverse.getDMXChannels(), this.dmxStartPoint, this.dmxChannels);
+    public void receiveDMXValues(int[] data, EnumFacing facing, World world, BlockPos pos) {
+        lastSignalFrom = facing;
+        this.dmxValues = Arrays.copyOfRange(data, this.dmxStartPoint, this.dmxChannels);
         if(!world.isRemote)
-            for(int i = 0; i < dmxValues.length; i++){
-                TheatricalPacketHandler.INSTANCE.sendToAll(new SendDMXPacket(pos, i, dmxValues[i]));
-            }
+            TheatricalPacketHandler.INSTANCE.sendToAll(new SendDMXPacket(pos, dmxValues));
     }
 
     @Override
@@ -74,5 +74,9 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     @Override
     public void updateChannel(int index, int value) {
         this.dmxValues[index] = value;
+    }
+
+    public EnumFacing getLastSignalFrom() {
+        return lastSignalFrom;
     }
 }

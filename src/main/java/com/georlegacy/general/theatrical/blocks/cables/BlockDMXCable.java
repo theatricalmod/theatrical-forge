@@ -4,6 +4,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
+import com.georlegacy.general.theatrical.util.ChatUtils;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
@@ -12,11 +13,13 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -181,16 +184,18 @@ public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHa
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
         EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
-        if(playerIn.isSneaking() && !worldIn.isRemote){
-            if(worldIn.getTileEntity(pos) instanceof TileDMXCable){
-                TileDMXCable tileDMXCable = (TileDMXCable) worldIn.getTileEntity(pos);
-                if(tileDMXCable.getUniverse() != null) {
-                    System.out.println(tileDMXCable.getUniverse().getUuid().toString());
-                    System.out.println(tileDMXCable.getUniverse().getDMXChannels());
+        if(!worldIn.isRemote)
+            if(playerIn.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.STICK){
+                if(worldIn.getTileEntity(pos) instanceof TileDMXCable){
+                    TileDMXCable tileDMXCable = (TileDMXCable) worldIn.getTileEntity(pos);
+                    for(int i = 0; i < tileDMXCable.getData().length; i++){
+                        if(tileDMXCable.getData()[i] > 0){
+                            ChatUtils.sendNoSpamMessages(i, new TextComponentString("Channel #" + i  + ": " + tileDMXCable.getData()[i]));
+                        }
+                    }
                 }
+                return true;
             }
-            return true;
-        }
         return false;
     }
 }
