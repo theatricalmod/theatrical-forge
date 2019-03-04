@@ -121,12 +121,12 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public int getPan() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2);
+        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2)  * 360) / 255F);
     }
 
     @Override
     public int getTilt() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3);
+        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3)  * 180) / 255F) - 90;
     }
 
     @Override
@@ -137,5 +137,16 @@ public class TileMovingHead extends TileRGBFixture  {
     @Override
     public float getIntensity() {
         return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(0);
+    }
+
+    @Override
+    public void update() {
+        prevTilt = getTilt();
+        prevPan = getPan();
+    }
+
+    @Override
+    public int getColorHex() {
+        return (getRed() << 16) | (getGreen() << 8) | getBlue();
     }
 }
