@@ -7,6 +7,10 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+configurations {
+    shade
+    compile.extendsFrom shade
+}
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -64,6 +68,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     compileOnly "dan200.computercraft:ComputerCraft:1.80pr1-build5"
     compileOnly "MCMultiPart2:MCMultiPart:2.5.3"
+    shade files('libs/artnet4j.jar')
 }
 
 processResources {

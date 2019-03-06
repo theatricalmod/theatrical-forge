@@ -48,6 +48,16 @@ public class TileDMXCable extends TileEntity implements ITickable {
             public void updateChannel(int index, int value) {
                 TileDMXCable.this.data[index] = value;
             }
+
+            @Override
+            public void setDMXStartPoint(int dmxStartPoint) {
+
+            }
+
+            @Override
+            public void setChannelCount(int channelCount) {
+
+            }
         };
     }
 

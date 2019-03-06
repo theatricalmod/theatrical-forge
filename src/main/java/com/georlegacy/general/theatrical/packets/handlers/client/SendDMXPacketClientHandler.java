@@ -38,14 +38,17 @@ public class SendDMXPacketClientHandler implements IMessageHandler<SendDMXPacket
                 BlockPos blockPos = message.getBlockPos();
                 TileEntity tileFresnel = Minecraft
                     .getMinecraft().world.getTileEntity(blockPos);
-                if (tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)) {
-                    if(message.getData() != null){
-                        for(int i = 0; i < message.getData().length; i++){
-                            tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH).updateChannel(i, message.getData()[i]);
+                if(tileFresnel != null) {
+                    if (tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)) {
+                        if (message.getData() != null) {
+                            for (int i = 0; i < message.getData().length; i++) {
+                                tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH)
+                                    .updateChannel(i, message.getData()[i]);
+                            }
                         }
                     }
+                    tileFresnel.markDirty();
                 }
-                tileFresnel.markDirty();
                 world.notifyBlockUpdate(blockPos, world.getBlockState(blockPos), world.getBlockState(blockPos), 11);
                 Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
             });

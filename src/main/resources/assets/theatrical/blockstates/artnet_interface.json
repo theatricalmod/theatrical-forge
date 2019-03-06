@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "normal": {"model": "theatrical:artnet_interface"},
+    "inventory": {"model": "theatrical:artnet_interface"}
+  }
+}

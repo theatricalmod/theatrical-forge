@@ -16,19 +16,24 @@
 
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
-import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
+import com.georlegacy.general.theatrical.TheatricalMain;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
+import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -37,12 +42,27 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockMovingHead extends BlockDirectional implements ITileEntityProvider, IHasTileEntity {
+public class BlockMovingHead extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
 
+    public static final PropertyBool FLIPPED  = PropertyBool.create("flipped");
 
     public BlockMovingHead() {
         super("moving_head");
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
+        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        if (!worldIn.isRemote) {
+            if (!playerIn.isSneaking()) {
+                playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_MOVING_HEAD.getNid(), worldIn,
+                    pos.getX(), pos.getY(), pos.getZ());
+            }
+        }
+        return super
+            .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
     @Nullable

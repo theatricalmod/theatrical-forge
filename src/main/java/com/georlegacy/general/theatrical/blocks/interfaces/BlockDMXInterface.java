@@ -3,7 +3,7 @@ package com.georlegacy.general.theatrical.blocks.interfaces;
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.TileDMXInterface;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileDMXInterface;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.tileentity.TileEntity;

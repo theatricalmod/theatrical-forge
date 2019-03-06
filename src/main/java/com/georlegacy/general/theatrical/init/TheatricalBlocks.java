@@ -20,6 +20,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.cables.BlockDMXCable;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
+import com.georlegacy.general.theatrical.blocks.interfaces.BlockArtnetInterface;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockDMXInterface;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockLadderBar;
@@ -42,4 +43,5 @@ public class TheatricalBlocks {
 
     public static BlockDMXCable BLOCK_CABLE = new BlockDMXCable();
     public static BlockDMXInterface BLOCK_DMX_INTERFACE = new BlockDMXInterface();
+    public static BlockArtnetInterface BLOCK_ARTNET_INTERFACE = new BlockArtnetInterface();
 }

@@ -18,8 +18,7 @@ package com.georlegacy.general.theatrical.blocks.rigging;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyDirection;
@@ -54,11 +53,12 @@ public class BlockBar extends BlockBase {
         float hitZ) {
         if (!worldIn.isRemote) {
             if (Block
-                .getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IHasTileEntity) {
+                .getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IBarAttachable) {
                 if (playerIn.getHorizontalFacing().getAxis() == state.getValue(AXIS).getAxis()) {
                     worldIn.setBlockToAir(pos);
                     worldIn.setBlockState(pos,
-                        TheatricalBlocks.BLOCK_FRESNEL.getDefaultState().withProperty(
+                        Block
+                            .getBlockFromItem(playerIn.getHeldItem(hand).getItem()).getDefaultState().withProperty(
                             BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING,
                             playerIn.getHorizontalFacing()), 2);
                     return true;

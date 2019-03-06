@@ -28,8 +28,6 @@ import net.minecraft.util.math.MathHelper;
 
 public class TileMovingHead extends TileRGBFixture  {
 
-    private int channelStartPoint = 0;
-
     /**
      * 0 - Intensity
      * 1 - Focus
@@ -40,8 +38,18 @@ public class TileMovingHead extends TileRGBFixture  {
      * 6 - Blue
      */
 
+    /**
+     * 2 - Intensity
+     * 3 -Red
+     * 4 - green
+     * 5- blue
+     * 7 - Pan
+     * 9 - Tilt
+     * 13 - Focus
+     */
+
     public TileMovingHead() {
-        super(7, 0);
+        super(18, 0);
     }
 
     @Override
@@ -106,41 +114,42 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public int getRed() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(4);
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2);
     }
 
     @Override
     public int getGreen() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(5);
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3);
     }
 
     @Override
     public int getBlue() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6);
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(4);
     }
 
     @Override
     public int getPan() {
-        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2)  * 360) / 255F);
+        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6)  * 360) / 255F);
     }
 
     @Override
     public int getTilt() {
-        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3)  * 180) / 255F) - 90;
+        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(8)  * 180) / 255F) - 90;
     }
 
     @Override
     public int getFocus() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1);
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(12);
     }
 
     @Override
     public float getIntensity() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(0);
+        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1);
     }
 
     @Override
     public void update() {
+        super.update();
         prevTilt = getTilt();
         prevPan = getPan();
     }

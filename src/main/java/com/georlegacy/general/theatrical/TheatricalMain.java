@@ -28,11 +28,17 @@ import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
+import com.georlegacy.general.theatrical.packets.UpdateArtNetInterfacePacket;
+import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
 import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.packets.handlers.client.SendDMXPacketClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.client.UpdateArtNetInterfaceClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.client.UpdateDMXStartAddressClientHandler;
 import com.georlegacy.general.theatrical.packets.handlers.client.UpdateIlluminatorPacketClientHandler;
 import com.georlegacy.general.theatrical.packets.handlers.client.UpdateLightPacketClientHandler;
+import com.georlegacy.general.theatrical.packets.handlers.server.UpdateArtNetInterfaceServerHandler;
+import com.georlegacy.general.theatrical.packets.handlers.server.UpdateDMXStartAddressServerHandler;
 import com.georlegacy.general.theatrical.packets.handlers.server.UpdateIlluminatorPacketServerHandler;
 import com.georlegacy.general.theatrical.packets.handlers.server.UpdateLightPacketServerHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
@@ -124,6 +130,9 @@ public class TheatricalMain {
             .registerMessage(new UpdateIlluminatorPacketServerHandler(), UpdateIlluminatorPacket.class, 1,
                 Side.SERVER);
         TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateDMXStartAddressServerHandler(), UpdateDMXStartAddressPacket.class, 2,
+                Side.SERVER);
+        TheatricalPacketHandler.INSTANCE
             .registerMessage(new UpdateLightPacketClientHandler(), UpdateLightPacket.class, 3,
                 Side.CLIENT);
         TheatricalPacketHandler.INSTANCE
@@ -132,6 +141,15 @@ public class TheatricalMain {
         TheatricalPacketHandler.INSTANCE
             .registerMessage(new SendDMXPacketClientHandler(), SendDMXPacket.class, 5,
                 Side.CLIENT);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateDMXStartAddressClientHandler(), UpdateDMXStartAddressPacket.class, 6,
+                Side.CLIENT);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateArtNetInterfaceClientHandler(), UpdateArtNetInterfacePacket.class, 7,
+                Side.CLIENT);
+        TheatricalPacketHandler.INSTANCE
+            .registerMessage(new UpdateArtNetInterfaceServerHandler(), UpdateArtNetInterfacePacket.class, 8,
+                Side.SERVER);
         if (Loader.isModLoaded("computercraft")) {
             initComputer();
         }

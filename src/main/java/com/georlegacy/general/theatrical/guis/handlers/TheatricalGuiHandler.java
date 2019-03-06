@@ -1,9 +1,15 @@
 package com.georlegacy.general.theatrical.guis.handlers;
 
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
+import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerIntelligentFixture;
 import com.georlegacy.general.theatrical.guis.fixtures.gui.GuiFresnel;
+import com.georlegacy.general.theatrical.guis.fixtures.gui.GuiIntelligentFixture;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
+import com.georlegacy.general.theatrical.guis.interfaces.ContainerArtNetInterface;
+import com.georlegacy.general.theatrical.guis.interfaces.GuiArtNetInterface;
+import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +26,10 @@ public class TheatricalGuiHandler implements IGuiHandler {
             case FIXTURE_FRESNEL:
                 return new ContainerFresnel(player.inventory,
                     (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)));
+            case FIXTURE_MOVING_HEAD:
+                return new ContainerIntelligentFixture(player.inventory, (TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)));
+            case ARTNET_INTERFACE:
+                return new ContainerArtNetInterface(player.inventory, (TileArtNetInterface) world.getTileEntity(new BlockPos(x, y, z)));
             default:
                 return null;
         }
@@ -34,6 +44,10 @@ public class TheatricalGuiHandler implements IGuiHandler {
                 return new GuiFresnel(
                     (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)),
                     (ContainerFresnel) getServerGuiElement(id, player, world, x, y, z));
+            case FIXTURE_MOVING_HEAD:
+                return new GuiIntelligentFixture((TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)), (ContainerIntelligentFixture) getServerGuiElement(id, player, world, x, y, z));
+            case ARTNET_INTERFACE:
+                return new GuiArtNetInterface((TileArtNetInterface) world.getTileEntity(new BlockPos(x, y, z)), (ContainerArtNetInterface) getServerGuiElement(id, player, world, x,y,z));
             default:
                 return null;
         }

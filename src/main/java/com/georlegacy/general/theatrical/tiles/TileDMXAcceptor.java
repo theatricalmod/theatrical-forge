@@ -9,31 +9,25 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public abstract class TileDMXAcceptor extends TileFixture {
 
-
-    private int channelCount;
-    private int channelStartPoint;
-
     private final IDMXReceiver idmxReceiver;
 
     public TileDMXAcceptor(int channelCount, int channelStartPoint){
-        this.channelCount = channelCount;
-        this.channelStartPoint = channelStartPoint;
         this.idmxReceiver = new DMXReceiver(channelCount, channelStartPoint);
     }
 
     @Override
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
         nbtTagCompound = super.getNBT(nbtTagCompound);
-        nbtTagCompound.setInteger("channelCount", channelCount);
-        nbtTagCompound.setInteger("channelStartPoint", channelStartPoint);
+        nbtTagCompound.setInteger("channelCount", idmxReceiver.getChannelCount());
+        nbtTagCompound.setInteger("channelStartPoint", idmxReceiver.getStartPoint());
         return nbtTagCompound;
     }
 
     @Override
     public void readNBT(NBTTagCompound nbtTagCompound) {
         super.readNBT(nbtTagCompound);
-        channelCount = nbtTagCompound.getInteger("channelCount");
-        channelStartPoint = nbtTagCompound.getInteger("channelStartPoint");
+        idmxReceiver.setChannelCount(nbtTagCompound.getInteger("channelCount"));
+        idmxReceiver.setDMXStartPoint(nbtTagCompound.getInteger("channelStartPoint"));
     }
 
     @Override
@@ -51,5 +45,4 @@ public abstract class TileDMXAcceptor extends TileFixture {
         }
         return super.getCapability(capability, facing);
     }
-
 }

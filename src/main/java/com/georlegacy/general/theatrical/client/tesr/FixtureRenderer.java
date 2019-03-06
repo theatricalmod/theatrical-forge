@@ -57,14 +57,12 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         double distance = te.getDistance();
         float[] startPos = te.getBeamStartPosition();
         GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
-//        if (te.getIntensity() > 0) {
-            renderLightBeam(te, partialTicks, 0.4f, te.getBeamWidth(), distance,
+        if (te.getIntensity() > 0) {
+            renderLightBeam(te, partialTicks, (te.getIntensity() * 0.4f) / 255, te.getBeamWidth(), distance,
                 FixtureUtils.getColorFromTE(te));
-//        }
+        }
         GlStateManager.popMatrix();
     }
-
-
 
     @Override
     public boolean isGlobalRenderer(TileFixture te) {

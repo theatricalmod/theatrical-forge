@@ -2,6 +2,8 @@ package com.georlegacy.general.theatrical.guis.handlers.enumeration;
 
 public enum GUIID {
     FIXTURE_FRESNEL("fixture.fresnel", 0),
+    FIXTURE_MOVING_HEAD("fixture.moving_head", 1),
+    ARTNET_INTERFACE("artnet_interface", 2)
     ;
 
     private final String id;

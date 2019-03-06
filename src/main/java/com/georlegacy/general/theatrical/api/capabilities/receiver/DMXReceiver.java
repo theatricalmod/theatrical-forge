@@ -44,7 +44,9 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     @Override
     public void receiveDMXValues(int[] data, EnumFacing facing, World world, BlockPos pos) {
         lastSignalFrom = facing;
-        this.dmxValues = Arrays.copyOfRange(data, this.dmxStartPoint, this.dmxChannels);
+        if(data.length > this.dmxStartPoint) {
+            this.dmxValues = Arrays.copyOfRange(data, this.dmxStartPoint, this.dmxStartPoint + this.dmxChannels);
+        }
         if(!world.isRemote)
             TheatricalPacketHandler.INSTANCE.sendToAll(new SendDMXPacket(pos, dmxValues));
     }
@@ -59,13 +61,18 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
 
     }
 
-    public void setDmxStartPoint(int dmxStartPoint) {
+    public void setDMXStartPoint(int dmxStartPoint) {
         this.dmxStartPoint = dmxStartPoint;
     }
 
     @Override
+    public void setChannelCount(int channelCount) {
+        this.dmxChannels = channelCount;
+    }
+
+    @Override
     public int getChannel(int index) {
-        if(dmxValues.length < index || dmxValues.length == 0){
+        if(dmxValues.length < (index + 1) || dmxValues.length == 0){
             return 0;
         }
         return dmxValues[index];
@@ -79,4 +86,6 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     public EnumFacing getLastSignalFrom() {
         return lastSignalFrom;
     }
+
+
 }

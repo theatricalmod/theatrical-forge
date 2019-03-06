@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.tiles;
+package com.georlegacy.general.theatrical.tiles.interfaces;
 
 import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;

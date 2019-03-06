@@ -15,4 +15,8 @@ public interface IDMXReceiver {
     int getChannel(int index);
 
     void updateChannel(int index, int value);
+
+    void setDMXStartPoint(int dmxStartPoint);
+
+    void setChannelCount(int channelCount);
 }

@@ -30,6 +30,10 @@ public class DMXUniverse {
         dmxChannels[index] = value;
     }
 
+    public void setDmxChannels(int[] data){
+        dmxChannels = data;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
