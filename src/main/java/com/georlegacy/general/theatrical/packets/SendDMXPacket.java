@@ -26,19 +26,19 @@ public class SendDMXPacket implements IMessage {
     }
 
 
-    public SendDMXPacket(BlockPos blockPos, int[] data) {
+    public SendDMXPacket(BlockPos blockPos, byte[] data) {
         this.blockPos = blockPos;
         this.data =data;
     }
 
     private BlockPos blockPos;
-    private int[] data;
+    private byte[] data;
 
     public BlockPos getBlockPos() {
         return blockPos;
     }
 
-    public int[] getData() {
+    public byte[] getData() {
         return data;
     }
 
@@ -48,12 +48,7 @@ public class SendDMXPacket implements IMessage {
         int y = buf.readInt();
         int z = buf.readInt();
         blockPos = new BlockPos(x, y, z);
-        int length = buf.readInt();
-        int[] data = new int[length];
-        for(int i = 0; i < length; i++){
-            data[i] = buf.readInt();
-        }
-        this.data = data;
+        buf.readBytes(data);
     }
 
     @Override
@@ -61,10 +56,7 @@ public class SendDMXPacket implements IMessage {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
-        buf.writeInt(data.length);
-        for(int i = 0; i < data.length; i++){
-            buf.writeInt(data[i]);
-        }
+        buf.writeBytes(data);
     }
 
 }

@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 
 public interface IDMXProvider {
 
-    int[] sendDMXValues(DMXUniverse dmxUniverse);
+    byte[] sendDMXValues(DMXUniverse dmxUniverse);
 
     DMXUniverse getUniverse(World world);
 

@@ -12,4 +12,5 @@ public class TheatricalModels {
     public static IBakedModel MOVING_HEAD_STATIC;
     public static IBakedModel MOVING_HEAD_PAN;
     public static IBakedModel MOVING_HEAD_TILT;
+    public static IBakedModel MOVING_HEAD_BAR;
 }

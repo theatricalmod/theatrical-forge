@@ -59,7 +59,7 @@ public class TileDMXInterface extends TileEntity implements IPeripheral {
         throws LuaException, InterruptedException {
         switch (method) {
             case 0:
-                this.idmxProvider.getUniverse(world).setChannel(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
+                this.idmxProvider.getUniverse(world).setChannel(((Number) args[0]).intValue(), ((Number) args[1]).byteValue());
                 this.sendDMXSignal(((Number) args[0]).intValue(), ((Number) args[1]).intValue());
                 break;
             case 1:

@@ -5,14 +5,14 @@ import java.util.UUID;
 public class DMXUniverse {
 
     private UUID uuid;
-    private int[] dmxChannels;
+    private byte[] dmxChannels;
 
     public DMXUniverse() {
         this.uuid = UUID.randomUUID();
-        this.dmxChannels = new int[512];
+        this.dmxChannels = new byte[512];
     }
 
-    public int[] getDMXChannels(){
+    public byte[] getDMXChannels(){
         return dmxChannels;
     }
 
@@ -23,14 +23,11 @@ public class DMXUniverse {
         return dmxChannels[index];
     }
 
-    public void setChannel(int index, int value){
-        if(value < 0 || value > 255){
-            throw new DMXValueOutOfBoundsException("Values can only be between 0 and 255");
-        }
+    public void setChannel(int index, byte value){
         dmxChannels[index] = value;
     }
 
-    public void setDmxChannels(int[] data){
+    public void setDmxChannels(byte[] data){
         dmxChannels = data;
     }
 

@@ -42,18 +42,18 @@ public class BlockDirectional extends BlockBase {
             state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
     }
 
-        @Override
-        public IBlockState getStateFromMeta(int meta) {
-            return getDefaultState().withProperty(FACING, EnumFacing.byIndex((meta & 3) + 2));
-        }
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.byIndex((meta & 3) + 2));
+    }
 
-        @Override
-        public int getMetaFromState(IBlockState state) {
-            return state.getValue(FACING).getIndex() - 2;
-        }
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(FACING).getIndex() - 2;
+    }
 
-        @Override
-        protected BlockStateContainer createBlockState() {
-            return new BlockStateContainer(this, FACING);
-        }
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING);
+    }
 }

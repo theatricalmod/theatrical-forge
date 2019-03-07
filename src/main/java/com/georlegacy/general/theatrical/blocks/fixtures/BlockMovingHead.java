@@ -28,7 +28,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -44,7 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockMovingHead extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
 
-    public static final PropertyBool FLIPPED  = PropertyBool.create("flipped");
+    public static final PropertyBool FLIPPED = PropertyBool.create("flipped");
 
     public BlockMovingHead() {
         super("moving_head");
@@ -63,6 +65,14 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
         }
         return super
             .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+    }
+
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing,
+        float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FLIPPED,
+            facing.getOpposite() == EnumFacing.UP);
     }
 
     @Nullable
@@ -129,5 +139,31 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
             }
         }
         return super.getLightValue(state, world, pos);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta)).withProperty(FLIPPED, (meta & 4) != 0).withProperty(ON_BAR, (meta & 8) != 0);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        int i = 0;
+        i = i | (state.getValue(FACING)).getHorizontalIndex();
+
+        if (state.getValue(FLIPPED))
+        {
+            i |= 4;
+        }
+        if (state.getValue(ON_BAR))
+        {
+            i |= 8;
+        }
+        return i;
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING, FLIPPED, ON_BAR);
     }
 }

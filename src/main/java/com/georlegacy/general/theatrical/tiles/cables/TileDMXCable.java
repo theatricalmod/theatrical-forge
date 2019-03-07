@@ -14,7 +14,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class TileDMXCable extends TileEntity implements ITickable {
 
-    private int[] data = new int[512];
+    private byte[] data = new byte[512];
     private EnumFacing lastSignalFrom;
     private final IDMXReceiver idmxReceiver;
 
@@ -33,19 +33,19 @@ public class TileDMXCable extends TileEntity implements ITickable {
             }
 
             @Override
-            public void receiveDMXValues(int[] data, EnumFacing facing, World world, BlockPos pos) {
+            public void receiveDMXValues(byte[] data, EnumFacing facing, World world, BlockPos pos) {
                 TileDMXCable.this.data = data;
                 TileDMXCable.this.lastSignalFrom = facing;
                 TileDMXCable.this.sendSignal();
             }
 
             @Override
-            public int getChannel(int index) {
+            public byte getChannel(int index) {
                 return TileDMXCable.this.data[index];
             }
 
             @Override
-            public void updateChannel(int index, int value) {
+            public void updateChannel(int index, byte value) {
                 TileDMXCable.this.data[index] = value;
             }
 
@@ -159,7 +159,7 @@ public class TileDMXCable extends TileEntity implements ITickable {
         sendSignal();
     }
 
-    public int[] getData() {
+    public byte[] getData() {
         return data;
     }
 }

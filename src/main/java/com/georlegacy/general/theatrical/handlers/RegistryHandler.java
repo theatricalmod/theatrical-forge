@@ -143,6 +143,7 @@ public class RegistryHandler {
         TheatricalModels.MOVING_HEAD_STATIC = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_static"));
         TheatricalModels.MOVING_HEAD_PAN = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_pan"));
         TheatricalModels.MOVING_HEAD_TILT = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_tilt"));
+        TheatricalModels.MOVING_HEAD_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_bar"));
     }
 
 }

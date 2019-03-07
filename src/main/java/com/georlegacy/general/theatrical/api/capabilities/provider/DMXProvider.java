@@ -21,7 +21,7 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public int[] sendDMXValues(DMXUniverse dmxUniverse) {
+    public byte[] sendDMXValues(DMXUniverse dmxUniverse) {
         return dmxUniverse.getDMXChannels();
     }
 

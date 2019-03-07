@@ -104,12 +104,16 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
 
 
 
-    public void sendDMXSignal(int[] values){
+    public void sendDMXSignal(byte[] values){
         for(EnumFacing facing : EnumFacing.VALUES){
             TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
             if(tileEntity != null){
                 if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                    tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()).receiveDMXValues(values, facing.getOpposite(), world, tileEntity.getPos());
+                    if(tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()) != null) {
+                        tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite())
+                            .receiveDMXValues(values, facing.getOpposite(), world,
+                                tileEntity.getPos());
+                    }
                 }
             }
         }
@@ -174,10 +178,6 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        ticks++;
-        if(ticks < 10){
-            return;
-        }
         if(errored){
             return;
         }
@@ -186,14 +186,8 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
                 return;
             }
         }
-        ticks = 0;
         byte[] data = ArtnetHandler.getClient().readDmxData(subnet, universe);
-        int[] values = new int[512];
-        for(int i = 0; i < data.length; i++){
-            int value = (data[i] & 0xFF);
-            values[i] = value;
-        }
-        this.idmxProvider.getUniverse(world).setDmxChannels(values);
-        sendDMXSignal(this.idmxProvider.getUniverse(world).getDMXChannels());
+        this.idmxProvider.getUniverse(world).setDmxChannels(data);
+        sendDMXSignal(data);
     }
 }

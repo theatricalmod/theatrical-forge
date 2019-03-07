@@ -19,6 +19,7 @@ package com.georlegacy.general.theatrical.tiles.fixtures;
 import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.tiles.TileRGBFixture;
 import net.minecraft.block.Block;
@@ -69,6 +70,10 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public IBakedModel getStaticModel() {
+        Block block = getWorld().getBlockState(pos).getBlock();
+        if(block instanceof IBarAttachable && ((IBarAttachable) block).isOnBar(world, pos)){
+            return TheatricalModels.MOVING_HEAD_BAR;
+        }
         return TheatricalModels.MOVING_HEAD_STATIC;
     }
 
@@ -114,37 +119,45 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public int getRed() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2);
+        return convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(2));
     }
 
     @Override
     public int getGreen() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3);
+        return convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(3));
     }
 
     @Override
     public int getBlue() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(4);
+        return convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(4));
     }
 
     @Override
     public int getPan() {
-        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6)  * 360) / 255F);
+        return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6))  * 360) / 255F);
     }
 
     @Override
     public int getTilt() {
-        return (int) ((getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(8)  * 180) / 255F) - 90;
+        return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(8)) * 180) / 255F) - 90;
     }
 
     @Override
     public int getFocus() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(12);
+        return convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(12));
     }
 
     @Override
     public float getIntensity() {
-        return getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1);
+        return convertByte(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1));
+    }
+
+    public float convertByte(byte val){
+        return val & 0xFF;
+    }
+
+    public int convertByteToInt(byte val){
+        return val & 0xFF;
     }
 
     @Override

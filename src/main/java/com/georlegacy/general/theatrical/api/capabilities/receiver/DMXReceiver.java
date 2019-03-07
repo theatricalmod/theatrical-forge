@@ -18,13 +18,13 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
 
     private int dmxStartPoint;
     private int dmxChannels;
-    private int[] dmxValues;
+    private byte[] dmxValues;
     private EnumFacing lastSignalFrom;
 
     public DMXReceiver(int dmxChannels, int dmxStartPoint){
         this.dmxChannels = dmxChannels;
         this.dmxStartPoint = dmxStartPoint;
-        this.dmxValues = new int[dmxChannels];
+        this.dmxValues = new byte[dmxChannels];
     }
 
     @Override
@@ -37,12 +37,12 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
         return dmxStartPoint;
     }
 
-    public int getDMXChannel(int channel){
+    public byte getDMXChannel(int channel){
         return dmxValues[channel];
     }
 
     @Override
-    public void receiveDMXValues(int[] data, EnumFacing facing, World world, BlockPos pos) {
+    public void receiveDMXValues(byte[] data, EnumFacing facing, World world, BlockPos pos) {
         lastSignalFrom = facing;
         if(data.length > this.dmxStartPoint) {
             this.dmxValues = Arrays.copyOfRange(data, this.dmxStartPoint, this.dmxStartPoint + this.dmxChannels);
@@ -71,7 +71,7 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public int getChannel(int index) {
+    public byte getChannel(int index) {
         if(dmxValues.length < (index + 1) || dmxValues.length == 0){
             return 0;
         }
@@ -79,7 +79,7 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     }
 
     @Override
-    public void updateChannel(int index, int value) {
+    public void updateChannel(int index, byte value) {
         this.dmxValues[index] = value;
     }
 

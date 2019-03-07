@@ -10,11 +10,11 @@ public interface IDMXReceiver {
 
     int getStartPoint();
 
-    void receiveDMXValues(int[] data, EnumFacing facing, World world, BlockPos pos);
+    void receiveDMXValues(byte[] data, EnumFacing facing, World world, BlockPos pos);
 
-    int getChannel(int index);
+    byte getChannel(int index);
 
-    void updateChannel(int index, int value);
+    void updateChannel(int index, byte value);
 
     void setDMXStartPoint(int dmxStartPoint);
 
