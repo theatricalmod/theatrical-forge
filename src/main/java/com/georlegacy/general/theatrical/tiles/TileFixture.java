@@ -203,7 +203,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         float tilt = getTilt() + getDefaultRotation();
         Vec3d look = getVectorForRotation(-tilt, lookingAngle);
         double distance = getMaxLightDistance();
-        BlockPos start = pos.add( 0.5 + (look.x * 0.7) , 0.5 + (look.y * 0.7), 0.5 + (look.z * 0.7));
+        BlockPos start = pos.add( 0.5 + (look.x * 0.65) , 0.5 + (look.y * 0.65), 0.5 + (look.z * 0.65));
         BlockPos blockPos = start.add(look.x * distance, look.y * distance, look.z * distance);
         RayTraceResult result = world
             .rayTraceBlocks(new Vec3d(start), new Vec3d(blockPos), false, true, false);
@@ -245,7 +245,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         if (getLightBlock() != null && getLightBlock() != lightPos && world.getBlockState(getLightBlock()) instanceof BlockIlluminator) {
             world.setBlockToAir(getLightBlock());
         }
-        if(world.getBlockState(blockPos) != null && (!(world.getBlockState(blockPos).getBlock() instanceof BlockAir) || !(world.getBlockState(blockPos).getBlock() instanceof BlockIlluminator))){
+        if((!(world.getBlockState(blockPos).getBlock() instanceof BlockAir) && !(world.getBlockState(blockPos).getBlock() instanceof BlockIlluminator))){
             return distance;
         }
         setLightBlock(lightPos);

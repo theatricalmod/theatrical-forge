@@ -1,5 +1,7 @@
 package com.georlegacy.general.theatrical.tiles.cables;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,10 +35,8 @@ public class TileDMXCable extends TileEntity implements ITickable {
             }
 
             @Override
-            public void receiveDMXValues(byte[] data, EnumFacing facing, World world, BlockPos pos) {
+            public void receiveDMXValues(byte[] data, World world, BlockPos pos) {
                 TileDMXCable.this.data = data;
-                TileDMXCable.this.lastSignalFrom = facing;
-                TileDMXCable.this.sendSignal();
             }
 
             @Override
@@ -101,7 +101,8 @@ public class TileDMXCable extends TileEntity implements ITickable {
         if(tileEntity instanceof TileDMXCable){
             return true;
         }
-        if(tileEntity.hasCapability(DMXReceiver.CAP, enumFacing.getOpposite())){
+        if(tileEntity.hasCapability(DMXReceiver.CAP, enumFacing.getOpposite()) || tileEntity.hasCapability(
+            DMXProvider.CAP, enumFacing.getOpposite())){
             return true;
         }
         return false;
@@ -123,43 +124,34 @@ public class TileDMXCable extends TileEntity implements ITickable {
         return super.getCapability(capability, facing);
     }
 
-    public void sendSignal(){
-        for(EnumFacing facing: EnumFacing.VALUES){
-            if(facing == lastSignalFrom){
-                continue;
-            }
-            BlockPos pos1 = pos.offset(facing);
-            TileEntity tileEntity = world.getTileEntity(pos1);
-            if(tileEntity == null){
-                continue;
-            } else if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                if(tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()) instanceof IDMXReceiver){
-                    IDMXReceiver receiver = tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite());
-                    if(receiver == null){
-                        continue;
-                    }
-                    receiver.receiveDMXValues(data, facing.getOpposite(), world, pos1);
-                    tileEntity.markDirty();
-                    world.notifyBlockUpdate(pos1, world.getBlockState(pos1), world.getBlockState(pos1), 11);
-                }
-            }
-        }
+    public byte[] getData() {
+        return data;
     }
 
     @Override
     public void update() {
-        if (world.isRemote) {
-            return;
-        }
-        ticks++;
-        if(ticks < 3){
-            return;
-        }
-        ticks = 0;
-        sendSignal();
+
     }
 
-    public byte[] getData() {
-        return data;
+    @Override
+    public void invalidate()
+    {
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+
+        super.invalidate();
+    }
+
+    @Override
+    public void setWorld(World world)
+    {
+        super.setWorld(world);
+
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
     }
 }

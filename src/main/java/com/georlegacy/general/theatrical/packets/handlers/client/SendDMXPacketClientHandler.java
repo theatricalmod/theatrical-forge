@@ -42,7 +42,7 @@ public class SendDMXPacketClientHandler implements IMessageHandler<SendDMXPacket
                     if (tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.NORTH)) {
                         if (message.getData() != null) {
                             for (int i = 0; i < message.getData().length; i++) {
-                                tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH)
+                                 tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH)
                                     .updateChannel(i, message.getData()[i]);
                             }
                         }

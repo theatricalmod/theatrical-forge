@@ -7,8 +7,10 @@ import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
 import com.georlegacy.general.theatrical.util.ChatUtils;
 import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -197,5 +199,28 @@ public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHa
                 return true;
             }
         return false;
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(world, pos, neighbor);
+    }
+
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        IBlockState downState = worldIn.getBlockState(pos.down());
+        return downState.isTopSolid() || downState.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID;
+    }
+
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        if (!worldIn.isRemote)
+        {
+            if (!this.canPlaceBlockAt(worldIn, pos))
+            {
+                this.dropBlockAsItem(worldIn, pos, state, 0);
+                worldIn.destroyBlock(pos, false);
+            }
+        }
     }
 }

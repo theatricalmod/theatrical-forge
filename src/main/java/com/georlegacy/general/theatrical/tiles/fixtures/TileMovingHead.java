@@ -44,7 +44,7 @@ public class TileMovingHead extends TileRGBFixture  {
      * 3 -Red
      * 4 - green
      * 5- blue
-     * 7 - Pan
+     * 8 - Pan
      * 9 - Tilt
      * 13 - Focus
      */

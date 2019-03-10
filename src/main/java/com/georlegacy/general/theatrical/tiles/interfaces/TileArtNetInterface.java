@@ -1,9 +1,9 @@
 package com.georlegacy.general.theatrical.tiles.interfaces;
 
 import ch.bildspur.artnet.ArtNetClient;
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import com.georlegacy.general.theatrical.handlers.ArtnetHandler;
 import java.net.InetAddress;
@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 public class TileArtNetInterface extends TileEntity implements ITickable {
@@ -88,7 +89,7 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == DMXReceiver.CAP) {
+        if (capability == DMXProvider.CAP) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -102,21 +103,8 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
         return super.getCapability(capability, facing);
     }
 
-
-
-    public void sendDMXSignal(byte[] values){
-        for(EnumFacing facing : EnumFacing.VALUES){
-            TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
-            if(tileEntity != null){
-                if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                    if(tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()) != null) {
-                        tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite())
-                            .receiveDMXValues(values, facing.getOpposite(), world,
-                                tileEntity.getPos());
-                    }
-                }
-            }
-        }
+    public void sendDMXSignal(){
+        WorldDMXNetwork.getCapability(world).updateDevices();
     }
 
     public int getSubnet() {
@@ -171,13 +159,11 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
     }
 
     @Override
-    public void invalidate() {
-        disconnectClient();
-        super.invalidate();
-    }
-
-    @Override
     public void update() {
+        if(world.isRemote)
+        {
+            return;
+        }
         if(errored){
             return;
         }
@@ -188,6 +174,29 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
         }
         byte[] data = ArtnetHandler.getClient().readDmxData(subnet, universe);
         this.idmxProvider.getUniverse(world).setDmxChannels(data);
-        sendDMXSignal(data);
+        sendDMXSignal();
+    }
+
+    @Override
+    public void invalidate()
+    {
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+
+        disconnectClient();
+        super.invalidate();
+    }
+
+    @Override
+    public void setWorld(World world)
+    {
+        super.setWorld(world);
+
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
     }
 }

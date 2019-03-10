@@ -1,10 +1,12 @@
 package com.georlegacy.general.theatrical.tiles;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 public abstract class TileDMXAcceptor extends TileFixture {
@@ -44,5 +46,27 @@ public abstract class TileDMXAcceptor extends TileFixture {
             return DMXReceiver.CAP.cast(idmxReceiver);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void invalidate()
+    {
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+
+        super.invalidate();
+    }
+
+    @Override
+    public void setWorld(World world)
+    {
+        super.setWorld(world);
+
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
     }
 }

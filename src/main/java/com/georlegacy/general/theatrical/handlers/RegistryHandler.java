@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.api.IHasModel;
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.client.models.ModelCableLoader;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
@@ -34,15 +35,18 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -53,6 +57,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod.EventBusSubscriber
 public class RegistryHandler {
     private static final ResourceLocation LOC = new ResourceLocation("theatrical:mcmp");
+    private static final ResourceLocation WORLD_CAP_ID = new ResourceLocation(Reference.MOD_ID, "dmx_world_network");
 
 
     @SubscribeEvent
@@ -144,6 +149,21 @@ public class RegistryHandler {
         TheatricalModels.MOVING_HEAD_PAN = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_pan"));
         TheatricalModels.MOVING_HEAD_TILT = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_tilt"));
         TheatricalModels.MOVING_HEAD_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_bar"));
+    }
+
+    @SubscribeEvent
+    public static void attachWorldCap(AttachCapabilitiesEvent<World> event)
+    {
+        event.addCapability(WORLD_CAP_ID, new WorldDMXNetwork(event.getObject()));
+    }
+
+    @SubscribeEvent
+    public static void tickServerWorld(TickEvent.WorldTickEvent event)
+    {
+        if (event.phase == TickEvent.Phase.END)
+        {
+            WorldDMXNetwork.getCapability(event.world).tick();
+        }
     }
 
 }

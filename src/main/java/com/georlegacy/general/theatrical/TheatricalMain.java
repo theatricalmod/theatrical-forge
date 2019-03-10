@@ -22,6 +22,7 @@ import static com.georlegacy.general.theatrical.util.Reference.MOD_ID;
 import static com.georlegacy.general.theatrical.util.Reference.NAME;
 import static com.georlegacy.general.theatrical.util.Reference.VERSION;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
@@ -111,6 +112,20 @@ public class TheatricalMain {
                 {
                     ((INBTSerializable) instance).deserializeNBT(nbt);
                 }
+            }
+        }, () -> null);
+
+        CapabilityManager.INSTANCE.register(WorldDMXNetwork.class, new IStorage<WorldDMXNetwork>() {
+            @Nullable
+            @Override
+            public NBTBase writeNBT(Capability<WorldDMXNetwork> capability, WorldDMXNetwork instance,
+                EnumFacing side) {
+                return null;
+            }
+
+            @Override
+            public void readNBT(Capability<WorldDMXNetwork> capability, WorldDMXNetwork instance,
+                EnumFacing side, NBTBase nbt) {
             }
         }, () -> null);
     }

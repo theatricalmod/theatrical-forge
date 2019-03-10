@@ -1,8 +1,8 @@
 package com.georlegacy.general.theatrical.tiles.interfaces;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional.Interface;
 
@@ -26,7 +27,7 @@ public class TileDMXInterface extends TileEntity implements IPeripheral {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == DMXReceiver.CAP) {
+        if (capability == DMXProvider.CAP) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -74,13 +75,28 @@ public class TileDMXInterface extends TileEntity implements IPeripheral {
     }
 
     public void sendDMXSignal(int channel, int value){
-        for(EnumFacing facing : EnumFacing.VALUES){
-            TileEntity  tileEntity = world.getTileEntity(pos.offset(facing));
-            if(tileEntity != null){
-                if(tileEntity.hasCapability(DMXReceiver.CAP, facing.getOpposite())){
-                    tileEntity.getCapability(DMXReceiver.CAP, facing.getOpposite()).receiveDMXValues(this.idmxProvider.getUniverse(world).getDMXChannels(), facing.getOpposite(), world, tileEntity.getPos());
-                }
-            }
+        WorldDMXNetwork.getCapability(world).updateDevices();
+    }
+
+    @Override
+    public void invalidate()
+    {
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+
+        super.invalidate();
+    }
+
+    @Override
+    public void setWorld(World world)
+    {
+        super.setWorld(world);
+
+        if (hasWorld())
+        {
+            WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
         }
     }
 }
