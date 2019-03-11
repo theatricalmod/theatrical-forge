@@ -16,24 +16,13 @@
 
 package com.georlegacy.general.theatrical.proxy;
 
-/**
- * Client Proxy for Theatrical
- *
- * @author James Conway
- */
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
+
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void registerModelBakeryVariants() {
+    public World getWorld() {
+        return Minecraft.getMinecraft().world;
     }
-
-    @Override
-    public void registerColorBlocks() {
-    }
-
-    @Override
-    public void preInit() {
-    }
-
-
 }

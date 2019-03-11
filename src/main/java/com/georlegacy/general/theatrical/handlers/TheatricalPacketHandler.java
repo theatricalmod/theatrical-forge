@@ -16,13 +16,60 @@
 
 package com.georlegacy.general.theatrical.handlers;
 
+import com.georlegacy.general.theatrical.packets.SendDMXPacket;
+import com.georlegacy.general.theatrical.packets.UpdateArtNetInterfacePacket;
+import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
+import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
+import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class TheatricalPacketHandler {
 
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(
-        Reference.MOD_ID);
+    public static SimpleNetworkWrapper INSTANCE;
+
+
+    public static void init() {
+        INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(
+            Reference.MOD_ID);
+        INSTANCE
+            .registerMessage(new UpdateLightPacket.ServerHandler(), UpdateLightPacket.class, 0,
+                Side.SERVER);
+        INSTANCE
+            .registerMessage(new UpdateIlluminatorPacket.ServerHandler(),
+                UpdateIlluminatorPacket.class, 1,
+                Side.SERVER);
+        INSTANCE
+            .registerMessage(new UpdateDMXStartAddressPacket.ServerHandler(),
+                UpdateDMXStartAddressPacket.class, 2,
+                Side.SERVER);
+        INSTANCE
+            .registerMessage(new UpdateArtNetInterfacePacket.ServerHandler(),
+                UpdateArtNetInterfacePacket.class, 8,
+                Side.SERVER);
+    }
+
+    public static void clientInit(){
+        INSTANCE
+            .registerMessage(new UpdateLightPacket.ClientHandler(), UpdateLightPacket.class, 3,
+                Side.CLIENT);
+        INSTANCE
+            .registerMessage(new UpdateIlluminatorPacket.ClientHandler(),
+                UpdateIlluminatorPacket.class, 4,
+                Side.CLIENT);
+        INSTANCE
+            .registerMessage(new SendDMXPacket.ClientHandler(), SendDMXPacket.class, 5,
+                Side.CLIENT);
+        INSTANCE
+            .registerMessage(new UpdateDMXStartAddressPacket.ClientHandler(),
+                UpdateDMXStartAddressPacket.class, 6,
+                Side.CLIENT);
+        INSTANCE
+            .registerMessage(new UpdateArtNetInterfacePacket.ClientHandler(),
+                UpdateArtNetInterfacePacket.class, 7,
+                Side.CLIENT);
+    }
 
 }

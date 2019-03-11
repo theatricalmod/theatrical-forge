@@ -16,10 +16,17 @@
 
 package com.georlegacy.general.theatrical.packets;
 
+import com.georlegacy.general.theatrical.TheatricalMain;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class UpdateArtNetInterfacePacket implements IMessage {
 
@@ -76,4 +83,48 @@ public class UpdateArtNetInterfacePacket implements IMessage {
         buf.writeInt(pos.getZ());
     }
 
+    public static class ServerHandler implements IMessageHandler<UpdateArtNetInterfacePacket, IMessage>{
+
+        @Override
+        public IMessage onMessage(UpdateArtNetInterfacePacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateArtNetInterfacePacket message, MessageContext ctx){
+            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+                World world = ctx.getServerHandler().player.world;
+                BlockPos blockPos = message.getPos();
+                TileArtNetInterface tileFresnel = (TileArtNetInterface) world
+                    .getTileEntity(blockPos);
+                tileFresnel.setSubnet(message.getSubnet());
+                tileFresnel.setUniverse(message.getUniverse());
+                tileFresnel.setIp(message.getIp());
+                world.markChunkDirty(blockPos, tileFresnel);
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateArtNetInterfacePacket(message.getSubnet(), message.getUniverse(), message.getIp(), tileFresnel.getPos()));
+            });
+        }
+    }
+
+    public static class ClientHandler implements IMessageHandler<UpdateArtNetInterfacePacket, IMessage>{
+
+        @Override
+        public IMessage onMessage(UpdateArtNetInterfacePacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateArtNetInterfacePacket message, MessageContext ctx){
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                World world = TheatricalMain.proxy.getWorld();
+                BlockPos blockPos = message.getPos();
+                TileArtNetInterface tileFresnel = (TileArtNetInterface) world.getTileEntity(blockPos);
+                tileFresnel.setSubnet(message.getSubnet());
+                tileFresnel.setUniverse(message.getUniverse());
+                tileFresnel.setIp(message.getIp());
+                world.markChunkDirty(blockPos, tileFresnel);
+            });
+        }
+    }
 }

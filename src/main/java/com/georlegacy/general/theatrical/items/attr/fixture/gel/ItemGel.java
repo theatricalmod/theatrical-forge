@@ -16,18 +16,14 @@
 
 package com.georlegacy.general.theatrical.items.attr.fixture.gel;
 
-import com.georlegacy.general.theatrical.api.IHasModel;
-import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tabs.GelsTab;
 import javax.annotation.Nonnull;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemGel extends Item implements IHasModel {
+public class ItemGel extends Item {
 
     public ItemGel() {
         this
@@ -45,7 +41,6 @@ public class ItemGel extends Item implements IHasModel {
         return this.getTranslationKey() + "." + GelType.getGelType(stack.getMetadata()).getId();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (!(tab instanceof GelsTab)) {
@@ -66,14 +61,4 @@ public class ItemGel extends Item implements IHasModel {
         GelType gelType = GelType.getGelType(stack.getMetadata());
         return this.getTranslationKey() + "." + gelType.getId();
     }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void registerModels() {
-        for (GelType gelType : GelType.values()) {
-            TheatricalItems
-                .registerItemRenderer(TheatricalItems.ITEM_GEL, gelType.getId(), "gel/gel_0");
-        }
-    }
-
 }

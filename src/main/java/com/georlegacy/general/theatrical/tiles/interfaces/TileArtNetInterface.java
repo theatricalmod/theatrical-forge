@@ -6,10 +6,10 @@ import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import com.georlegacy.general.theatrical.handlers.ArtnetHandler;
+import com.georlegacy.general.theatrical.util.ArtnetThread;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.annotation.Nullable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -132,10 +132,8 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
             client.stop();
         }
         try {
-            InetAddress address = InetAddress.getByName(ip);
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                client.start(address);
-            });
+            InetAddress.getByName(ip);
+            new ArtnetThread(ip, client).start();
             errored = false;
         } catch (UnknownHostException e) {
             e.printStackTrace();

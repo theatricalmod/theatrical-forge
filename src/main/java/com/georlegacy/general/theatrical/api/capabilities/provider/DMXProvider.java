@@ -72,7 +72,7 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
 
             HashMap<IDMXReceiver, BlockPos> receivers = new HashMap<>();
             for(EnumFacing facing : EnumFacing.VALUES){
-                addToList(receivers, world, controllerPos.offset(facing), facing);
+                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite());
             }
             devices = new HashMap<>(receivers);
         }

@@ -16,17 +16,12 @@
 
 package com.georlegacy.general.theatrical.proxy;
 
-/**
- * Common Proxy for Theatrical
- *
- * @author James Conway
- */
-public abstract class CommonProxy {
+import net.minecraft.world.World;
 
-    public abstract void registerModelBakeryVariants();
+public class CommonProxy {
 
-    public abstract void registerColorBlocks();
-
-    public abstract void preInit();
+    public World getWorld(){
+        return null;
+    }
 
 }

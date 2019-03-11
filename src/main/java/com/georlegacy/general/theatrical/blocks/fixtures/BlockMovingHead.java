@@ -19,7 +19,6 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
@@ -40,9 +39,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockMovingHead extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
 
@@ -103,7 +99,6 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess worldIn, BlockPos pos,
         EnumFacing side) {
         return false;
@@ -113,12 +108,6 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0, 0, 1, 1.1, 1);
         return axisAlignedBB;
-    }
-
-    @Override
-    public void registerModels() {
-        super.registerModels();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
     }
 
     @Override

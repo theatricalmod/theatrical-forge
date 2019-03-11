@@ -20,13 +20,9 @@ import com.georlegacy.general.theatrical.armor.utility.FixtureDetailHelmetItem;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
-import com.georlegacy.general.theatrical.util.Reference;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 
 /**
  * Item store for Theatrical items
@@ -51,12 +47,6 @@ public class TheatricalItems {
         ITEMS.add(ITEM_BLANK_GOBO);
 
         ITEMS.add(ITEM_FIXTURE_DETAIL_HELMET);
-    }
-
-    public static void registerItemRenderer(Item item, int meta, String fileName) {
-        ModelLoader.setCustomModelResourceLocation(item, meta,
-            new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, fileName),
-                "inventory"));
     }
 
 

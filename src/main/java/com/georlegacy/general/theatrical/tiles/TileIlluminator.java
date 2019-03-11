@@ -9,12 +9,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface = "elucent.albedo.lighting.ILightProvider", modid = "albedo")
-public class TileIlluminator extends TileEntity implements ILightProvider {
+public class TileIlluminator extends TileEntity implements ILightProvider, ITickable {
 
     private BlockPos controller;
 
@@ -114,5 +115,24 @@ public class TileIlluminator extends TileEntity implements ILightProvider {
         return Light.builder().pos(pos)
             .color(r, g, b, ((tileFresnel.getIntensity() * 0.009F) / 255))
             .radius(Math.max(value / 2, 1)).build();
+    }
+
+    @Override
+    public void update() {
+        if(!world.isRemote) {
+            if (controller != null) {
+                TileEntity tileEntity = world.getTileEntity(controller);
+                if (tileEntity instanceof TileFixture) {
+                    TileFixture fixture = (TileFixture) tileEntity;
+                    if (!pos.equals(fixture.getLightBlock())) {
+                        world.setBlockToAir(pos);
+                    }
+                } else {
+                    world.setBlockToAir(pos);
+                }
+            } else {
+                world.setBlockToAir(pos);
+            }
+        }
     }
 }

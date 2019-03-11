@@ -28,20 +28,6 @@ import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
-import com.georlegacy.general.theatrical.packets.SendDMXPacket;
-import com.georlegacy.general.theatrical.packets.UpdateArtNetInterfacePacket;
-import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
-import com.georlegacy.general.theatrical.packets.UpdateIlluminatorPacket;
-import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.packets.handlers.client.SendDMXPacketClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.client.UpdateArtNetInterfaceClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.client.UpdateDMXStartAddressClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.client.UpdateIlluminatorPacketClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.client.UpdateLightPacketClientHandler;
-import com.georlegacy.general.theatrical.packets.handlers.server.UpdateArtNetInterfaceServerHandler;
-import com.georlegacy.general.theatrical.packets.handlers.server.UpdateDMXStartAddressServerHandler;
-import com.georlegacy.general.theatrical.packets.handlers.server.UpdateIlluminatorPacketServerHandler;
-import com.georlegacy.general.theatrical.packets.handlers.server.UpdateLightPacketServerHandler;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
@@ -57,7 +43,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Main class for Theatrical
@@ -75,8 +60,9 @@ public class TheatricalMain {
 
 
     @Mod.EventHandler
-    public static void PreInit(FMLPreInitializationEvent event) {
-        proxy.preInit();
+    public void PreInit(FMLPreInitializationEvent event) {
+        TheatricalPacketHandler.init();
+        TheatricalPacketHandler.clientInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TheatricalGuiHandler());
         CapabilityManager.INSTANCE.register(IDMXProvider.class, new IStorage<IDMXProvider>() {
             @Nullable
@@ -130,48 +116,19 @@ public class TheatricalMain {
         }, () -> null);
     }
 
-    private static void initComputer() {
+    private void initComputer() {
         ComputerCraftIntegration.init();
     }
 
     @Mod.EventHandler
-    public static void init(FMLInitializationEvent event) {
-        proxy.registerModelBakeryVariants();
-        proxy.registerColorBlocks();
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateLightPacketServerHandler(), UpdateLightPacket.class, 0,
-                Side.SERVER);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateIlluminatorPacketServerHandler(), UpdateIlluminatorPacket.class, 1,
-                Side.SERVER);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateDMXStartAddressServerHandler(), UpdateDMXStartAddressPacket.class, 2,
-                Side.SERVER);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateLightPacketClientHandler(), UpdateLightPacket.class, 3,
-                Side.CLIENT);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateIlluminatorPacketClientHandler(), UpdateIlluminatorPacket.class, 4,
-                Side.CLIENT);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new SendDMXPacketClientHandler(), SendDMXPacket.class, 5,
-                Side.CLIENT);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateDMXStartAddressClientHandler(), UpdateDMXStartAddressPacket.class, 6,
-                Side.CLIENT);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateArtNetInterfaceClientHandler(), UpdateArtNetInterfacePacket.class, 7,
-                Side.CLIENT);
-        TheatricalPacketHandler.INSTANCE
-            .registerMessage(new UpdateArtNetInterfaceServerHandler(), UpdateArtNetInterfacePacket.class, 8,
-                Side.SERVER);
+    public void init(FMLInitializationEvent event) {
         if (Loader.isModLoaded("computercraft")) {
             initComputer();
         }
     }
 
     @Mod.EventHandler
-    public static void PostInit(FMLPostInitializationEvent event) {
+    public void PostInit(FMLPostInitializationEvent event) {
 
     }
 }

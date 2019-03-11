@@ -16,14 +16,11 @@
 
 package com.georlegacy.general.theatrical.blocks.base;
 
-import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
-import com.georlegacy.general.theatrical.init.TheatricalItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
 
-public class BlockBase extends Block implements IHasModel {
+public class BlockBase extends Block {
 
     private String name;
 
@@ -34,11 +31,5 @@ public class BlockBase extends Block implements IHasModel {
         setRegistryName(name);
 
         TheatricalBlocks.BLOCKS.add(this);
-    }
-
-
-    @Override
-    public void registerModels() {
-        TheatricalItems.registerItemRenderer(Item.getItemFromBlock(this), 0, this.name);
     }
 }

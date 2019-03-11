@@ -18,8 +18,8 @@ package com.georlegacy.general.theatrical.armor.utility;
 
 import com.georlegacy.general.theatrical.armor.materials.FixtureDetailArmorMaterial;
 import com.georlegacy.general.theatrical.api.IHasModel;
+import com.georlegacy.general.theatrical.handlers.ClientEventHandler;
 import com.georlegacy.general.theatrical.init.TheatricalArmorMaterials;
-import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
@@ -36,7 +36,7 @@ public class FixtureDetailHelmetItem extends ItemArmor implements IHasModel {
 
     @Override
     public void registerModels() {
-        TheatricalItems.registerItemRenderer(this, 0, "armor/utility/fixture_detail_helmet");
+        ClientEventHandler.registerItemRenderer(this, 0, "armor/utility/fixture_detail_helmet");
     }
 
 }

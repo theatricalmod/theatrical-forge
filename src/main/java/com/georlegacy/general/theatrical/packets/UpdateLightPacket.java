@@ -16,9 +16,15 @@
 
 package com.georlegacy.general.theatrical.packets;
 
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.tiles.TileFixture;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class UpdateLightPacket implements IMessage {
 
@@ -73,6 +79,51 @@ public class UpdateLightPacket implements IMessage {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
+    }
+
+    public static class ServerHandler implements IMessageHandler<UpdateLightPacket, IMessage>{
+
+        @Override
+        public IMessage onMessage(UpdateLightPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateLightPacket message, MessageContext ctx){
+            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+                World world = ctx.getServerHandler().player.world;
+                BlockPos blockPos = message.getPos();
+                TileFixture tileFresnel = (TileFixture) world
+                    .getTileEntity(blockPos);
+                tileFresnel.setTilt(message.getTilt());
+                tileFresnel.setPan(message.getPan());
+                world.markChunkDirty(blockPos, tileFresnel);
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateLightPacket(tileFresnel.getTilt(), tileFresnel.getPan(),
+                        tileFresnel.getIntensity(), tileFresnel.getPos()));
+            });
+        }
+    }
+
+    public static class ClientHandler implements
+        IMessageHandler<UpdateLightPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(UpdateLightPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateLightPacket message, MessageContext ctx){
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                BlockPos blockPos = message.getPos();
+                TileFixture tileFresnel = (TileFixture) Minecraft
+                    .getMinecraft().world.getTileEntity(blockPos);
+                tileFresnel.setTilt(message.getTilt());
+                tileFresnel.setPan(message.getPan());
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
+            });
+        }
     }
 
 }

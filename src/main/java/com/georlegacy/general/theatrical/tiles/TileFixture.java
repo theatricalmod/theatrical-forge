@@ -25,8 +25,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract  class TileFixture extends TileEntity implements IFixture, ITickable,
     IFixtureModelProvider {
@@ -120,7 +118,6 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
@@ -245,7 +242,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         if (getLightBlock() != null && getLightBlock() != lightPos && world.getBlockState(getLightBlock()) instanceof BlockIlluminator) {
             world.setBlockToAir(getLightBlock());
         }
-        if((!(world.getBlockState(blockPos).getBlock() instanceof BlockAir) && !(world.getBlockState(blockPos).getBlock() instanceof BlockIlluminator))){
+        if((!(world.getBlockState(lightPos).getBlock() instanceof BlockAir) && !(world.getBlockState(lightPos).getBlock() instanceof BlockIlluminator))){
             return distance;
         }
         setLightBlock(lightPos);

@@ -16,9 +16,17 @@
 
 package com.georlegacy.general.theatrical.packets;
 
+import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class UpdateDMXStartAddressPacket implements IMessage {
 
@@ -59,4 +67,50 @@ public class UpdateDMXStartAddressPacket implements IMessage {
         buf.writeInt(pos.getZ());
     }
 
+
+    public static class ServerHandler implements IMessageHandler<UpdateDMXStartAddressPacket, IMessage>{
+
+        @Override
+        public IMessage onMessage(UpdateDMXStartAddressPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateDMXStartAddressPacket message, MessageContext ctx){
+            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+                World world = ctx.getServerHandler().player.world;
+                BlockPos blockPos = message.getPos();
+                TileDMXAcceptor tileFresnel = (TileDMXAcceptor) world
+                    .getTileEntity(blockPos);
+                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)){
+                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).setDMXStartPoint(message.getDmxStartPoint());
+                }
+                world.markChunkDirty(blockPos, tileFresnel);
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateDMXStartAddressPacket(message.getDmxStartPoint(), tileFresnel.getPos()));
+            });
+        }
+    }
+
+    public static class ClientHandler implements
+        IMessageHandler<UpdateDMXStartAddressPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(UpdateDMXStartAddressPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateDMXStartAddressPacket message, MessageContext ctx){
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                BlockPos blockPos = message.getPos();
+                TileDMXAcceptor tileFresnel = (TileDMXAcceptor) Minecraft
+                    .getMinecraft().world.getTileEntity(blockPos);
+                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)){
+                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).setDMXStartPoint(message.getDmxStartPoint());
+                }
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
+            });
+        }
+    }
 }

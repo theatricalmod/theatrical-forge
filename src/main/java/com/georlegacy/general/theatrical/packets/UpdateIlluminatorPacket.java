@@ -16,9 +16,15 @@
 
 package com.georlegacy.general.theatrical.packets;
 
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.tiles.TileIlluminator;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class UpdateIlluminatorPacket implements IMessage {
 
@@ -62,6 +68,55 @@ public class UpdateIlluminatorPacket implements IMessage {
         buf.writeInt(controller.getX());
         buf.writeInt(controller.getY());
         buf.writeInt(controller.getZ());
+    }
+
+    public static class ServerHandler implements IMessageHandler<UpdateIlluminatorPacket, IMessage>{
+
+        @Override
+        public IMessage onMessage(UpdateIlluminatorPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateIlluminatorPacket message, MessageContext ctx){
+            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+                BlockPos blockPos = message.getIlluminator();
+                TileIlluminator tileIlluminator = (TileIlluminator) ctx.getServerHandler().player
+                    .getServerWorld().getTileEntity(blockPos);
+                if (tileIlluminator == null) {
+                    return;
+                }
+                tileIlluminator.setController(message.getController());
+                ctx.getServerHandler().player
+                    .getServerWorld().markChunkDirty(blockPos, tileIlluminator);
+                TheatricalPacketHandler.INSTANCE.sendToAll(
+                    new UpdateIlluminatorPacket(message.getIlluminator(), message.getController()));
+            });
+        }
+    }
+
+    public static class ClientHandler implements
+        IMessageHandler<UpdateIlluminatorPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(UpdateIlluminatorPacket message, MessageContext ctx) {
+            doTheFuckingThing(message, ctx);
+            return null;
+        }
+
+        private void doTheFuckingThing(UpdateIlluminatorPacket message, MessageContext ctx){
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                BlockPos blockPos = message.getIlluminator();
+                TileIlluminator tileIlluminator = (TileIlluminator) Minecraft.getMinecraft().world
+                    .getTileEntity(blockPos);
+                if (tileIlluminator == null) {
+                    return;
+                }
+                tileIlluminator.setController(message.getController());
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileIlluminator);
+                Minecraft.getMinecraft().world.checkLightFor(EnumSkyBlock.BLOCK, blockPos);
+            });
+        }
     }
 
 }
