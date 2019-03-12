@@ -23,6 +23,16 @@ import net.minecraftforge.common.model.TRSRTransformation;
 
 public class ModelCable implements IModel {
 
+    public static final ModelRotation[] FACE_ROTATIONS = {
+        ModelRotation.X0_Y0,
+        ModelRotation.X180_Y0,
+        ModelRotation.X90_Y180,
+        ModelRotation.X90_Y0,
+        ModelRotation.X90_Y90,
+        ModelRotation.X90_Y270
+    };
+
+
     private static final ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> TRANSFORM_MAP;
 
     private static TRSRTransformation get(float ty, float ax, float ay, float s)
@@ -35,7 +45,7 @@ public class ModelCable implements IModel {
         TRSRTransformation thirdperson = get(2.5F, 75, 45, 0.375F);
         TRSRTransformation flipX = new TRSRTransformation(null, null, new javax.vecmath.Vector3f(-1, 1, 1), null);
         ImmutableMap.Builder<ItemCameraTransforms.TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-        builder.put(ItemCameraTransforms.TransformType.GUI, get(0, 30, 225, 2F));
+        builder.put(ItemCameraTransforms.TransformType.GUI, get(0, 30, 225, 0.625F));
         builder.put(ItemCameraTransforms.TransformType.GROUND, get(3, 0, 0, 0.25F));
         builder.put(ItemCameraTransforms.TransformType.FIXED, get(0, 0, 0, 0.5F));
         builder.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
@@ -82,7 +92,7 @@ public class ModelCable implements IModel {
         List<BakedQuad> get(ResourceLocation id, ModelRotation rotation, boolean uvlock);
 
         default List<BakedQuad> get(ResourceLocation id, ModelRotation rotation){
-            return get(id, rotation, true);
+            return get(id, rotation, false);
         }
     }
 }

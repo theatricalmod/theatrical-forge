@@ -12,7 +12,7 @@ public class ModelCableLoader extends DefaultStateMapper implements ICustomModel
 
 
     public static final ModelCableLoader INSTANCE = new ModelCableLoader();
-    public static final ModelResourceLocation ID = new ModelResourceLocation(Reference.MOD_ID + ":dmx_cable#normal");
+    public static final ModelResourceLocation ID = new ModelResourceLocation(Reference.MOD_ID + ":dmx_cable_block#normal");
 
 
     @Override

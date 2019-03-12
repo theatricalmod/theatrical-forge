@@ -20,10 +20,10 @@ import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -76,12 +76,12 @@ public class SendDMXPacket implements IMessage {
 
         @Override
         public IMessage onMessage(SendDMXPacket message, MessageContext ctx) {
-            doTheFuckingThing(message.getBlockPos(), message.getData());
+            doTheFuckingThing(message.getBlockPos(), message.getData(), ctx);
             return null;
         }
 
-        private void doTheFuckingThing(BlockPos pos, byte[] data){
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+        private void doTheFuckingThing(BlockPos pos, byte[] data, MessageContext ctx){
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 TileEntity tileFresnel = TheatricalMain.proxy.getWorld().getTileEntity(pos);
                 if(tileFresnel != null) {
                     IDMXReceiver dmxReceiver = tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.NORTH);

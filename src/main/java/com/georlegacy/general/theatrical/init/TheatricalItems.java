@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.armor.utility.FixtureDetailHelmetItem;
+import com.georlegacy.general.theatrical.items.ItemDMXCable;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
@@ -24,11 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.item.Item;
 
-/**
- * Item store for Theatrical items
- *
- * @author James Conway
- */
 public class TheatricalItems {
 
     public static final List<Item> ITEMS = new ArrayList<Item>();
@@ -39,6 +35,8 @@ public class TheatricalItems {
     public static final BlankGobo ITEM_BLANK_GOBO = new BlankGobo();
 
     public static final FixtureDetailHelmetItem ITEM_FIXTURE_DETAIL_HELMET = new FixtureDetailHelmetItem();
+
+    public static final ItemDMXCable ITEM_DMX_CABLE = new ItemDMXCable();
 
     static {
         ITEMS.add(ITEM_GEL);

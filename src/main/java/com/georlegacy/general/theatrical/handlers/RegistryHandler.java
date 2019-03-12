@@ -21,6 +21,7 @@ import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
+import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -58,6 +59,8 @@ public class RegistryHandler {
                 GameRegistry.registerTileEntity(fixture.getTileEntity(), block.getRegistryName());
             }
         });
+        event.getRegistry().register(TheatricalBlocks.BLOCK_CABLE);
+        GameRegistry.registerTileEntity(TileDMXCable.class, TheatricalBlocks.BLOCK_CABLE.getRegistryName());
     }
 
     @SubscribeEvent

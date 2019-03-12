@@ -1,48 +1,54 @@
 package com.georlegacy.general.theatrical.blocks.cables;
 
-import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
+import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
-import com.georlegacy.general.theatrical.util.ChatUtils;
-import java.util.List;
+import java.util.Random;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHasTileEntity {
+public class BlockDMXCable extends Block implements ITileEntityProvider, IHasTileEntity {
 
-    public static final AxisAlignedBB[] BOXES = new AxisAlignedBB[1 << 6];
+    public static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
     static {
-        double d0 = 7 / 16D;
-        double d1 = 1D - d0;
-        for (int i = 0; i < BOXES.length; i++)
-        {
-            boolean x0 = (i & (1 << EnumFacing.WEST.getIndex())) != 0;
-            boolean x1 = (i & (1 << EnumFacing.EAST.getIndex())) != 0;
-            boolean z0 = (i & (1 << EnumFacing.NORTH.getIndex())) != 0;
-            boolean z1 = (i & (1 << EnumFacing.SOUTH.getIndex())) != 0;
-            BOXES[i] = new AxisAlignedBB(x0 ? 0D : d0, 0D, z0 ? 0D : d0, x1 ? 1D : d1, 0.05D, z1 ? 1D : d1);
-        }
+        double h0 = 1D / 16D;
+        double h1 = 1D - h0;
+
+        double v0 = 1D / 16D;
+        double v1 = 1D - v0;
+
+        BOXES[0] = new AxisAlignedBB(h0, 0D, h0, h1, v0, h1);
+        BOXES[1] = new AxisAlignedBB(h0, v1, h0, h1, 1D, h1);
+        BOXES[2] = new AxisAlignedBB(h0, h0, 0D, h1, h1, v0);
+        BOXES[3] = new AxisAlignedBB(h0, h0, v1, h1, h1, 1D);
+        BOXES[4] = new AxisAlignedBB(0D, h0, h0, v0, h1, h1);
+        BOXES[5] = new AxisAlignedBB(v1, h0, h0, 1D, h1, h1);
     }
 
     public static final IUnlistedProperty<TileDMXCable> CABLE = new IUnlistedProperty<TileDMXCable>() {
@@ -68,8 +74,9 @@ public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHa
     };
 
     public BlockDMXCable() {
-        super("dmx_cable");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        super(Material.ROCK);
+        setTranslationKey("dmx_cable_block");
+        setRegistryName("dmx_cable_block");
     }
 
     @Override
@@ -138,89 +145,164 @@ public class BlockDMXCable extends BlockBase implements ITileEntityProvider, IHa
         return state;
     }
 
+
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tileEntity = world.getTileEntity(pos);
-
-        if (tileEntity instanceof TileDMXCable)
-        {
-            TileDMXCable pipe = (TileDMXCable) tileEntity;
-
-            int id = 0;
-
-            for (int i = 0; i < 6; i++)
-            {
-                if (pipe.isConnected(EnumFacing.VALUES[i]))
-                {
-                    id |= 1 << i;
-                }
-            }
-
-            return BOXES[id];
-        }
-
-        return BOXES[0];
+    @Nullable
+    @Deprecated
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
+    {
+        return NULL_AABB;
     }
+
     @Override
     @Deprecated
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isActualState)
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos)
     {
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, BOXES[0]);
-        TileEntity tileEntity = world.getTileEntity(pos);
+        RayTraceResult ray = Minecraft.getMinecraft().objectMouseOver;
 
-        if (tileEntity instanceof TileDMXCable)
+        if (ray != null && ray.subHit >= 0 && ray.subHit < BOXES.length)
         {
-            TileDMXCable pipe = (TileDMXCable) tileEntity;
-
-            for (int i = 0; i < 6; i++)
-            {
-                if (pipe.isConnected(EnumFacing.VALUES[i]))
-                {
-                    addCollisionBoxToList(pos, entityBox, collidingBoxes, BOXES[1 << i]);
-                }
-            }
+            return BOXES[ray.subHit].offset(pos);
         }
+
+        return super.getSelectedBoundingBox(state, worldIn, pos);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
-        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
-        float hitZ) {
-        if(!worldIn.isRemote)
-            if(playerIn.getHeldItem(EnumHand.MAIN_HAND).getItem() == Items.STICK){
-                if(worldIn.getTileEntity(pos) instanceof TileDMXCable){
-                    TileDMXCable tileDMXCable = (TileDMXCable) worldIn.getTileEntity(pos);
-                    for(int i = 0; i < tileDMXCable.getData().length; i++){
-                        if(tileDMXCable.getData()[i] > 0){
-                            ChatUtils.sendNoSpamMessages(i, new TextComponentString("Channel #" + i  + ": " + tileDMXCable.getData()[i]));
-                        }
-                    }
+    @Nullable
+    @Deprecated
+    public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end)
+    {
+        TileEntity tileEntity = world.getTileEntity(pos);
+
+        if (!(tileEntity instanceof TileDMXCable))
+        {
+            return super.collisionRayTrace(state, world, pos, start, end);
+        }
+
+        TileDMXCable tile = (TileDMXCable) tileEntity;
+
+        if(!hasSide(tile)){
+            return super.collisionRayTrace(state, world, pos, start, end);
+        }
+
+        Vec3d start1 = start.subtract(pos.getX(), pos.getY(), pos.getZ());
+        Vec3d end1 = end.subtract(pos.getX(), pos.getY(), pos.getZ());
+        RayTraceResult ray1 = null;
+        double dist = Double.POSITIVE_INFINITY;
+
+        for (int i = 0; i < BOXES.length; i++)
+        {
+            if (!tile.sides[i])
+            {
+                continue;
+            }
+
+            RayTraceResult ray = BOXES[i].calculateIntercept(start1, end1);
+
+            if (ray != null)
+            {
+                double dist1 = ray.hitVec.squareDistanceTo(start1);
+
+                if (dist >= dist1)
+                {
+                    dist = dist1;
+                    ray1 = ray;
+                    ray1.subHit = i;
                 }
+            }
+        }
+
+        if (ray1 != null)
+        {
+            RayTraceResult ray2 = new RayTraceResult(ray1.hitVec.add(pos.getX(), pos.getY(), pos.getZ()), ray1.sideHit, pos);
+            ray2.subHit = ray1.subHit;
+            return ray2;
+        }
+
+        return null;
+    }
+
+    public boolean hasSide(TileDMXCable dmxCable){
+        for(boolean bool : dmxCable.sides){
+            if(bool){
                 return true;
             }
+        }
         return false;
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
-    }
-
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
     {
-        IBlockState downState = worldIn.getBlockState(pos.down());
-        return downState.isTopSolid() || downState.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID;
-    }
+        TileEntity tileEntity = world.getTileEntity(pos);
 
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
-    {
-        if (!worldIn.isRemote)
+        if (tileEntity instanceof TileDMXCable)
         {
-            if (!this.canPlaceBlockAt(worldIn, pos))
+            TileDMXCable tile = (TileDMXCable) tileEntity;
+            double dist = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+            Vec3d start = player.getPositionEyes(1F);
+            Vec3d look = player.getLookVec();
+            Vec3d end = start.add(look.x * dist, look.y * dist, look.z * dist);
+            RayTraceResult ray = collisionRayTrace(state, world, pos, start, end);
+            EnumFacing side = ray != null && ray.subHit >= 0 && ray.subHit < 6 ? EnumFacing.byIndex(ray.subHit) : null;
+
+            if (side != null)
             {
-                this.dropBlockAsItem(worldIn, pos, state, 0);
-                worldIn.destroyBlock(pos, false);
+                if (!player.capabilities.isCreativeMode)
+                {
+                    spawnAsEntity(world, pos, new ItemStack(ItemBlock.getItemFromBlock(this)));
+                }
+
+                tile.sides[side.getIndex()] = false;
+
+                if (hasSide(tile))
+                {
+                    world.notifyBlockUpdate(pos, state, state, 11);
+                }
+                else
+                {
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState(), world.isRemote ? 11 : 3);
+                    return true;
+                }
             }
         }
+
+        return false;
+    }
+
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    {
+        return Items.AIR;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult ray, World world, BlockPos pos, EntityPlayer player)
+    {
+        EnumFacing side = ray != null && ray.subHit >= 0 && ray.subHit < 6 ? EnumFacing.byIndex(ray.subHit) : null;
+
+        if (side != null)
+        {
+            TileEntity tileEntity = world.getTileEntity(pos);
+
+            if (tileEntity instanceof TileDMXCable)
+            {
+                TileDMXCable tile = (TileDMXCable) tileEntity;
+
+                if (tile.sides[side.getIndex()])
+                {
+                    return new ItemStack(TheatricalItems.ITEM_DMX_CABLE);
+                }
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void dropBlockAsItemWithChance(World world, BlockPos pos, IBlockState state, float chance, int fortune)
+    {
     }
 }

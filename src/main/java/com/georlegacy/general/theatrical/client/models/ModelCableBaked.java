@@ -1,25 +1,23 @@
 package com.georlegacy.general.theatrical.client.models;
 
-import com.georlegacy.general.theatrical.blocks.cables.BlockCable;
 import com.georlegacy.general.theatrical.blocks.cables.BlockDMXCable;
+import com.georlegacy.general.theatrical.items.ItemDMXCable;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
-import com.georlegacy.general.theatrical.util.ClientUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,42 +25,117 @@ import org.apache.commons.lang3.tuple.Pair;
 public class ModelCableBaked implements IBakedModel {
 
     public final TextureAtlasSprite particle;
-    public final List<BakedQuad> north, south, west, east, center;
+    public final List<List<BakedQuad>> north, south, west, east, center;
     private final IBakedModel bakedItem;
     private final ItemOverrideList itemOverrideList;
 
+    int NORTH = EnumFacing.NORTH.getIndex();
+    int SOUTH = EnumFacing.SOUTH.getIndex();
+    int EAST = EnumFacing.EAST.getIndex();
+    int WEST = EnumFacing.WEST.getIndex();
+    int DOWN = EnumFacing.DOWN.getIndex();
+    int UP = EnumFacing.UP.getIndex();
+
     public ModelCableBaked(ModelCable cable, TextureAtlasSprite p, ModelCable.ModelCallback c){
         particle = p;
-        north = c.get(cable.modelNorth, ModelRotation.X0_Y0);
-        south = c.get(cable.modelSouth, ModelRotation.X0_Y0);
-        west = c.get(cable.modelWest, ModelRotation.X0_Y0);
-        east = c.get(cable.modelEast, ModelRotation.X0_Y0);
-        center = c.get(cable.modelCenter, ModelRotation.X0_Y0);
+        north = new ArrayList<>();
+        south = new ArrayList<>();
+        west = new ArrayList<>();
+        east = new ArrayList<>();
+        center = new ArrayList<>();
+        for(EnumFacing facing : EnumFacing.VALUES){
+            north.add(c.get(cable.modelNorth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            south.add(c.get(cable.modelSouth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            east.add(c.get(cable.modelEast, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            west.add(c.get(cable.modelWest, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            center.add(c.get(cable.modelCenter, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+        }
         bakedItem = new ModelCableBakedItem(this);
 
         itemOverrideList = new ItemOverrideList(Collections.emptyList()){
             @Override
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack,
                 @Nullable World world, @Nullable EntityLivingBase entity) {
-                Block block = Block.getBlockFromItem(stack.getItem());
-                return block instanceof BlockCable ? bakedItem : originalModel;
+                return stack.getItem() instanceof ItemDMXCable ? bakedItem : originalModel;
             }
         };
     }
 
-    public List<BakedQuad> getFromFacing(EnumFacing facing){
-        switch(facing){
-            case SOUTH:
-                return south;
-            case NORTH:
-                return north;
-            case EAST:
-                return east;
-            case WEST:
-                return west;
-            default:
-                return center;
+// This comment is for Alex. This is commented out cause Latvian told me to.
+    public List<List<BakedQuad>> getFromFacing(EnumFacing facing, int face){
+        if(face  == 0 ){
+            switch(facing.getIndex()){
+                case 3:
+                    return south;
+                case 2:
+                    return north;
+                case 5:
+                    return east;
+                case 4:
+                    return west;
+            }
+        }else
+        if(face  == 1 ){
+            switch(facing.getIndex()){
+                case 3:
+                    return north;
+                case 2:
+                    return south;
+                case 5:
+                    return east;
+                case 4:
+                    return west;
+            }
+        }else
+        if(face  == 2 ){
+            switch(facing.getIndex()){
+                case 1:
+                    return south;
+                case 0:
+                    return north;
+                case 5:
+                    return west;
+                case 4:
+                    return east;
+            }
+        }else
+        if(face  == 3 ){
+            switch(facing.getIndex()){
+                case 1:
+                    return south;
+                case 0:
+                    return north;
+                case 5:
+                    return east;
+                case 4:
+                    return west;
+            }
+        }else
+        if(face  == 4 ){
+            switch(facing.getIndex()){
+                case 1:
+                    return south;
+                case 0:
+                    return north;
+                case 2:
+                    return west;
+                case 3:
+                    return east;
+            }
+        }else
+        if(face  ==5 ){
+            switch(facing.getIndex()){
+                case 1:
+                    return south;
+                case 0:
+                    return north;
+                case 2:
+                    return east;
+                case 3:
+                    return west;
+            }
         }
+        return center;
     }
 
     @Override
@@ -78,24 +151,130 @@ public class ModelCableBaked implements IBakedModel {
         if(tileDMXCable == null){
             return Collections.emptyList();
         }
+// This comment is for Alex. This is commented out cause Latvian told me to.
 
-        int connections = 0;
-        for(EnumFacing facing : EnumFacing.values()){
-            if(tileDMXCable.isConnected(facing)){
-                connections |= 1 << facing.getIndex();
+//
+//        return ClientUtils.optimize(quads);
+
+
+
+        ArrayList<BakedQuad> quads = new ArrayList<>();
+        for(int i = 0; i < 6; i++){
+            if(tileDMXCable.sides[i]){
+                quads.addAll(center.get(i));
+                if(i == DOWN ){
+                    if(tileDMXCable.sides[NORTH] || tileDMXCable.isConnected(EnumFacing.NORTH, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[SOUTH] || tileDMXCable.isConnected(EnumFacing.SOUTH, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[WEST] || tileDMXCable.isConnected(EnumFacing.WEST, i) ){
+                        quads.addAll(west.get(i));
+                    }
+                    if(tileDMXCable.sides[EAST]|| tileDMXCable.isConnected(EnumFacing.EAST, i)){
+                        quads.addAll(east.get(i));
+                    }
+                }
+                if(i == UP){
+                    if(tileDMXCable.sides[NORTH]|| tileDMXCable.isConnected(EnumFacing.NORTH, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[SOUTH] || tileDMXCable.isConnected(EnumFacing.SOUTH, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[WEST] || tileDMXCable.isConnected(EnumFacing.WEST, i)){
+                        quads.addAll(west.get(i));
+                    }
+                    if(tileDMXCable.sides[EAST]|| tileDMXCable.isConnected(EnumFacing.EAST, i)){
+                        quads.addAll(east.get(i));
+                    }
+                }
+                if(i == NORTH){
+                    if(tileDMXCable.sides[UP] || tileDMXCable.isConnected(EnumFacing.UP, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[DOWN] || tileDMXCable.isConnected(EnumFacing.DOWN, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[WEST] || tileDMXCable.isConnected(EnumFacing.WEST, i)){
+                        quads.addAll(east.get(i));
+                    }
+                    if(tileDMXCable.sides[EAST]  || tileDMXCable.isConnected(EnumFacing.EAST, i)){
+                        quads.addAll(west.get(i));
+                    }
+                }
+                if(i == SOUTH){
+                    if(tileDMXCable.sides[UP] || tileDMXCable.isConnected(EnumFacing.UP, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[DOWN]|| tileDMXCable.isConnected(EnumFacing.DOWN, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[WEST]|| tileDMXCable.isConnected(EnumFacing.WEST, i)){
+                        quads.addAll(west.get(i));
+                    }
+                    if(tileDMXCable.sides[EAST]|| tileDMXCable.isConnected(EnumFacing.EAST, i)){
+                        quads.addAll(east.get(i));
+                    }
+                }
+                if(i == EAST){
+                    if(tileDMXCable.sides[UP]  || tileDMXCable.isConnected(EnumFacing.UP, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[DOWN]  || tileDMXCable.isConnected(EnumFacing.DOWN, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[NORTH] || tileDMXCable.isConnected(EnumFacing.NORTH, i)){
+                        quads.addAll(east.get(i));
+                    }
+                    if(tileDMXCable.sides[SOUTH] || tileDMXCable.isConnected(EnumFacing.SOUTH, i)){
+                        quads.addAll(west.get(i));
+                    }
+                }
+                if(i == WEST){
+                    if(tileDMXCable.sides[UP] || tileDMXCable.isConnected(EnumFacing.UP, i)){
+                        quads.addAll(south.get(i));
+                    }
+                    if(tileDMXCable.sides[DOWN] || tileDMXCable.isConnected(EnumFacing.DOWN, i)){
+                        quads.addAll(north.get(i));
+                    }
+                    if(tileDMXCable.sides[NORTH] || tileDMXCable.isConnected(EnumFacing.NORTH, i)){
+                        quads.addAll(west.get(i));
+                    }
+                    if(tileDMXCable.sides[SOUTH] || tileDMXCable.isConnected(EnumFacing.SOUTH, i)){
+                        quads.addAll(east.get(i));
+                    }
+                }
+                BlockPos pos = tileDMXCable.getPos().offset(EnumFacing.byIndex(i));
+                for(EnumFacing facing : EnumFacing.VALUES){
+                    BlockPos offset = pos.offset(facing);
+                    IBlockState state1 =  tileDMXCable.getWorld().getBlockState(offset);
+                    if(state1.getBlock() instanceof BlockDMXCable){
+                        if(tileDMXCable.getWorld().getTileEntity(offset) != null && tileDMXCable.getWorld().getTileEntity(offset) instanceof TileDMXCable){
+                            TileDMXCable tileDMXCable1 =  (TileDMXCable) tileDMXCable.getWorld().getTileEntity(offset);
+                            if(tileDMXCable1.sides[facing.getOpposite().getIndex()]){
+                                quads.addAll(getFromFacing(facing, i).get(i));
+                            }
+                        }
+                    }
+                }
             }
         }
-        List<BakedQuad> quads = new ArrayList<>();
-        quads.addAll(center);
-        for (int i = 0; i < 6; i++)
-        {
-            if ((connections & (1 << i)) != 0)
-            {
-                quads.addAll(getFromFacing(EnumFacing.byIndex(i)));
-            }
-        }
-
-        return ClientUtils.optimize(quads);
+//        int connections = 0;
+//        for(EnumFacing facing : EnumFacing.values()){
+//            if(tileDMXCable.isConnected(facing)){
+//                connections |= 1 << facing.getIndex();
+//            }
+//        }
+//        for (int i = 0; i < 6; i++)
+//        {
+//            if ((connections & (1 << i)) != 0)
+//            {
+//                quads.addAll(getFromFacing(EnumFacing.byIndex(i)));
+//            }
+//        }
+        return quads;
     }
 
     @Override

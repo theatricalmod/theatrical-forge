@@ -15,14 +15,15 @@ import net.minecraft.util.EnumFacing;
 
 public class ModelCableBakedItem implements IBakedModel {
 
-
     public final ModelCableBaked parent;
     private List<BakedQuad> quads;
 
     public ModelCableBakedItem(ModelCableBaked p){
         parent = p;
         quads = new ArrayList<>();
-        quads.addAll(parent.center);
+//        quads.addAll(parent.center);
+//        quads.addAll(parent.north);
+//        quads.addAll(parent.south);
         quads = Collections.unmodifiableList(ClientUtils.optimize(quads));
     }
 

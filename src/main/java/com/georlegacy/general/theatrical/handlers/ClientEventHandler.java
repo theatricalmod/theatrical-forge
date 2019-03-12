@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -45,7 +44,7 @@ public class ClientEventHandler {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
         ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
         ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_CABLE, ModelCableLoader.INSTANCE);
-        ModelLoader.setCustomModelResourceLocation(new ItemBlock(TheatricalBlocks.BLOCK_CABLE),0, ModelCableLoader.ID);
+        ModelLoader.setCustomModelResourceLocation(TheatricalItems.ITEM_DMX_CABLE,0, ModelCableLoader.ID);
     }
 
     public static IBakedModel loadModel(ResourceLocation location){

@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -79,7 +80,7 @@ public class UpdateIlluminatorPacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateIlluminatorPacket message, MessageContext ctx){
-            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 BlockPos blockPos = message.getIlluminator();
                 TileIlluminator tileIlluminator = (TileIlluminator) ctx.getServerHandler().player
                     .getServerWorld().getTileEntity(blockPos);
@@ -105,7 +106,7 @@ public class UpdateIlluminatorPacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateIlluminatorPacket message, MessageContext ctx){
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 BlockPos blockPos = message.getIlluminator();
                 TileIlluminator tileIlluminator = (TileIlluminator) Minecraft.getMinecraft().world
                     .getTileEntity(blockPos);

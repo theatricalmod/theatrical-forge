@@ -3,7 +3,8 @@ package com.georlegacy.general.theatrical.api.capabilities.provider;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
-import java.util.HashMap;
+import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
+import java.util.HashSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -19,7 +20,7 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
     public static Capability<IDMXProvider> CAP;
 
     private DMXUniverse dmxUniverse;
-    private HashMap<IDMXReceiver, BlockPos> devices = null;
+    private HashSet<BlockPos> devices = null;
 
     public DMXProvider() {}
 
@@ -48,17 +49,24 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
     }
 
 
-    public void addToList(HashMap<IDMXReceiver, BlockPos> scanned, World world, BlockPos pos, EnumFacing facing){
+    public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, EnumFacing facing){
         TileEntity tileEntity = world.getTileEntity(pos);
         if(tileEntity != null && tileEntity.hasCapability(DMXReceiver.CAP, facing)){
-            if(!scanned.containsKey(tileEntity.getCapability(DMXReceiver.CAP, facing))){
-                scanned.put(tileEntity.getCapability(DMXReceiver.CAP, facing), pos);
-                for(EnumFacing facing1 : EnumFacing.VALUES){
-                    if(facing1 != facing){
-                        addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
+                if (scanned.add(pos)) {
+                    for (EnumFacing facing1 : EnumFacing.VALUES) {
+                        if (facing1 != facing) {
+                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
+                        }
+                    }
+                    if(tileEntity instanceof TileDMXCable) {
+                        BlockPos offset = pos.offset(facing.getOpposite());
+                        for (EnumFacing facing1 : EnumFacing.VALUES) {
+                            if (facing1 != facing) {
+                                addToList(scanned, world, offset.offset(facing1), facing1.getOpposite());
+                            }
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -66,18 +74,24 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
     public void updateDevices(World world, BlockPos controllerPos) {
         if(devices == null) {
             if (world.isRemote) {
-                devices = new HashMap<>();
+                devices = new HashSet<>();
                 return;
             }
 
-            HashMap<IDMXReceiver, BlockPos> receivers = new HashMap<>();
+            HashSet<BlockPos> receivers = new HashSet<>();
             for(EnumFacing facing : EnumFacing.VALUES){
                 addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite());
             }
-            devices = new HashMap<>(receivers);
+            devices = new HashSet<>(receivers);
         }
-        for(IDMXReceiver provider : devices.keySet()) {
-            provider.receiveDMXValues(dmxUniverse.getDMXChannels(), world, devices.get(provider));
+        for(BlockPos provider : devices) {
+            TileEntity tile = world.getTileEntity(provider);
+            if(tile != null) {
+                IDMXReceiver idmxReceiver = tile.getCapability(DMXReceiver.CAP, null);
+                if (idmxReceiver != null) {
+                    tile.getCapability(DMXReceiver.CAP, null).receiveDMXValues(dmxUniverse.getDMXChannels(), world, provider);
+                }
+            }
         }
     }
 

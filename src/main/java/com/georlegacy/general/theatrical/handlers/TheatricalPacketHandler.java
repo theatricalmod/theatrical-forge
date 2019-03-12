@@ -35,39 +35,39 @@ public class TheatricalPacketHandler {
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(
             Reference.MOD_ID);
         INSTANCE
-            .registerMessage(new UpdateLightPacket.ServerHandler(), UpdateLightPacket.class, 0,
+            .registerMessage(UpdateLightPacket.ServerHandler.class, UpdateLightPacket.class, 0,
                 Side.SERVER);
         INSTANCE
-            .registerMessage(new UpdateIlluminatorPacket.ServerHandler(),
+            .registerMessage(UpdateIlluminatorPacket.ServerHandler.class,
                 UpdateIlluminatorPacket.class, 1,
                 Side.SERVER);
         INSTANCE
-            .registerMessage(new UpdateDMXStartAddressPacket.ServerHandler(),
+            .registerMessage(UpdateDMXStartAddressPacket.ServerHandler.class,
                 UpdateDMXStartAddressPacket.class, 2,
                 Side.SERVER);
         INSTANCE
-            .registerMessage(new UpdateArtNetInterfacePacket.ServerHandler(),
+            .registerMessage(UpdateArtNetInterfacePacket.ServerHandler.class,
                 UpdateArtNetInterfacePacket.class, 8,
                 Side.SERVER);
     }
 
     public static void clientInit(){
         INSTANCE
-            .registerMessage(new UpdateLightPacket.ClientHandler(), UpdateLightPacket.class, 3,
+            .registerMessage(UpdateLightPacket.ClientHandler.class, UpdateLightPacket.class, 3,
                 Side.CLIENT);
         INSTANCE
-            .registerMessage(new UpdateIlluminatorPacket.ClientHandler(),
+            .registerMessage(UpdateIlluminatorPacket.ClientHandler.class,
                 UpdateIlluminatorPacket.class, 4,
                 Side.CLIENT);
         INSTANCE
-            .registerMessage(new SendDMXPacket.ClientHandler(), SendDMXPacket.class, 5,
+            .registerMessage(SendDMXPacket.ClientHandler.class, SendDMXPacket.class, 5,
                 Side.CLIENT);
         INSTANCE
-            .registerMessage(new UpdateDMXStartAddressPacket.ClientHandler(),
+            .registerMessage(UpdateDMXStartAddressPacket.ClientHandler.class,
                 UpdateDMXStartAddressPacket.class, 6,
                 Side.CLIENT);
         INSTANCE
-            .registerMessage(new UpdateArtNetInterfacePacket.ClientHandler(),
+            .registerMessage(UpdateArtNetInterfacePacket.ClientHandler.class,
                 UpdateArtNetInterfacePacket.class, 7,
                 Side.CLIENT);
     }

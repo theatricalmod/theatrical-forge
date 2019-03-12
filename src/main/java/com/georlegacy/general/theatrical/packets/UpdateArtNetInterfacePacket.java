@@ -20,9 +20,9 @@ import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -92,7 +92,7 @@ public class UpdateArtNetInterfacePacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateArtNetInterfacePacket message, MessageContext ctx){
-            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
                 TileArtNetInterface tileFresnel = (TileArtNetInterface) world
@@ -116,7 +116,7 @@ public class UpdateArtNetInterfacePacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateArtNetInterfacePacket message, MessageContext ctx){
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = TheatricalMain.proxy.getWorld();
                 BlockPos blockPos = message.getPos();
                 TileArtNetInterface tileFresnel = (TileArtNetInterface) world.getTileEntity(blockPos);

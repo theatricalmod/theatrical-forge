@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -90,7 +91,7 @@ public class UpdateLightPacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateLightPacket message, MessageContext ctx){
-            ctx.getServerHandler().player.server.addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
                 TileFixture tileFresnel = (TileFixture) world
@@ -115,7 +116,7 @@ public class UpdateLightPacket implements IMessage {
         }
 
         private void doTheFuckingThing(UpdateLightPacket message, MessageContext ctx){
-            Minecraft.getMinecraft().addScheduledTask(() -> {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 BlockPos blockPos = message.getPos();
                 TileFixture tileFresnel = (TileFixture) Minecraft
                     .getMinecraft().world.getTileEntity(blockPos);
