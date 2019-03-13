@@ -61,6 +61,7 @@ public class ModelCable implements IModel {
     }
 
     public final ResourceLocation modelNorth, modelSouth, modelEast, modelWest, modelCenter;
+    public final ResourceLocation modelExtendedNorth, modelExtendedSouth, modelExtendedEast, modelExtendedWest;
     public final ResourceLocation particle;
 
     public ModelCable() {
@@ -70,6 +71,10 @@ public class ModelCable implements IModel {
         modelWest = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_west");
         modelCenter = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_middle");
         particle = new ResourceLocation("minecraft:blocks/concrete_gray");
+        modelExtendedNorth = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_north_extended");
+        modelExtendedSouth = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_south_extended");
+        modelExtendedEast = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_east_extended");
+        modelExtendedWest = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_west_extended");
     }
 
     @Override
@@ -84,7 +89,7 @@ public class ModelCable implements IModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return Arrays.asList(modelCenter, modelNorth, modelSouth, modelEast, modelWest);
+        return Arrays.asList(modelCenter, modelNorth, modelSouth, modelEast, modelWest, modelExtendedEast, modelExtendedNorth, modelExtendedSouth, modelExtendedWest);
     }
 
     public interface ModelCallback
@@ -92,7 +97,7 @@ public class ModelCable implements IModel {
         List<BakedQuad> get(ResourceLocation id, ModelRotation rotation, boolean uvlock);
 
         default List<BakedQuad> get(ResourceLocation id, ModelRotation rotation){
-            return get(id, rotation, false);
+            return get(id, rotation, true);
         }
     }
 }

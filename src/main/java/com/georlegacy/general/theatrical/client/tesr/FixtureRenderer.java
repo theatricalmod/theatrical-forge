@@ -46,6 +46,9 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     @Override
     public void render(TileFixture te, double x, double y, double z, float partialTicks,
         int destroyStage, float a) {
+        if(!(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockDirectional)){
+            return;
+        }
         EnumFacing direction = te.getWorld().getBlockState(te.getPos())
             .getValue(BlockDirectional.FACING);
         boolean isFlipped = false;

@@ -1,11 +1,13 @@
 package com.georlegacy.general.theatrical.blocks.cables;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -16,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -233,6 +234,34 @@ public class BlockDMXCable extends Block implements ITileEntityProvider, IHasTil
         return false;
     }
 
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileDMXCable) {
+            TileDMXCable tile = (TileDMXCable) tileEntity;
+            for(int i = 0; i < 6; i++){
+                if(tile.sides[i]){
+                    BlockPos offset = pos.offset(EnumFacing.byIndex(i));
+                    if(worldIn.getBlockState(offset).getBlock() instanceof BlockAir){
+                        spawnAsEntity(worldIn, pos, new ItemStack(TheatricalItems.ITEM_DMX_CABLE));
+                        tile.sides[i] = false;
+                        if (hasSide(tile))
+                        {
+                            worldIn.notifyBlockUpdate(pos, state, state, 11);
+                            WorldDMXNetwork.getCapability(worldIn).setRefresh(true);
+                        }
+                        else
+                        {
+                            worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), worldIn.isRemote ? 11 : 3);
+                            WorldDMXNetwork.getCapability(worldIn).setRefresh(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
     {
@@ -252,7 +281,7 @@ public class BlockDMXCable extends Block implements ITileEntityProvider, IHasTil
             {
                 if (!player.capabilities.isCreativeMode)
                 {
-                    spawnAsEntity(world, pos, new ItemStack(ItemBlock.getItemFromBlock(this)));
+                    spawnAsEntity(world, pos, new ItemStack(TheatricalItems.ITEM_DMX_CABLE));
                 }
 
                 tile.sides[side.getIndex()] = false;
@@ -260,10 +289,12 @@ public class BlockDMXCable extends Block implements ITileEntityProvider, IHasTil
                 if (hasSide(tile))
                 {
                     world.notifyBlockUpdate(pos, state, state, 11);
+                    WorldDMXNetwork.getCapability(world).setRefresh(true);
                 }
                 else
                 {
                     world.setBlockState(pos, Blocks.AIR.getDefaultState(), world.isRemote ? 11 : 3);
+                    WorldDMXNetwork.getCapability(world).setRefresh(true);
                     return true;
                 }
             }

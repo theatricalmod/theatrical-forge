@@ -52,21 +52,56 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, EnumFacing facing){
         TileEntity tileEntity = world.getTileEntity(pos);
         if(tileEntity != null && tileEntity.hasCapability(DMXReceiver.CAP, facing)){
-                if (scanned.add(pos)) {
+            if (scanned.add(pos)) {
+                if(tileEntity instanceof TileDMXCable){
+                        for (EnumFacing facing1 : EnumFacing.VALUES) {
+                            if (facing1 != facing) {
+                                for(int i = 0; i < 6; i++) {
+                                    if(((TileDMXCable) tileEntity).sides[i]) {
+                                        if (((TileDMXCable) tileEntity).isConnected(facing1, i)) {
+                                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                }else{
                     for (EnumFacing facing1 : EnumFacing.VALUES) {
                         if (facing1 != facing) {
                             addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
                         }
                     }
-                    if(tileEntity instanceof TileDMXCable) {
-                        BlockPos offset = pos.offset(facing.getOpposite());
-                        for (EnumFacing facing1 : EnumFacing.VALUES) {
-                            if (facing1 != facing) {
-                                addToList(scanned, world, offset.offset(facing1), facing1.getOpposite());
+                }
+                if(tileEntity instanceof TileDMXCable){
+                    TileDMXCable dmxCable = (TileDMXCable) tileEntity;
+                    for(int i = 0; i < 6; i++){
+                        if(((TileDMXCable) tileEntity).sides[i]){
+                            EnumFacing sideDirection = EnumFacing.byIndex(i);
+                            BlockPos offset = pos.offset(sideDirection);
+                            for(EnumFacing facing1 : EnumFacing.VALUES) {
+                                if(facing1 != sideDirection) {
+                                    BlockPos offset1 = offset.offset(facing1);
+                                    if(world.getTileEntity(offset1) != null && world.getTileEntity(offset1) instanceof TileDMXCable){
+                                        TileDMXCable tileEntity1 = (TileDMXCable) world.getTileEntity(offset1);
+                                        if(i != EnumFacing.DOWN.getIndex() && i != EnumFacing.UP.getIndex()){
+                                            if(tileEntity1.sides[EnumFacing.UP.getIndex()] || tileEntity1.sides[EnumFacing.DOWN.getIndex()]){
+                                                addToList(scanned, world, offset1, facing1.getOpposite());
+                                            }
+                                        } else {
+                                            if((tileEntity1.sides[EnumFacing.NORTH.getIndex()] || tileEntity1.sides[EnumFacing.SOUTH.getIndex()])){
+                                                addToList(scanned, world, offset1, facing1.getOpposite());
+                                            }
+                                            if((tileEntity1.sides[EnumFacing.WEST.getIndex()] || tileEntity1.sides[EnumFacing.EAST.getIndex()])){
+                                                addToList(scanned, world, offset1, facing1.getOpposite());
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            }
         }
     }
 

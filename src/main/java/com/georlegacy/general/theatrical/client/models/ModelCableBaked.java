@@ -3,6 +3,7 @@ package com.georlegacy.general.theatrical.client.models;
 import com.georlegacy.general.theatrical.blocks.cables.BlockDMXCable;
 import com.georlegacy.general.theatrical.items.ItemDMXCable;
 import com.georlegacy.general.theatrical.tiles.cables.TileDMXCable;
+import com.georlegacy.general.theatrical.util.ClientUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ModelCableBaked implements IBakedModel {
 
     public final TextureAtlasSprite particle;
     public final List<List<BakedQuad>> north, south, west, east, center;
+    public final List<List<BakedQuad>> extendedNorth, extendedSouth, extendedWest, extendedEast;
     private final IBakedModel bakedItem;
     private final ItemOverrideList itemOverrideList;
 
@@ -43,12 +45,20 @@ public class ModelCableBaked implements IBakedModel {
         west = new ArrayList<>();
         east = new ArrayList<>();
         center = new ArrayList<>();
+        extendedNorth = new ArrayList<>();
+        extendedSouth = new ArrayList<>();
+        extendedWest = new ArrayList<>();
+        extendedEast = new ArrayList<>();
         for(EnumFacing facing : EnumFacing.VALUES){
             north.add(c.get(cable.modelNorth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
             south.add(c.get(cable.modelSouth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
             east.add(c.get(cable.modelEast, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
             west.add(c.get(cable.modelWest, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
             center.add(c.get(cable.modelCenter, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            extendedNorth.add(c.get(cable.modelExtendedNorth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            extendedSouth.add(c.get(cable.modelExtendedSouth, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            extendedWest.add(c.get(cable.modelExtendedWest, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
+            extendedEast.add(c.get(cable.modelExtendedEast, ModelCable.FACE_ROTATIONS[facing.getIndex()]));
         }
         bakedItem = new ModelCableBakedItem(this);
 
@@ -66,73 +76,73 @@ public class ModelCableBaked implements IBakedModel {
         if(face  == 0 ){
             switch(facing.getIndex()){
                 case 3:
-                    return south;
+                    return extendedSouth;
                 case 2:
-                    return north;
+                    return extendedNorth;
                 case 5:
-                    return east;
+                    return extendedEast;
                 case 4:
-                    return west;
+                    return extendedWest;
             }
         }else
         if(face  == 1 ){
             switch(facing.getIndex()){
                 case 3:
-                    return north;
+                    return extendedNorth;
                 case 2:
-                    return south;
+                    return extendedSouth;
                 case 5:
-                    return east;
+                    return extendedEast;
                 case 4:
-                    return west;
+                    return extendedWest;
             }
         }else
         if(face  == 2 ){
             switch(facing.getIndex()){
                 case 1:
-                    return south;
+                    return extendedSouth;
                 case 0:
-                    return north;
+                    return extendedNorth;
                 case 5:
-                    return west;
+                    return extendedWest;
                 case 4:
-                    return east;
+                    return extendedEast;
             }
         }else
         if(face  == 3 ){
             switch(facing.getIndex()){
                 case 1:
-                    return south;
+                    return extendedSouth;
                 case 0:
-                    return north;
+                    return extendedNorth;
                 case 5:
-                    return east;
+                    return extendedEast;
                 case 4:
-                    return west;
+                    return extendedWest;
             }
         }else
         if(face  == 4 ){
             switch(facing.getIndex()){
                 case 1:
-                    return south;
+                    return extendedSouth;
                 case 0:
-                    return north;
+                    return extendedNorth;
                 case 2:
-                    return west;
+                    return extendedWest;
                 case 3:
-                    return east;
+                    return extendedEast;
             }
         }else
         if(face  ==5 ){
             switch(facing.getIndex()){
                 case 1:
-                    return south;
+                    return extendedSouth;
                 case 0:
-                    return north;
+                    return extendedNorth;
                 case 2:
-                    return east;
+                    return extendedEast;
                 case 3:
-                    return west;
+                    return extendedWest;
             }
         }
         return center;
@@ -151,13 +161,6 @@ public class ModelCableBaked implements IBakedModel {
         if(tileDMXCable == null){
             return Collections.emptyList();
         }
-// This comment is for Alex. This is commented out cause Latvian told me to.
-
-//
-//        return ClientUtils.optimize(quads);
-
-
-
         ArrayList<BakedQuad> quads = new ArrayList<>();
         for(int i = 0; i < 6; i++){
             if(tileDMXCable.sides[i]){
@@ -274,7 +277,7 @@ public class ModelCableBaked implements IBakedModel {
 //                quads.addAll(getFromFacing(EnumFacing.byIndex(i)));
 //            }
 //        }
-        return quads;
+        return ClientUtils.optimize(quads);
     }
 
     @Override

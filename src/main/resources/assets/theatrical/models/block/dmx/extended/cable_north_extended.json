@@ -1,0 +1,20 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "theatrical:blocks/dmx_cable",
+		"particle": "theatrical:blocks/dmx_cable"
+	},
+	"elements": [
+		{
+			"name": "north",
+			"from": [7, 0, -1],
+			"to": [9, 1, 7],
+			"faces": {
+				"east": {"uv": [0, 0, 8, 1], "texture": "#0"},
+				"south": {"uv": [0, 0, 2, 1], "texture": "#0"},
+				"west": {"uv": [0, 0, 8, 1], "texture": "#0"},
+				"up": {"uv": [0, 0, 2, 8], "texture": "#0"}
+			}
+		}
+	]
+}
