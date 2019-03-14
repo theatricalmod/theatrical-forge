@@ -16,16 +16,16 @@
 
 package com.georlegacy.general.theatrical.blocks.rigging;
 
+import com.georlegacy.general.theatrical.api.ISupport;
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
-import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.EnumHand;
@@ -34,13 +34,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockBar extends BlockBase {
+public class BlockBar extends BlockBase implements ISupport {
 
     public static final PropertyDirection AXIS = PropertyDirection.create("axis",
         Plane.HORIZONTAL);
 
-    private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.4, 0.9, 0, 0.6, 1.1, 1);
-    private final AxisAlignedBB Z_BOX = new AxisAlignedBB(0, 0.9, 0.4, 1, 1.1, 0.6);
+    private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.4, 0, 0, 0.6, 0.2, 1);
+    private final AxisAlignedBB Z_BOX = new AxisAlignedBB(0, 0, 0.4, 1, 0.2, 0.6);
 
     public BlockBar() {
         super("bar");
@@ -51,18 +51,15 @@ public class BlockBar extends BlockBase {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
         EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
-        if (!worldIn.isRemote) {
-            if (Block
-                .getBlockFromItem(playerIn.getHeldItem(hand).getItem()) instanceof IBarAttachable) {
-                if (playerIn.getHorizontalFacing().getAxis() == state.getValue(AXIS).getAxis()) {
-                    worldIn.setBlockToAir(pos);
-                    worldIn.setBlockState(pos,
-                        Block
-                            .getBlockFromItem(playerIn.getHeldItem(hand).getItem()).getDefaultState().withProperty(
-                            BlockFresnel.ON_BAR, true).withProperty(BlockFresnel.FACING,
-                            playerIn.getHorizontalFacing()), 2);
-                    return true;
-                }
+        if(!playerIn.getHeldItem(hand).isEmpty()){
+            Item item = playerIn.getHeldItem(hand).getItem();
+            if(getBlockFromItem(item) instanceof BlockHangable){
+                BlockHangable hangable = (BlockHangable) getBlockFromItem(item);
+                BlockPos down = pos.offset(EnumFacing.DOWN);
+                if(!worldIn.isAirBlock(down))
+                    return false;
+                worldIn.setBlockState(down, hangable.getDefaultState().withProperty(BlockHangable.FACING, playerIn.getHorizontalFacing()));
+                return true;
             }
         }
         return super
@@ -112,4 +109,8 @@ public class BlockBar extends BlockBase {
         return state.getValue(AXIS).getIndex();
     }
 
+    @Override
+    public EnumFacing getBlockPlacementDirection() {
+        return EnumFacing.DOWN;
+    }
 }

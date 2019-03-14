@@ -16,20 +16,25 @@
 
 package com.georlegacy.general.theatrical.blocks.rigging;
 
+import com.georlegacy.general.theatrical.api.ISupport;
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockLadderBar extends BlockBase {
+public class BlockLadderBar extends BlockBase implements ISupport {
 
     public static final PropertyEnum<EnumAxis> AXIS = PropertyEnum.create("axis", EnumAxis.class);
 
@@ -43,6 +48,13 @@ public class BlockLadderBar extends BlockBase {
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing,
         float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         if (facing.getAxis().isHorizontal()) {
+            BlockPos offFacing = pos.offset(placer.getHorizontalFacing());
+            if(!worldIn.isAirBlock(offFacing))
+            {
+                if(worldIn.getBlockState(offFacing).getBlock() == this){
+                    return this.getDefaultState().withProperty(AXIS, worldIn.getBlockState(offFacing).getValue(AXIS));
+                }
+            }
             return this.getDefaultState()
                 .withProperty(AXIS, EnumAxis.fromFacingAxis(facing.getOpposite().getAxis()));
         } else {
@@ -92,4 +104,28 @@ public class BlockLadderBar extends BlockBase {
         return state.getValue(AXIS).ordinal();
     }
 
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
+        EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
+        float hitZ) {
+        if(!playerIn.getHeldItem(hand).isEmpty()){
+            Item item = playerIn.getHeldItem(hand).getItem();
+            if(getBlockFromItem(item) instanceof BlockHangable){
+                BlockHangable hangable = (BlockHangable) getBlockFromItem(item);
+                BlockPos down = pos.offset(EnumFacing.DOWN);
+                if(!worldIn.isAirBlock(down)){
+                    return false;
+                }
+                worldIn.setBlockState(down, hangable.getDefaultState().withProperty(BlockHangable.FACING, playerIn.getHorizontalFacing()));
+                return true;
+            }
+        }
+        return super
+            .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public EnumFacing getBlockPlacementDirection() {
+        return EnumFacing.DOWN;
+    }
 }

@@ -11,23 +11,27 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileDMXCable extends TileEntity{
+public class TileCable extends TileEntity{
 
-    public boolean[] sides = new boolean[6];
+    public CableSide[] sides = new CableSide[6];
 
-    public TileDMXCable() {
+    public TileCable() {
     }
 
     public NBTTagCompound writeNBT(NBTTagCompound nbtTagCompound){
         for(int i = 0; i < sides.length; i++){
-            nbtTagCompound.setBoolean(Integer.toString(i), sides[i]);
+            if(hasSide(i)) {
+                nbtTagCompound.setTag("side_" + i, sides[i].getNBT());
+            }
         }
         return nbtTagCompound;
     }
 
     public void readNBT(NBTTagCompound nbt){
         for(int i = 0; i < 6; i++){
-            sides[i] = nbt.getBoolean(Integer.toString(i));
+            if(nbt.hasKey("side_" + i)) {
+                sides[i] = CableSide.readNBT(nbt.getCompoundTag("side_" + i));
+            }
         }
     }
 
@@ -64,13 +68,27 @@ public class TileDMXCable extends TileEntity{
         readNBT(tag);
     }
 
-    public boolean isConnected(EnumFacing enumFacing, int side){
+    public boolean hasSide(int side){
+        return sides[side] != null;
+    }
+
+    public boolean isConnected(EnumFacing enumFacing, int side, CableType cableType){
         TileEntity tileEntity = world.getTileEntity(pos.offset(enumFacing));
         if(tileEntity == null){
             return false;
         }
-        if(tileEntity instanceof TileDMXCable){
-          return ((TileDMXCable) tileEntity).sides[side];
+        if(tileEntity instanceof TileCable){
+            TileCable tileCable = (TileCable)tileEntity;
+          return tileCable.sides[side] != null && tileCable.sides[side].hasType(cableType);
+        }
+        if(enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH){
+            if(!hasSide(0) && !hasSide(1)){
+                return false;
+            }
+        } else {
+            if(!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)){
+                return false;
+            }
         }
         if(tileEntity.hasCapability(DMXReceiver.CAP, enumFacing.getOpposite()) || tileEntity.hasCapability(
             DMXProvider.CAP, enumFacing.getOpposite())){

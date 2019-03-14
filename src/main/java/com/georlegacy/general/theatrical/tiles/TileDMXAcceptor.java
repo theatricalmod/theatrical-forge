@@ -1,15 +1,17 @@
 package com.georlegacy.general.theatrical.tiles;
 
+import com.georlegacy.general.theatrical.api.IAcceptsCable;
 import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
+import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-public abstract class TileDMXAcceptor extends TileFixture {
+public abstract class TileDMXAcceptor extends TileFixture implements IAcceptsCable {
 
     private final IDMXReceiver idmxReceiver;
 
@@ -68,5 +70,10 @@ public abstract class TileDMXAcceptor extends TileFixture {
         {
             WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
         }
+    }
+
+    @Override
+    public CableType[] getAcceptedCables() {
+        return new CableType[]{CableType.DMX, CableType.POWER};
     }
 }

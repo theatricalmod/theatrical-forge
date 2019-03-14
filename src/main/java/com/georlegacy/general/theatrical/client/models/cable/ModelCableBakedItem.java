@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.client.models;
+package com.georlegacy.general.theatrical.client.models.cable;
 
 import com.georlegacy.general.theatrical.util.ClientUtils;
 import java.util.ArrayList;
@@ -21,9 +21,6 @@ public class ModelCableBakedItem implements IBakedModel {
     public ModelCableBakedItem(ModelCableBaked p){
         parent = p;
         quads = new ArrayList<>();
-//        quads.addAll(parent.center);
-//        quads.addAll(parent.north);
-//        quads.addAll(parent.south);
         quads = Collections.unmodifiableList(ClientUtils.optimize(quads));
     }
 

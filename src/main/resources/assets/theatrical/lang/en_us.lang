@@ -6,19 +6,19 @@ itemGroup.theatrical_rigging=Rigging/Truss
 
 tile.fresnel.name=Harmony F Fresnel
 tile.moving_head.name=Moving Head
-tile.dmx_cable_block.name=DMX Cable
+tile.dmx_cable.name=DMX Cable
 tile.dmx_interface.name=DMX Interface
+tile.artnet_interface.name=Artnet Interface
 
 tile.bar.name=Rigging Bar
 tile.ladder_bar.name=Rigging Ladder Bar
-
 
 item.dmx_cable.name=DMX Cable
 item.blank_gel.name=Blank Gel
 item.gel.0.name=Clear (0)
 item.gel.1.name=Light Bastard Amber (1)
 item.gel.2.name=Bastard Amber (2)
-item.gel.3.name=Dark Bastard Amber (3)
+item.gel.3.name=Dark Bastard Amber (3)B
 item.gel.4.name=Medium Bastard Amber (4)
 item.gel.5.name=Rose Tint (5)
 item.gel.6.name=No Color Straw (6)

@@ -1,6 +1,7 @@
 package com.georlegacy.general.theatrical.handlers;
 
-import com.georlegacy.general.theatrical.client.models.ModelCableLoader;
+import com.georlegacy.general.theatrical.client.models.cable.ModelCableLoader;
+import com.georlegacy.general.theatrical.client.models.truss.ModelTrussLoader;
 import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
@@ -40,11 +41,15 @@ public class ClientEventHandler {
         }
         registerItemRenderer(TheatricalItems.ITEM_BLANK_GEL, 0, "gel/base/blank_gel");
         registerItemRenderer(TheatricalItems.ITEM_BLANK_GOBO, 0, "gobo/base/blank_gobo");
+        registerItemRenderer(TheatricalItems.ITEM_DMX_CABLE, 0, "cable/dmx");
+        registerItemRenderer(TheatricalItems.ITEM_POWER_CABLE, 0, "cable/power");
         ClientRegistry.bindTileEntitySpecialRenderer(TileFresnel.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
         ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
         ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_CABLE, ModelCableLoader.INSTANCE);
-        ModelLoader.setCustomModelResourceLocation(TheatricalItems.ITEM_DMX_CABLE,0, ModelCableLoader.ID);
+
+        ModelLoaderRegistry.registerLoader(ModelTrussLoader.INSTANCE);
+        ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_SQUARE_TRUSS, ModelTrussLoader.INSTANCE);
     }
 
     public static IBakedModel loadModel(ResourceLocation location){

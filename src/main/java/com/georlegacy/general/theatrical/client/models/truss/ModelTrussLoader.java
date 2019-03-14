@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.client.models;
+package com.georlegacy.general.theatrical.client.models.truss;
 
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -8,11 +8,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 
-public class ModelCableLoader extends DefaultStateMapper implements ICustomModelLoader {
+public class ModelTrussLoader extends DefaultStateMapper implements ICustomModelLoader {
 
 
-    public static final ModelCableLoader INSTANCE = new ModelCableLoader();
-    public static final ModelResourceLocation ID = new ModelResourceLocation(Reference.MOD_ID + ":dmx_cable_block#normal");
+    public static final ModelTrussLoader INSTANCE = new ModelTrussLoader();
+    public static final ModelResourceLocation ID = new ModelResourceLocation(Reference.MOD_ID + ":square#normal");
 
 
     @Override
@@ -27,6 +27,6 @@ public class ModelCableLoader extends DefaultStateMapper implements ICustomModel
 
     @Override
     public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-        return new ModelCable();
+        return new ModelTruss();
     }
 }

@@ -18,6 +18,7 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.armor.utility.FixtureDetailHelmetItem;
 import com.georlegacy.general.theatrical.items.ItemDMXCable;
+import com.georlegacy.general.theatrical.items.ItemPowerCable;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.BlankGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.items.attr.fixture.gobo.BlankGobo;
@@ -37,6 +38,7 @@ public class TheatricalItems {
     public static final FixtureDetailHelmetItem ITEM_FIXTURE_DETAIL_HELMET = new FixtureDetailHelmetItem();
 
     public static final ItemDMXCable ITEM_DMX_CABLE = new ItemDMXCable();
+    public static final ItemPowerCable ITEM_POWER_CABLE = new ItemPowerCable();
 
     static {
         ITEMS.add(ITEM_GEL);

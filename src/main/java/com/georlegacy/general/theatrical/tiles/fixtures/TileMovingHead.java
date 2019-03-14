@@ -19,7 +19,7 @@ package com.georlegacy.general.theatrical.tiles.fixtures;
 import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
-import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.tiles.TileRGBFixture;
 import net.minecraft.block.Block;
@@ -71,7 +71,7 @@ public class TileMovingHead extends TileRGBFixture  {
     @Override
     public IBakedModel getStaticModel() {
         Block block = getWorld().getBlockState(pos).getBlock();
-        if(block instanceof IBarAttachable && ((IBarAttachable) block).isOnBar(world, pos)){
+        if(block instanceof BlockHangable && ((BlockHangable) block).isHanging(world, pos)){
             return TheatricalModels.MOVING_HEAD_BAR;
         }
         return TheatricalModels.MOVING_HEAD_STATIC;

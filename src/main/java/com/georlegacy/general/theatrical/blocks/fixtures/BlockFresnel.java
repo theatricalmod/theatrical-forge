@@ -19,9 +19,7 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import javax.annotation.Nonnull;
@@ -42,7 +40,7 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
 
 
     public BlockFresnel() {
-        super("fresnel");
+        super("fresnel", new EnumFacing[]{EnumFacing.DOWN});
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
@@ -69,14 +67,6 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
             if (!playerIn.isSneaking()) {
                 playerIn.openGui(TheatricalMain.instance, GUIID.FIXTURE_FRESNEL.getNid(), worldIn,
                     pos.getX(), pos.getY(), pos.getZ());
-            } else {
-                if (state.getValue(ON_BAR)) {
-                    worldIn.setBlockToAir(pos);
-                    worldIn.setBlockState(pos,
-                        TheatricalBlocks.BLOCK_BAR.getDefaultState().withProperty(
-                            BlockBar.AXIS, state.getValue(FACING)), 2);
-                    return true;
-                }
             }
         }
         return super
@@ -130,4 +120,6 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
         }
         return super.getLightValue(state, world, pos);
     }
+
+
 }

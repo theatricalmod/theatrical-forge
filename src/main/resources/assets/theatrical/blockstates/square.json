@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "theatrical:mt100"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "axis": {
+      "x": {},
+      "z": {"y": 270}
+    }
+  }
+}

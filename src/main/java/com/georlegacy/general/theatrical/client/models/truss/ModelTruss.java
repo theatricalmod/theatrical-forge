@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.client.models;
+package com.georlegacy.general.theatrical.client.models.truss;
 
 import com.georlegacy.general.theatrical.util.ClientUtils;
 import com.georlegacy.general.theatrical.util.Reference;
@@ -21,7 +21,7 @@ import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-public class ModelCable implements IModel {
+public class ModelTruss implements IModel {
 
     public static final ModelRotation[] FACE_ROTATIONS = {
         ModelRotation.X0_Y0,
@@ -60,27 +60,23 @@ public class ModelCable implements IModel {
         return PerspectiveMapWrapper.handlePerspective(model, TRANSFORM_MAP, cameraTransformType);
     }
 
-    public final ResourceLocation modelNorth, modelSouth, modelEast, modelWest, modelCenter;
-    public final ResourceLocation modelExtendedNorth, modelExtendedSouth, modelExtendedEast, modelExtendedWest;
+    public final ResourceLocation modelNorth, modelSouth, modelEast, modelWest, modelDown, modelUp;
     public final ResourceLocation particle;
 
-    public ModelCable() {
-        modelNorth = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_north");
-        modelSouth = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_south");
-        modelEast = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_east");
-        modelWest = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_west");
-        modelCenter = new ResourceLocation(Reference.MOD_ID, "block/dmx/cable_middle");
+    public ModelTruss() {
+        modelNorth = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_north");
+        modelSouth = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_south");
+        modelEast = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_east");
+        modelWest = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_west");
+        modelUp = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_up");
+        modelDown = new ResourceLocation(Reference.MOD_ID, "block/mt/mt100_down");
         particle = new ResourceLocation("minecraft:blocks/concrete_gray");
-        modelExtendedNorth = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_north_extended");
-        modelExtendedSouth = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_south_extended");
-        modelExtendedEast = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_east_extended");
-        modelExtendedWest = new ResourceLocation(Reference.MOD_ID, "block/dmx/extended/cable_west_extended");
     }
 
     @Override
     public IBakedModel bake(IModelState state, VertexFormat format,
         Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        return new ModelCableBaked(this, bakedTextureGetter.apply(particle), (id, rotation, uvlock) -> {
+        return new ModelTrussBaked(this, bakedTextureGetter.apply(particle), (id, rotation, uvlock) -> {
             IModel model = ModelLoaderRegistry.getModelOrMissing(id).uvlock(uvlock);
             IBakedModel bakedModel = model.bake(rotation, format, bakedTextureGetter);
             return ClientUtils.optimize(bakedModel.getQuads(null, null, 0L));
@@ -89,7 +85,7 @@ public class ModelCable implements IModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return Arrays.asList(modelCenter, modelNorth, modelSouth, modelEast, modelWest, modelExtendedEast, modelExtendedNorth, modelExtendedSouth, modelExtendedWest);
+        return Arrays.asList(modelDown, modelUp, modelNorth, modelSouth, modelEast, modelWest);
     }
 
     public interface ModelCallback

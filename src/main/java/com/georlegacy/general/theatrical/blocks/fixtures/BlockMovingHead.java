@@ -45,7 +45,7 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
     public static final PropertyBool FLIPPED = PropertyBool.create("flipped");
 
     public BlockMovingHead() {
-        super("moving_head");
+        super("moving_head", new EnumFacing[]{EnumFacing.DOWN, EnumFacing.UP});
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
@@ -132,7 +132,7 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta)).withProperty(FLIPPED, (meta & 4) != 0).withProperty(ON_BAR, (meta & 8) != 0);
+        return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta)).withProperty(FLIPPED, (meta & 4) != 0);
     }
 
     @Override
@@ -144,15 +144,11 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
         {
             i |= 4;
         }
-        if (state.getValue(ON_BAR))
-        {
-            i |= 8;
-        }
         return i;
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, FLIPPED, ON_BAR);
+        return new BlockStateContainer(this, FACING, FLIPPED);
     }
 }

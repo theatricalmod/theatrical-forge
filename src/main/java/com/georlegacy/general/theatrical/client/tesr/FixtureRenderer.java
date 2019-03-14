@@ -68,6 +68,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
             renderLightBeam(te, partialTicks, (te.getIntensity() * 0.4f) / 255, te.getBeamWidth(), distance,
                 FixtureUtils.getColorFromTE(te));
         }
+        GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
 
@@ -77,9 +78,11 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     }
 
     public void renderLight(TileFixture te, EnumFacing direction, float partialTicks, boolean isFlipped) {
-        if(te.getHangType() == HangableType.BRACE_BAR && te.getWorld().getBlockState(te.getPos()).getValue(
-            BlockHangable.ON_BAR)){
-            GlStateManager.translate(0, 0.125, 0);
+        if(te.getHangType() == HangableType.BRACE_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
+            GlStateManager.translate(0, 0.175, 0);
+        }
+        if(te.getHangType() == HangableType.HOOK_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
+            GlStateManager.translate(0, 0.05, 0);
         }
         GlStateManager.translate(0.5F, 0, -.5F);
         GlStateManager.rotate(direction.getHorizontalAngle() , 0, 1, 0);
@@ -87,11 +90,8 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         GlStateManager.translate(0.5, -.5F, -0.5F);
         GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
         GlStateManager.translate(-.5F, .5F, 0.5F);
-        GlStateManager.enableLighting();
         renderHookBar(te);
-        GlStateManager.disableLighting();
-        if(te.getHangType() == HangableType.BRACE_BAR && te.getWorld().getBlockState(te.getPos()).getValue(
-            BlockHangable.ON_BAR)){
+        if(te.getHangType() == HangableType.BRACE_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
             GlStateManager.translate(0, 0.19, 0);
         }
         float[] pans = te.getPanRotationPosition();
@@ -119,7 +119,6 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.pushMatrix();
-        GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.depthMask(true);
         GlStateManager.enableDepth();
@@ -131,7 +130,6 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         bufferbuilder.setTranslation(0, 0, 0);
         tessellator.draw();
         GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
 
@@ -164,7 +162,6 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
 
     public void renderLightBeam(TileFixture tileFresnel, float partialTicks,
         float alpha, double beamSize, double length, int color) {
-        //TODO: Fix me so the lamps don't disappear when you look through me.
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder render = tessellator.getBuffer();
         int r = (color >> 16) & 0xFF;
@@ -175,8 +172,8 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
 
         //Open GL Stuff
         GlStateManager.pushMatrix();
+        GlStateManager.depthMask(false);
         GlStateManager.translate(0.5, 0.8, 0);
-        GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
             GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -230,7 +227,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
             GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
             GlStateManager.DestFactor.ZERO);
         GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
+        GlStateManager.depthMask(true);
         GlStateManager.popMatrix();
 
         popBrightness();
