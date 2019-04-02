@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 public class BlockHangable extends BlockDirectional {
 
-    private EnumFacing[] allowedPlaces;
+    public EnumFacing[] allowedPlaces;
 
     public BlockHangable(String name, EnumFacing[] allowedPlaces) {
         super(name);

@@ -1,28 +1,37 @@
 {
-	"credit": "Made with Blockbench",
-	"textures": {
-		"0": "theatrical:blocks/dmx_cable",
-		"particle": "theatrical:blocks/dmx_cable"
-	},
-	"elements": [
-		{
-			"name": "east",
+  "credit": "Made with Blockbench",
+  "textures": {
+    "0": "theatrical:blocks/dmx_cable",
+    "particle": "theatrical:blocks/dmx_cable"
+  },
+  "elements": [
+    {
+      "name": "center",
       "from": [
-        9,
+        6,
         0,
         6
       ],
       "to": [
-        17,
+        10,
         2,
         10
       ],
-			"faces": {
+      "faces": {
         "north": {
           "uv": [
             0,
             0,
-            8,
+            4,
+            2
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
             2
           ],
           "texture": "#0"
@@ -31,7 +40,7 @@
           "uv": [
             0,
             0,
-            8,
+            4,
             2
           ],
           "texture": "#0"
@@ -49,12 +58,12 @@
           "uv": [
             0,
             0,
-            8,
+            4,
             4
           ],
           "texture": "#0"
         }
-			}
-		}
-	]
+      }
+    }
+  ]
 }

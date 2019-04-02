@@ -72,14 +72,56 @@ public class TileCable extends TileEntity{
         return sides[side] != null;
     }
 
-    public boolean isConnected(EnumFacing enumFacing, int side, CableType cableType){
+
+    public boolean isConnected(EnumFacing enumFacing, int side, CableType typer) {
+        TileEntity tileEntity = world.getTileEntity(pos.offset(enumFacing));
+        if (tileEntity == null) {
+            return false;
+        }
+        if (tileEntity instanceof TileCable) {
+            TileCable tileCable = (TileCable) tileEntity;
+            if (tileCable.sides[side] != null) {
+                return tileCable.sides[side].hasType(typer);
+            }
+            return false;
+        }
+        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
+            if (!hasSide(0) && !hasSide(1)) {
+                return false;
+            }
+        } else {
+            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
+                return false;
+            }
+        }
+        if (tileEntity.hasCapability(DMXReceiver.CAP, enumFacing.getOpposite()) || tileEntity.hasCapability(
+            DMXProvider.CAP, enumFacing.getOpposite())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isConnected(EnumFacing enumFacing, int side) {
         TileEntity tileEntity = world.getTileEntity(pos.offset(enumFacing));
         if(tileEntity == null){
             return false;
         }
         if(tileEntity instanceof TileCable){
             TileCable tileCable = (TileCable)tileEntity;
-          return tileCable.sides[side] != null && tileCable.sides[side].hasType(cableType);
+            if (tileCable.sides[side] == null) {
+                return false;
+            }
+            boolean hasType = false;
+            for (CableType type : sides[side].getTypes()) {
+                if (type != CableType.NONE) {
+                    if (!hasType) {
+                        if (tileCable.sides[side].hasType(type)) {
+                            hasType = true;
+                        }
+                    }
+                }
+            }
+            return hasType;
         }
         if(enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH){
             if(!hasSide(0) && !hasSide(1)){

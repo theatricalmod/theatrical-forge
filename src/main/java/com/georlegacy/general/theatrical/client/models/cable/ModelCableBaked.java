@@ -32,7 +32,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class ModelCableBaked implements IBakedModel {
 
     public final TextureAtlasSprite particle;
-    public final Map<CableType, List<List<List<BakedQuad>>>> north, south, west, east, center_x, center_z;
+    public final Map<CableType, List<List<List<BakedQuad>>>> north, south, west, east, center;
     private final IBakedModel bakedItem;
     private final ItemOverrideList itemOverrideList;
 
@@ -43,57 +43,52 @@ public class ModelCableBaked implements IBakedModel {
     int DOWN = EnumFacing.DOWN.getIndex();
     int UP = EnumFacing.UP.getIndex();
 
-    public ModelCableBaked(ModelCable cable, TextureAtlasSprite p, ModelCable.ModelCallback c){
+    public ModelCableBaked(ModelCable cable, TextureAtlasSprite p, ModelCable.ModelCallback c) {
         particle = p;
         north = new HashMap<>();
         south = new HashMap<>();
         west = new HashMap<>();
         east = new HashMap<>();
-        center_x = new HashMap<>();
-        center_z = new HashMap<>();
-        for(CableType cableType : CableType.values()){
-            if(cableType == CableType.NONE){
+        center = new HashMap<>();
+        for (CableType cableType : CableType.values()) {
+            if (cableType == CableType.NONE) {
                 continue;
             }
+
             List<List<List<BakedQuad>>> multiplesNorth = new ArrayList<>();
             List<List<List<BakedQuad>>> multiplesSouth = new ArrayList<>();
             List<List<List<BakedQuad>>> multiplesEast = new ArrayList<>();
             List<List<List<BakedQuad>>> multiplesWest = new ArrayList<>();
-            List<List<List<BakedQuad>>> multiplesCenterX = new ArrayList<>();
-            List<List<List<BakedQuad>>> multiplesCenterZ = new ArrayList<>();
-            for(int i = 0; i < 5; i++){
+            List<List<List<BakedQuad>>> multiplesCenter = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
                 List<List<BakedQuad>> facingsNorth = new ArrayList<>();
                 List<List<BakedQuad>> facingsSouth = new ArrayList<>();
                 List<List<BakedQuad>> facingsEast = new ArrayList<>();
                 List<List<BakedQuad>> facingsWest = new ArrayList<>();
-                List<List<BakedQuad>> facingsCenterX = new ArrayList<>();
-                List<List<BakedQuad>> facingsCenterZ = new ArrayList<>();
-                for(EnumFacing facing : EnumFacing.VALUES){
+                List<List<BakedQuad>> facingsCenter = new ArrayList<>();
+                for (EnumFacing facing : EnumFacing.VALUES) {
                     AbstractMap.SimpleEntry<String, ResourceLocation> entry = new AbstractMap.SimpleEntry<>("0", cableType.getTexture());
                     facingsNorth.add(c.get(cable.modelNorth.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
                     facingsSouth.add(c.get(cable.modelSouth.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
                     facingsEast.add(c.get(cable.modelEast.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
                     facingsWest.add(c.get(cable.modelWest.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
-                    facingsCenterX.add(c.get(cable.modelCenter_X.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
-                    facingsCenterZ.add(c.get(cable.modelCenter_Z.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
+                    facingsCenter.add(c.get(cable.modelCenter.get(i), ModelCable.FACE_ROTATIONS[facing.getIndex()], entry));
                 }
                 multiplesNorth.add(facingsNorth);
                 multiplesSouth.add(facingsSouth);
                 multiplesEast.add(facingsEast);
                 multiplesWest.add(facingsWest);
-                multiplesCenterX.add(facingsCenterX);
-                multiplesCenterZ.add(facingsCenterZ);
+                multiplesCenter.add(facingsCenter);
             }
             north.put(cableType, multiplesNorth);
             south.put(cableType, multiplesSouth);
             west.put(cableType, multiplesWest);
             east.put(cableType, multiplesEast);
-            center_x.put(cableType, multiplesCenterX);
-            center_z.put(cableType, multiplesCenterZ);
+            center.put(cableType, multiplesCenter);
         }
         bakedItem = new ModelCableBakedItem(this);
 
-        itemOverrideList = new ItemOverrideList(Collections.emptyList()){
+        itemOverrideList = new ItemOverrideList(Collections.emptyList()) {
             @Override
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack,
                 @Nullable World world, @Nullable EntityLivingBase entity) {
@@ -102,77 +97,72 @@ public class ModelCableBaked implements IBakedModel {
         };
     }
 
-    public List<List<BakedQuad>> getFromFacing(EnumFacing facing, int face, int multiple, CableType type){
-        if(face  == 0 ){
-            switch(facing.getIndex()){
+    public List<List<BakedQuad>> getFromFacing(EnumFacing facing, int face, int multiple, CableType cableType) {
+        if (face == 0) {
+            switch (facing.getIndex()) {
                 case 3:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 2:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 5:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
                 case 4:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
             }
-        }else
-        if(face  == 1 ){
-            switch(facing.getIndex()){
+        } else if (face == 1) {
+            switch (facing.getIndex()) {
                 case 3:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 2:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 5:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
                 case 4:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
             }
-        }else
-        if(face  == 2 ){
-            switch(facing.getIndex()){
+        } else if (face == 2) {
+            switch (facing.getIndex()) {
                 case 1:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 0:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 5:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
                 case 4:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
             }
-        }else
-        if(face  == 3 ){
-            switch(facing.getIndex()){
+        } else if (face == 3) {
+            switch (facing.getIndex()) {
                 case 1:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 0:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 5:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
                 case 4:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
             }
-        }else
-        if(face  == 4 ){
-            switch(facing.getIndex()){
+        } else if (face == 4) {
+            switch (facing.getIndex()) {
                 case 1:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 0:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 2:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
                 case 3:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
             }
-        }else
-        if(face  ==5 ){
-            switch(facing.getIndex()){
+        } else if (face == 5) {
+            switch (facing.getIndex()) {
                 case 1:
-                    return south.get(type).get(multiple);
+                    return south.get(cableType).get(multiple);
                 case 0:
-                    return north.get(type).get(multiple);
+                    return north.get(cableType).get(multiple);
                 case 2:
-                    return east.get(type).get(multiple);
+                    return east.get(cableType).get(multiple);
                 case 3:
-                    return west.get(type).get(multiple);
+                    return west.get(cableType).get(multiple);
             }
         }
         return Collections.emptyList();
@@ -184,124 +174,128 @@ public class ModelCableBaked implements IBakedModel {
 
         TileCable tileCable = null;
 
-        if(state instanceof IExtendedBlockState){
-            tileCable = ((IExtendedBlockState)state).getValue(BlockCable.CABLE);
+        if (state instanceof IExtendedBlockState) {
+            tileCable = ((IExtendedBlockState) state).getValue(BlockCable.CABLE);
         }
 
-        if(tileCable == null){
+        if (tileCable == null) {
             return Collections.emptyList();
         }
         ArrayList<BakedQuad> quads = new ArrayList<>();
-        for(int i = 0; i < 6; i++){
-            if(tileCable.hasSide(i)){
-                CableSide side1 =tileCable.sides[i];
-                for(int x = 0; x < 5; x++){
-                    if(side1.hasTypeInSlot(x)){
-                        CableType type = side1.getTypes()[x];
-                        if( tileCable.isConnected(EnumFacing.NORTH, i, type)  || tileCable.isConnected(EnumFacing.SOUTH, i, type)){
-                            quads.addAll(center_x.get(type).get(x).get(i));
-                        }else if(tileCable.isConnected(EnumFacing.EAST, i, type)  || tileCable.isConnected(EnumFacing.WEST, i, type)){
-                            quads.addAll(center_z.get(type).get(x).get(i));
-                        }else {
-                            quads.addAll(center_x.get(type).get(x).get(i));
-                        }
-                        if(i == DOWN ){
-                            if(tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i, type) ){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(EAST) | tileCable.isConnected(EnumFacing.EAST, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                        }
-                        if(i == UP){
-                            if(tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i, type)){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(EAST)|| tileCable.isConnected(EnumFacing.EAST, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                        }
-                        if(i == NORTH){
-                            if(tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(EAST)  || tileCable.isConnected(EnumFacing.EAST, i, type)){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                        }
-                        if(i == SOUTH){
-                            if(tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(DOWN)|| tileCable.isConnected(EnumFacing.DOWN, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(WEST)|| tileCable.isConnected(EnumFacing.WEST, i, type)){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(EAST)|| tileCable.isConnected(EnumFacing.EAST, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                        }
-                        if(i == EAST){
-                            if(tileCable.hasSide(UP)  || tileCable.isConnected(EnumFacing.UP, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(DOWN)  || tileCable.isConnected(EnumFacing.DOWN, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i, type)){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                        }
-                        if(i == WEST){
-                            if(tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i, type)){
-                                quads.addAll(south.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i, type)){
-                                quads.addAll(north.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i, type)){
-                                quads.addAll(west.get(type).get(x).get(i));
-                            }
-                            if(tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i, type)){
-                                quads.addAll(east.get(type).get(x).get(i));
-                            }
-                        }
-                        BlockPos pos = tileCable.getPos().offset(EnumFacing.byIndex(i));
-                        for(EnumFacing facing : EnumFacing.VALUES){
-                            BlockPos offset = pos.offset(facing);
-                            IBlockState state1 =  tileCable.getWorld().getBlockState(offset);
-                            if(state1.getBlock() instanceof BlockCable){
-                                if(tileCable.getWorld().getTileEntity(offset) != null && tileCable.getWorld().getTileEntity(offset) instanceof TileCable){
-                                    TileCable tileCable1 =  (TileCable) tileCable.getWorld().getTileEntity(offset);
-                                    if(tileCable1.hasSide(facing.getOpposite().getIndex()) && tileCable1.sides[facing.getOpposite().getIndex()].hasType(type)){
-                                        List<List<BakedQuad>> quads1 = getFromFacing(facing, i, x, type);
-                                        if(quads1.size() > 0) {
-                                            quads.addAll(quads1.get(i));
-                                        }
-                                    }
+        for (int i = 0; i < 6; i++) {
+            if (tileCable.hasSide(i)) {
+                CableSide side1 = tileCable.sides[i];
+                int size = side1.getTotalTypes() - 1;
+                CableType type = CableType.BUNDLED;
+                if (size == 0 && side1.getFirstType() != null) {
+                    type = side1.getFirstType();
+                }
+                if (size < 0) {
+                    return Collections.emptyList();
+                }
+                quads.addAll(center.get(type).get(size).get(i));
+//                        if( tileCable.isConnected(EnumFacing.NORTH, i)  || tileCable.isConnected(EnumFacing.SOUTH, i)){
+//                            quads.addAll(center_x.get(x).get(i));
+//                            hasCenter = true;
+//                        }else if(tileCable.isConnected(EnumFacing.EAST, i)  || tileCable.isConnected(EnumFacing.WEST, i)){
+//                            quads.addAll(center_z.get(x).get(i));
+//                            hasCenter = true;
+//                        }
+                if (i == DOWN) {
+                    if (tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(EAST) | tileCable.isConnected(EnumFacing.EAST, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                }
+                if (i == UP) {
+                    if (tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(EAST) || tileCable.isConnected(EnumFacing.EAST, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                }
+                if (i == NORTH) {
+                    if (tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(EAST) || tileCable.isConnected(EnumFacing.EAST, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                }
+                if (i == SOUTH) {
+                    if (tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(WEST) || tileCable.isConnected(EnumFacing.WEST, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(EAST) || tileCable.isConnected(EnumFacing.EAST, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                }
+                if (i == EAST) {
+                    if (tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                }
+                if (i == WEST) {
+                    if (tileCable.hasSide(UP) || tileCable.isConnected(EnumFacing.UP, i)) {
+                        quads.addAll(south.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(DOWN) || tileCable.isConnected(EnumFacing.DOWN, i)) {
+                        quads.addAll(north.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(NORTH) || tileCable.isConnected(EnumFacing.NORTH, i)) {
+                        quads.addAll(west.get(type).get(size).get(i));
+                    }
+                    if (tileCable.hasSide(SOUTH) || tileCable.isConnected(EnumFacing.SOUTH, i)) {
+                        quads.addAll(east.get(type).get(size).get(i));
+                    }
+                }
+                BlockPos pos = tileCable.getPos().offset(EnumFacing.byIndex(i));
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    BlockPos offset = pos.offset(facing);
+                    IBlockState state1 = tileCable.getWorld().getBlockState(offset);
+                    if (state1.getBlock() instanceof BlockCable) {
+                        if (tileCable.getWorld().getTileEntity(offset) != null && tileCable.getWorld().getTileEntity(offset) instanceof TileCable) {
+                            TileCable tileCable1 = (TileCable) tileCable.getWorld().getTileEntity(offset);
+                            if (tileCable1.hasSide(facing.getOpposite().getIndex()) && tileCable1.sides[facing.getOpposite().getIndex()].hasAnyType(side1.getTypes())) {
+                                List<List<BakedQuad>> quads1 = getFromFacing(facing, i, size, type);
+                                if (quads1.size() > 0) {
+                                    quads.addAll(quads1.get(i));
                                 }
                             }
                         }
@@ -309,6 +303,7 @@ public class ModelCableBaked implements IBakedModel {
                 }
             }
         }
+
         return ClientUtils.optimize(quads);
     }
 

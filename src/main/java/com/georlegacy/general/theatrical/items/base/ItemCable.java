@@ -64,15 +64,41 @@ public class ItemCable extends ItemBase {
                 if (tile.hasSide(opposite.getIndex()))
                 {
                     if(tile.sides[opposite.getIndex()].hasType(type)){
-                        return EnumActionResult.FAIL;
+                        if (!player.isSneaking()) {
+                            return EnumActionResult.FAIL;
+                        } else {
+                            CableSide side = tile.sides[opposite.getIndex()];
+                            side.removeType(type);
+                            tile.sides[opposite.getIndex()] = side;
+                            if (side.getTotalTypes() <= 0) {
+                                world.setBlockToAir(pos);
+                            }
+                        }
                     }else{
                         CableSide side = tile.sides[opposite.getIndex()];
                         side.addType(type);
                         tile.sides[opposite.getIndex()] = side;
                     }
                 }else{
+                    boolean haveAdded = false;
                     CableSide cableSide = new CableSide();
-                    cableSide.addType(type);
+                    for (EnumFacing facing1 : EnumFacing.HORIZONTALS) {
+                        BlockPos offset = pos.offset(facing1);
+                        if (world.getBlockState(offset).getBlock() instanceof BlockCable) {
+                            TileCable cable = (TileCable) world.getTileEntity(offset);
+                            if (cable.hasSide(opposite.getIndex())) {
+                                if (cable.sides[opposite.getIndex()].hasType(type)) {
+                                    int slot = cable.sides[opposite.getIndex()].getSlotForType(type);
+                                    cableSide.setSlotToType(type, slot);
+                                    haveAdded = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!haveAdded) {
+                        cableSide.addType(type);
+                    }
                     tile.sides[opposite.getIndex()] = cableSide;
                 }
                 tileEntity.markDirty();
@@ -100,5 +126,9 @@ public class ItemCable extends ItemBase {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
+    }
+
+    public CableType getType() {
+        return type;
     }
 }

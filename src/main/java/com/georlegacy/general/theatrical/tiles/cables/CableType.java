@@ -7,7 +7,8 @@ public enum CableType {
 
     NONE(-1, null),
     DMX(0, new ResourceLocation(Reference.MOD_ID, "blocks/cables/cable")),
-    POWER(1, new ResourceLocation(Reference.MOD_ID, "blocks/cables/power"));
+    POWER(1, new ResourceLocation(Reference.MOD_ID, "blocks/cables/power")),
+    BUNDLED(99, new ResourceLocation(Reference.MOD_ID, "blocks/cables/bundled"));
 
     private int index;
     private ResourceLocation texture;

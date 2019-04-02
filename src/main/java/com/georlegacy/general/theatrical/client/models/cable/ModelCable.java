@@ -66,7 +66,7 @@ public class ModelCable implements IModel {
         return PerspectiveMapWrapper.handlePerspective(model, TRANSFORM_MAP, cameraTransformType);
     }
 
-    public final List<ResourceLocation> modelNorth, modelSouth, modelEast, modelWest, modelCenter_X, modelCenter_Z;
+    public final List<ResourceLocation> modelNorth, modelSouth, modelEast, modelWest, modelCenter;
     public final ResourceLocation particle;
 
     public final Collection<ResourceLocation> textures;
@@ -76,11 +76,10 @@ public class ModelCable implements IModel {
         modelSouth = new ArrayList<>();
         modelEast = new ArrayList<>();
         modelWest = new ArrayList<>();
-        modelCenter_X = new ArrayList<>();
-        modelCenter_Z = new ArrayList<>();
-        for(int i = 0; i < 5; i++){
-            modelCenter_X.add(new ResourceLocation(Reference.MOD_ID, "block/cable/center/x/cable_middle_" + i));
-            modelCenter_Z.add(new ResourceLocation(Reference.MOD_ID, "block/cable/center/z/cable_middle_" + i));
+        modelCenter = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            modelCenter.add(new ResourceLocation(Reference.MOD_ID, "block/cable/center/cable_middle_" + i));
             modelNorth.add(new ResourceLocation(Reference.MOD_ID, "block/cable/north/cable_north_extended_" + i));
             modelSouth.add(new ResourceLocation(Reference.MOD_ID, "block/cable/south/cable_south_extended_" + i));
             modelEast.add(new ResourceLocation(Reference.MOD_ID, "block/cable/east/cable_east_extended_" + i));
@@ -118,7 +117,7 @@ public class ModelCable implements IModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        Stream<ResourceLocation> combinedStream = Stream.of(modelCenter_X, modelCenter_Z, modelNorth, modelSouth, modelEast, modelWest).flatMap(Collection::stream);
+        Stream<ResourceLocation> combinedStream = Stream.of(modelCenter, modelNorth, modelSouth, modelEast, modelWest).flatMap(Collection::stream);
         return combinedStream.collect(Collectors.toList());
     }
 

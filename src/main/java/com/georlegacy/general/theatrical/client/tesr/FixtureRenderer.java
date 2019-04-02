@@ -34,6 +34,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 
 public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
@@ -64,7 +65,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         double distance = te.getDistance();
         float[] startPos = te.getBeamStartPosition();
         GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
-        if (te.getIntensity() > 0) {
+        if (te.getIntensity() > 0 && MinecraftForgeClient.getRenderPass() == 1) {
             renderLightBeam(te, partialTicks, (te.getIntensity() * 0.4f) / 255, te.getBeamWidth(), distance,
                 FixtureUtils.getColorFromTE(te));
         }
@@ -76,6 +77,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     public boolean isGlobalRenderer(TileFixture te) {
         return true;
     }
+
 
     public void renderLight(TileFixture te, EnumFacing direction, float partialTicks, boolean isFlipped) {
         if(te.getHangType() == HangableType.BRACE_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){

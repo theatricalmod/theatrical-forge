@@ -18,6 +18,12 @@ public class CableSide {
         this.types = types;
     }
 
+    public void setSlotToType(CableType toType, int slot) {
+        if (!hasTypeInSlot(slot)) {
+            types[slot] = toType;
+        }
+    }
+
     public int getTotalTypes(){
         int count = 0;
         for(int i = 0; i < types.length; i++){
@@ -30,6 +36,35 @@ public class CableSide {
 
     public boolean hasTypeInSlot(int i){
         return types[i].getIndex() != CableType.NONE.getIndex();
+    }
+
+    public boolean hasAnyType(CableType[] types) {
+        for (CableType type : types) {
+            if (type != CableType.NONE) {
+                if (this.hasType(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int getSlotForType(CableType type) {
+        for (int i = 0; i < 5; i++) {
+            if (types[i].getIndex() == type.getIndex()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public CableType getFirstType() {
+        for (CableType type : types) {
+            if (type != CableType.NONE) {
+                return type;
+            }
+        }
+        return null;
     }
 
     public boolean hasType(CableType type){

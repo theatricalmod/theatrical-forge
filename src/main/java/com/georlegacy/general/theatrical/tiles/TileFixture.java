@@ -152,10 +152,9 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         readNBT(tag);
     }
 
-
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 1;
+        return pass == 0 || pass == 1;
     }
 
     @Override

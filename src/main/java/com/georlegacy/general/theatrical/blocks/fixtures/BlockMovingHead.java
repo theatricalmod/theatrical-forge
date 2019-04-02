@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
+import com.georlegacy.general.theatrical.api.ISupport;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
@@ -25,12 +26,14 @@ import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -63,6 +66,22 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
             .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        BlockPos up = pos.offset(EnumFacing.UP);
+        if (worldIn.getBlockState(up).getBlock() != Blocks.AIR && worldIn.getBlockState(up).getBlock() instanceof ISupport) {
+            ISupport support = (ISupport) worldIn.getBlockState(up).getBlock();
+            for (EnumFacing facing : allowedPlaces) {
+                if (support.getBlockPlacementDirection().equals(facing)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing,
@@ -145,6 +164,13 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
             i |= 4;
         }
         return i;
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (state.getValue(FLIPPED)) {
+            super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+        }
     }
 
     @Override
