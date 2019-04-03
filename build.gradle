@@ -30,6 +30,7 @@ repositories {
         url = "http://cc.crzd.me/maven"
     }
     maven { url "http://maven.amadornes.com/" }
+
 }
 
 minecraft {

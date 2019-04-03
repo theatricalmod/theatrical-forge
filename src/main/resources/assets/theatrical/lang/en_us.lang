@@ -14,6 +14,7 @@ tile.bar.name=Rigging Bar
 tile.ladder_bar.name=Rigging Ladder Bar
 
 item.dmx_cable.name=DMX Cable
+item.power_cable.name=Power Cable
 item.blank_gel.name=Blank Gel
 item.gel.0.name=Clear (0)
 item.gel.1.name=Light Bastard Amber (1)

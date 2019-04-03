@@ -41,11 +41,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
 
     private BlockPos lightBlock;
 
-
-
     public TileFixture(){}
-
-
 
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
         if (nbtTagCompound == null) {
@@ -251,7 +247,9 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         if (tileEntity != null) {
             TileIlluminator illuminator = (TileIlluminator) tileEntity;
             illuminator.setController(pos);
-            world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+            if (lightBlock != null) {
+                world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+            }
             if (world.isRemote) {
                 TheatricalPacketHandler.INSTANCE
                     .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));

@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.tiles.fixtures;
 
+import com.georlegacy.general.theatrical.TheatricalConfig;
 import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
@@ -27,7 +28,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 
-public class TileMovingHead extends TileRGBFixture  {
+public class TileMovingHead extends TileRGBFixture {
 
     /**
      * 0 - Intensity
@@ -39,6 +40,7 @@ public class TileMovingHead extends TileRGBFixture  {
      * 6 - Blue
      */
 
+
     /**
      * 2 - Intensity
      * 3 -Red
@@ -49,8 +51,9 @@ public class TileMovingHead extends TileRGBFixture  {
      * 13 - Focus
      */
 
+
     public TileMovingHead() {
-        super(18, 0);
+        super(18, 0, 5, TheatricalConfig.general.movingHeadEnergyCost, TheatricalConfig.general.movingHeadEnergyUsage);
     }
 
     @Override
@@ -134,11 +137,17 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public int getPan() {
+        if (this.power < this.energyCost) {
+            return prevPan;
+        }
         return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(6))  * 360) / 255F);
     }
 
     @Override
     public int getTilt() {
+        if (this.power < this.energyCost) {
+            return prevTilt;
+        }
         return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(8)) * 180) / 255F) - 90;
     }
 
@@ -149,6 +158,9 @@ public class TileMovingHead extends TileRGBFixture  {
 
     @Override
     public float getIntensity() {
+        if (this.power < this.energyCost) {
+            return 0;
+        }
         return convertByte(getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getChannel(1));
     }
 
@@ -171,4 +183,5 @@ public class TileMovingHead extends TileRGBFixture  {
     public int getColorHex() {
         return (getRed() << 16) | (getGreen() << 8) | getBlue();
     }
+
 }

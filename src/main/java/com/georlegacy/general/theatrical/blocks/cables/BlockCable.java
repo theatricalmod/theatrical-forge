@@ -325,7 +325,9 @@ public class BlockCable extends Block implements ITileEntityProvider, IHasTileEn
 
                 if (tile.hasSide(side.getIndex()))
                 {
-                    return new ItemStack(TheatricalItems.ITEM_DMX_CABLE);
+                    if (tile.sides[side.getIndex()].getTotalTypes() == 1) {
+                        return new ItemStack(tile.sides[side.getIndex()].getFirstType().getCableItem());
+                    }
                 }
             }
         }
