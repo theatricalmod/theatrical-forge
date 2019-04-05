@@ -1,7 +1,7 @@
-package com.georlegacy.general.theatrical.api.capabilities.provider;
+package com.georlegacy.general.theatrical.api.capabilities.dmx.provider;
 
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import com.georlegacy.general.theatrical.tiles.cables.TileCable;

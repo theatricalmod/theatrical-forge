@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.api.capabilities.receiver;
+package com.georlegacy.general.theatrical.api.capabilities.dmx.receiver;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

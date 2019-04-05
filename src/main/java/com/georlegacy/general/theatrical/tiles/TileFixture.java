@@ -33,7 +33,6 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     private double distance = 0;
     private int pan, tilt = 0;
     private int focus = 6;
-    private float power = 255;
 
     private long timer = 0;
 
@@ -54,7 +53,6 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         nbtTagCompound.setInteger("prevTilt", prevTilt);
         nbtTagCompound.setInteger("prevFocus", prevFocus);
         nbtTagCompound.setLong("timer", timer);
-        nbtTagCompound.setFloat("power", power);
         return nbtTagCompound;
     }
 
@@ -66,7 +64,6 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         prevTilt = nbtTagCompound.getInteger("prevTilt");
         prevFocus = nbtTagCompound.getInteger("prevFocus");
         timer = nbtTagCompound.getLong("timer");
-        power = nbtTagCompound.getFloat("power");
     }
 
     public int getPan() {
@@ -155,10 +152,10 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        int prevLightValue = (int) (power * 15F / 255F);
+        int prevLightValue = (int) (getIntensity() * 15F / 255F);
         NBTTagCompound tag = pkt.getNbtCompound();
         readNBT(tag);
-        int newLightValue = (int) (power * 15F / 255F);
+        int newLightValue = (int) (getIntensity() * 15F / 255F);
         if (prevLightValue != newLightValue) {
             if (world != null && lightBlock != null) {
                 world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);

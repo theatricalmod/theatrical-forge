@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.guis.fixtures.gui;
 
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerIntelligentFixture;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;

@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.items.base;
 
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.cables.BlockCable;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;

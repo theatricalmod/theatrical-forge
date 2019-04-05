@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.tiles.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalConfig;
 import com.georlegacy.general.theatrical.api.HangableType;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
@@ -29,28 +29,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 
 public class TileMovingHead extends TileRGBFixture {
-
-    /**
-     * 0 - Intensity
-     * 1 - Focus
-     * 2 - Pan
-     * 3 - Tilt
-     * 4 - Red
-     * 5 - Green
-     * 6 - Blue
-     */
-
-
-    /**
-     * 2 - Intensity
-     * 3 -Red
-     * 4 - green
-     * 5- blue
-     * 8 - Pan
-     * 9 - Tilt
-     * 13 - Focus
-     */
-
 
     public TileMovingHead() {
         super(18, 0, 5, TheatricalConfig.general.movingHeadEnergyCost, TheatricalConfig.general.movingHeadEnergyUsage);

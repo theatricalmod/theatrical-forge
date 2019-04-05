@@ -1,12 +1,19 @@
 package com.georlegacy.general.theatrical.blocks.cables;
 
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
+import com.georlegacy.general.theatrical.api.capabilities.power.bundled.IBundledTheatricalPowerStorage;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
+import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tiles.cables.CableSide;
+import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import com.georlegacy.general.theatrical.tiles.cables.TileCable;
 import java.util.Random;
 import javax.annotation.Nullable;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.ITileEntityProvider;
@@ -34,7 +41,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockCable extends Block implements ITileEntityProvider, IHasTileEntity {
+public class BlockCable extends Block implements ITileEntityProvider, IHasTileEntity, ITOPProvider {
 
     public static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
@@ -326,7 +333,9 @@ public class BlockCable extends Block implements ITileEntityProvider, IHasTileEn
                 if (tile.hasSide(side.getIndex()))
                 {
                     if (tile.sides[side.getIndex()].getTotalTypes() == 1) {
-                        return new ItemStack(tile.sides[side.getIndex()].getFirstType().getCableItem());
+                        return new ItemStack(CableType.getItemForCable(tile.sides[side.getIndex()].getFirstType()));
+                    } else {
+                        return new ItemStack(TheatricalItems.ITEM_BUNDLED_CABLE);
                     }
                 }
             }
@@ -338,5 +347,38 @@ public class BlockCable extends Block implements ITileEntityProvider, IHasTileEn
     @Override
     public void dropBlockAsItemWithChance(World world, BlockPos pos, IBlockState state, float chance, int fortune)
     {
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        EnumFacing side = data.getSideHit().getOpposite();
+
+        if (side != null) {
+            TileEntity tileEntity = world.getTileEntity(data.getPos());
+
+            if (tileEntity instanceof TileCable) {
+                TileCable tile = (TileCable) tileEntity;
+
+                if (tile.hasSide(side.getIndex())) {
+                    if (tile.sides[side.getIndex()].getTotalTypes() > 1) {
+                        for (int i = 0; i < 5; i++) {
+                            if (tile.sides[side.getIndex()].getTypes()[i] != CableType.NONE) {
+                                probeInfo.text("#" + i + ": " + tile.sides[side.getIndex()].getTypes()[i].getName());
+                            }
+                        }
+                    }
+                    if (tile.sides[side.getIndex()].hasType(CableType.PATCH)) {
+                        for (int i = 0; i < 5; i++) {
+                            if (tile.sides[side.getIndex()].getTypes()[i] == CableType.PATCH) {
+                                IBundledTheatricalPowerStorage bundledTheatricalPowerStorage = tile.getCapability(BundledTheatricalPower.CAP, null);
+                                for (int x = 0; x < 8; x++) {
+                                    probeInfo.text("Channel #" + x + ": " + bundledTheatricalPowerStorage.getEnergyStored(x));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -49,7 +49,10 @@ public class BlockDirectional extends BlockBase {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex() - 2;
+        if (state.getBlock() instanceof BlockDirectional) {
+            return state.getValue(FACING).getIndex() - 2;
+        }
+        return 0;
     }
 
     @Override

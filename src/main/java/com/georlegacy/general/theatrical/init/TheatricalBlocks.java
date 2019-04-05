@@ -18,6 +18,8 @@ package com.georlegacy.general.theatrical.init;
 
 import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.cables.BlockCable;
+import com.georlegacy.general.theatrical.blocks.dimmable.BlockDimmerRack;
+import com.georlegacy.general.theatrical.blocks.dimmable.BlockPlugPanel;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockArtnetInterface;
@@ -47,4 +49,7 @@ public class TheatricalBlocks {
     public static BlockCable BLOCK_CABLE = new BlockCable();
     public static BlockDMXInterface BLOCK_DMX_INTERFACE = new BlockDMXInterface();
     public static BlockArtnetInterface BLOCK_ARTNET_INTERFACE = new BlockArtnetInterface();
+
+    public static BlockDimmerRack BLOCK_DIMMER_RACK = new BlockDimmerRack();
+    public static BlockPlugPanel BLOCK_PLUG_PANEL = new BlockPlugPanel();
 }

@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.tiles.fixtures;
 
+import com.georlegacy.general.theatrical.TheatricalConfig;
 import com.georlegacy.general.theatrical.api.HangableType;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IBarAttachable;
@@ -34,6 +35,11 @@ import net.minecraftforge.fml.common.Optional.Method;
 
 @Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "computercraft")
 public class TileFresnel extends TileTungstenFixture implements IPeripheral {
+
+    public TileFresnel() {
+        super(TheatricalConfig.general.fresnelEnergyCost, TheatricalConfig.general.fresnelEnergyUsage);
+    }
+
     @Nonnull
     @Override
     public String getType() {

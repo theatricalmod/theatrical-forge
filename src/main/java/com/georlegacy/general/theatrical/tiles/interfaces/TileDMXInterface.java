@@ -1,8 +1,8 @@
 package com.georlegacy.general.theatrical.tiles.interfaces;
 
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
-import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.DMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;

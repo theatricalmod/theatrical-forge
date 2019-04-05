@@ -16,7 +16,8 @@
 
 package com.georlegacy.general.theatrical.handlers;
 
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.WorldPipePanelNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
@@ -41,6 +42,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class RegistryHandler {
     private static final ResourceLocation LOC = new ResourceLocation("theatrical:mcmp");
     private static final ResourceLocation WORLD_CAP_ID = new ResourceLocation(Reference.MOD_ID, "dmx_world_network");
+    private static final ResourceLocation PIPE_PANEL_NETWORK = new ResourceLocation(Reference.MOD_ID, "pipe_panel_network");
 
 
     @SubscribeEvent
@@ -74,6 +76,7 @@ public class RegistryHandler {
     public static void attachWorldCap(AttachCapabilitiesEvent<World> event)
     {
         event.addCapability(WORLD_CAP_ID, new WorldDMXNetwork(event.getObject()));
+        event.addCapability(PIPE_PANEL_NETWORK, new WorldPipePanelNetwork(event.getObject()));
     }
 
     @SubscribeEvent
@@ -82,6 +85,7 @@ public class RegistryHandler {
         if (event.phase == TickEvent.Phase.END)
         {
             WorldDMXNetwork.getCapability(event.world).tick();
+            WorldPipePanelNetwork.getCapability(event.world).tick();
         }
     }
 

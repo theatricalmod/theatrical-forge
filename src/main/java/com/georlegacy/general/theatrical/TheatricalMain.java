@@ -22,20 +22,12 @@ import static com.georlegacy.general.theatrical.util.Reference.MOD_ID;
 import static com.georlegacy.general.theatrical.util.Reference.NAME;
 import static com.georlegacy.general.theatrical.util.Reference.VERSION;
 
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
-import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
+import com.georlegacy.general.theatrical.init.TheatricalCapabilities;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
+import com.georlegacy.general.theatrical.integration.top.TOPIntegration;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
-import javax.annotation.Nullable;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -64,56 +56,7 @@ public class TheatricalMain {
         TheatricalPacketHandler.init();
         TheatricalPacketHandler.clientInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TheatricalGuiHandler());
-        CapabilityManager.INSTANCE.register(IDMXProvider.class, new IStorage<IDMXProvider>() {
-            @Nullable
-            @Override
-            public NBTBase writeNBT(Capability<IDMXProvider> capability, IDMXProvider instance,
-                EnumFacing side) {
-                return instance instanceof INBTSerializable ? ((INBTSerializable) instance).serializeNBT() : null;
-            }
-
-            @Override
-            public void readNBT(Capability<IDMXProvider> capability, IDMXProvider instance,
-                EnumFacing side, NBTBase nbt) {
-
-                if (nbt != null && instance instanceof INBTSerializable)
-                {
-                    ((INBTSerializable) instance).deserializeNBT(nbt);
-                }
-            }
-        }, () -> null);
-        CapabilityManager.INSTANCE.register(IDMXReceiver.class, new IStorage<IDMXReceiver>() {
-            @Nullable
-            @Override
-            public NBTBase writeNBT(Capability<IDMXReceiver> capability, IDMXReceiver instance,
-                EnumFacing side) {
-                return instance instanceof INBTSerializable ? ((INBTSerializable) instance).serializeNBT() : null;
-            }
-
-            @Override
-            public void readNBT(Capability<IDMXReceiver> capability, IDMXReceiver instance,
-                EnumFacing side, NBTBase nbt) {
-
-                if (nbt != null && instance instanceof INBTSerializable)
-                {
-                    ((INBTSerializable) instance).deserializeNBT(nbt);
-                }
-            }
-        }, () -> null);
-
-        CapabilityManager.INSTANCE.register(WorldDMXNetwork.class, new IStorage<WorldDMXNetwork>() {
-            @Nullable
-            @Override
-            public NBTBase writeNBT(Capability<WorldDMXNetwork> capability, WorldDMXNetwork instance,
-                EnumFacing side) {
-                return null;
-            }
-
-            @Override
-            public void readNBT(Capability<WorldDMXNetwork> capability, WorldDMXNetwork instance,
-                EnumFacing side, NBTBase nbt) {
-            }
-        }, () -> null);
+        TheatricalCapabilities.init();
     }
 
     private void initComputer() {
@@ -124,6 +67,9 @@ public class TheatricalMain {
     public void init(FMLInitializationEvent event) {
         if (Loader.isModLoaded("computercraft")) {
             initComputer();
+        }
+        if (Loader.isModLoaded("theoneprobe")) {
+            TOPIntegration.init();
         }
     }
 

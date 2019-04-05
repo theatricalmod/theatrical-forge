@@ -16,7 +16,7 @@
 
 package com.georlegacy.general.theatrical.packets;
 
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import io.netty.buffer.ByteBuf;

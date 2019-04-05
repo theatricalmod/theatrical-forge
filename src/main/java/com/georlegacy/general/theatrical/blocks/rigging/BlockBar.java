@@ -17,15 +17,26 @@
 package com.georlegacy.general.theatrical.blocks.rigging;
 
 import com.georlegacy.general.theatrical.api.ISupport;
+import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
+import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
+import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
+import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
+import com.georlegacy.general.theatrical.tiles.rigging.TilePipe;
+import javax.annotation.Nullable;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.EnumHand;
@@ -34,12 +45,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockBar extends BlockBase implements ISupport {
+public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider, IHasTileEntity, ITOPProvider {
 
     public static final PropertyDirection AXIS = PropertyDirection.create("axis",
         Plane.HORIZONTAL);
 
-    private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.4, 0, 0, 0.6, 0.2, 1);
+    private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.35, 0, 0, 0.65, 0.2, 1);
     private final AxisAlignedBB Z_BOX = new AxisAlignedBB(0, 0, 0.4, 1, 0.2, 0.6);
 
     public BlockBar() {
@@ -94,6 +105,12 @@ public class BlockBar extends BlockBase implements ISupport {
         return state.getValue(AXIS).getAxis() == EnumFacing.Axis.X ? X_BOX : Z_BOX;
     }
 
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return state.getValue(AXIS).getAxis() == EnumFacing.Axis.X ? X_BOX : Z_BOX;
+    }
+
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, AXIS);
@@ -112,5 +129,27 @@ public class BlockBar extends BlockBase implements ISupport {
     @Override
     public EnumFacing getBlockPlacementDirection() {
         return EnumFacing.DOWN;
+    }
+
+    @Override
+    public Class<? extends TileEntity> getTileEntity() {
+        return TilePipe.class;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TilePipe();
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        TileEntity tileEntity = world.getTileEntity(data.getPos());
+
+        if (tileEntity instanceof TilePipe) {
+            TilePipe pipe = (TilePipe) tileEntity;
+            ITheatricalPowerStorage theatricalPower = pipe.getCapability(TheatricalPower.CAP, null);
+            probeInfo.text("Power: " + theatricalPower.getEnergyStored());
+        }
     }
 }

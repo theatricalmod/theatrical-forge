@@ -1,7 +1,7 @@
-package com.georlegacy.general.theatrical.api.capabilities;
+package com.georlegacy.general.theatrical.api.capabilities.dmx;
 
-import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.DMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import java.util.HashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -17,12 +17,11 @@
 package com.georlegacy.general.theatrical.packets;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

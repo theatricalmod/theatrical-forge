@@ -17,13 +17,19 @@
 package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
+import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
+import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
+import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,12 +37,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockFresnel extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
+public class BlockFresnel extends BlockHangable implements ITileEntityProvider, IHasTileEntity, ITOPProvider {
 
 
     public BlockFresnel() {
@@ -96,12 +101,6 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(0, 0, 0, 1, 1.1, 1);
-        return axisAlignedBB;
-    }
-
-    @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileFresnel tileFresnel = (TileFresnel) worldIn.getTileEntity(pos);
         if (tileFresnel != null && tileFresnel.getLightBlock() != null) {
@@ -122,4 +121,14 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
     }
 
 
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        TileEntity tileEntity = world.getTileEntity(data.getPos());
+
+        if (tileEntity instanceof TileFresnel) {
+            TileFresnel pipe = (TileFresnel) tileEntity;
+            ITheatricalPowerStorage theatricalPower = pipe.getCapability(TheatricalPower.CAP, null);
+            probeInfo.text("Power: " + theatricalPower.getEnergyStored());
+        }
+    }
 }

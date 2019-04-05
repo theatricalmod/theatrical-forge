@@ -3,10 +3,12 @@ package com.georlegacy.general.theatrical.handlers;
 import com.georlegacy.general.theatrical.client.models.cable.ModelCableLoader;
 import com.georlegacy.general.theatrical.client.models.truss.ModelTrussLoader;
 import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
+import com.georlegacy.general.theatrical.client.tesr.PlugPanelRenderer;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.tiles.TilePipePanel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
 import com.georlegacy.general.theatrical.util.Reference;
@@ -43,8 +45,11 @@ public class ClientEventHandler {
         registerItemRenderer(TheatricalItems.ITEM_BLANK_GOBO, 0, "gobo/base/blank_gobo");
         registerItemRenderer(TheatricalItems.ITEM_DMX_CABLE, 0, "cable/dmx");
         registerItemRenderer(TheatricalItems.ITEM_POWER_CABLE, 0, "cable/power");
+        registerItemRenderer(TheatricalItems.ITEM_BUNDLED_CABLE, 0, "cable/bundled");
+        registerItemRenderer(TheatricalItems.ITEM_PATCH_CABLE, 0, "cable/patch");
         ClientRegistry.bindTileEntitySpecialRenderer(TileFresnel.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePipePanel.class, new PlugPanelRenderer());
         ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
         ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_CABLE, ModelCableLoader.INSTANCE);
 

@@ -24,6 +24,12 @@ public class TheatricalConfig {
 
         @Config.Comment("How often the Moving head uses energy in ticks")
         public int movingHeadEnergyUsage = 10;
+
+        @Config.Comment("The amount of energy a fresnel uses")
+        public int fresnelEnergyCost = 1;
+
+        @Config.Comment("How often the fresnel uses energy in ticks")
+        public int fresnelEnergyUsage = 10;
     }
 
     public static void sync() {

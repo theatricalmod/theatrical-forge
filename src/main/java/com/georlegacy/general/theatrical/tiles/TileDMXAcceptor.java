@@ -1,9 +1,9 @@
 package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.receiver.IDMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;

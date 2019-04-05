@@ -1,9 +1,9 @@
 package com.georlegacy.general.theatrical.tiles.interfaces;
 
 import ch.bildspur.artnet.ArtNetClient;
-import com.georlegacy.general.theatrical.api.capabilities.WorldDMXNetwork;
-import com.georlegacy.general.theatrical.api.capabilities.provider.DMXProvider;
-import com.georlegacy.general.theatrical.api.capabilities.provider.IDMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.DMXProvider;
+import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import com.georlegacy.general.theatrical.api.dmx.DMXUniverse;
 import com.georlegacy.general.theatrical.handlers.ArtnetHandler;
 import com.georlegacy.general.theatrical.util.ArtnetThread;

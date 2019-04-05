@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.api.capabilities.receiver;
+package com.georlegacy.general.theatrical.api.capabilities.dmx.receiver;
 
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
