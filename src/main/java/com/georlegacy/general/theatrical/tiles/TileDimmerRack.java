@@ -1,15 +1,13 @@
 package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.IBundledTheatricalPowerStorage;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
-import java.util.HashSet;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
@@ -17,12 +15,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable, IBundledTheatricalPowerStorage, IEnergyStorage {
+public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable, IEnergyStorage {
 
     private int dmxStart = 0;
 
 
     private DMXReceiver dmxReceiver;
+    private SocapexProvider socapexProvider;
 
     private int[] channels;
     private int power;
@@ -32,6 +31,7 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
 
     public TileDimmerRack() {
         dmxReceiver = new DMXReceiver(6, dmxStart);
+        socapexProvider = new SocapexProvider();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
         if (capability == DMXReceiver.CAP) {
             return true;
         }
-        if (capability == BundledTheatricalPower.CAP) {
+        if (capability == SocapexProvider.CAP) {
             return true;
         }
         if (capability == CapabilityEnergy.ENERGY) {
@@ -53,8 +53,8 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
         if (capability == DMXReceiver.CAP) {
             return DMXReceiver.CAP.cast(dmxReceiver);
         }
-        if (capability == BundledTheatricalPower.CAP) {
-            return BundledTheatricalPower.CAP.cast(this);
+        if (capability == SocapexProvider.CAP) {
+            return SocapexProvider.CAP.cast(socapexProvider);
         }
         if (capability == CapabilityEnergy.ENERGY) {
             return CapabilityEnergy.ENERGY.cast(this);
@@ -66,24 +66,29 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
         nbtTagCompound = super.getNBT(nbtTagCompound);
         nbtTagCompound.setInteger("dmxStart", dmxStart);
+        nbtTagCompound.setTag("provider", socapexProvider.serializeNBT());
         return nbtTagCompound;
     }
 
     @Override
     public void readNBT(NBTTagCompound nbtTagCompound) {
         dmxStart = nbtTagCompound.getInteger("dmxStart");
+        if (nbtTagCompound.hasKey("provider")) {
+            socapexProvider.deserializeNBT(nbtTagCompound.getCompoundTag("provider"));
+        }
         super.readNBT(nbtTagCompound);
     }
 
     @Override
     public CableType[] getAcceptedCables() {
-        return new CableType[]{CableType.POWER, CableType.PATCH, CableType.DMX};
+        return new CableType[]{CableType.POWER, CableType.SOCAPEX, CableType.DMX};
     }
 
     @Override
     public void invalidate() {
         if (hasWorld()) {
             WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
         }
 
         super.invalidate();
@@ -95,9 +100,9 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
 
         if (hasWorld()) {
             WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
         }
     }
-
 
     @Override
     public void update() {
@@ -115,79 +120,8 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
         if (getEnergyStored() < 1) {
             return;
         }
-        HashSet<IBundledTheatricalPowerStorage> acceptors = new HashSet<>();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            TileEntity tile = world.getTileEntity(pos.offset(face));
-            if (tile == null) {
-                continue;
-            } else if (tile.getCapability(BundledTheatricalPower.CAP, face.getOpposite()) != null) {
-                IBundledTheatricalPowerStorage energyTile = tile.getCapability(BundledTheatricalPower.CAP, face.getOpposite());
-                if (energyTile != null && energyTile.canReceive(0)) {
-                    acceptors.add(energyTile);
-                }
-            }
-        }
-        if (acceptors.size() > 0) {
-            for (IBundledTheatricalPowerStorage acceptor : acceptors) {
-                int[] drain = new int[8];
-                for (int i = 0; i < powerChannels.length; i++) {
-                    drain[i] = Math.min(powerChannels[i], 255);
-                }
-                int[] res = acceptor.receiveEnergy(drain, true);
-                boolean anyTransfer = false;
-                for (int re : res) {
-                    if (re > 0) {
-                        anyTransfer = true;
-                        break;
-                    }
-                }
-                if (anyTransfer) {
-                    acceptor.receiveEnergy(drain, false);
-                    extractEnergy(totalPower, false);
-                }
-            }
-        }
-    }
-
-    @Override
-    public int[] receiveEnergy(int[] channels, boolean simulate) {
-        return new int[8];
-    }
-
-    @Override
-    public int[] extractEnergy(int[] channels, boolean simulate) {
-        int[] energyExtracted = new int[8];
-        for (int i = 0; i < channels.length; i++) {
-            if (!canExtract(i)) {
-                energyExtracted[i] = 0;
-                continue;
-            }
-            energyExtracted[i] = Math.min(this.channels[i], Math.min(255, channels[i]));
-            if (!simulate) {
-                this.channels[i] -= energyExtracted[i];
-            }
-        }
-        return energyExtracted;
-    }
-
-    @Override
-    public int getEnergyStored(int channel) {
-        return 0;
-    }
-
-    @Override
-    public int getMaxEnergyStored(int channel) {
-        return 0;
-    }
-
-    @Override
-    public boolean canExtract(int channel) {
-        return getEnergyStored() > 0;
-    }
-
-    @Override
-    public boolean canReceive(int channel) {
-        return false;
+        socapexProvider.updateDevices(world, pos);
+        extractEnergy(totalPower, false);
     }
 
     @Override

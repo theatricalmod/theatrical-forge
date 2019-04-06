@@ -1,7 +1,5 @@
 package com.georlegacy.general.theatrical.blocks.dimmable;
 
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.IBundledTheatricalPowerStorage;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
@@ -91,10 +89,6 @@ public class BlockPlugPanel extends BlockDirectional implements IHasTileEntity, 
 
         if (tileEntity instanceof TilePipePanel) {
             TilePipePanel tile = (TilePipePanel) tileEntity;
-            IBundledTheatricalPowerStorage bundledTheatricalPowerStorage = tile.getCapability(BundledTheatricalPower.CAP, null);
-            for (int x = 0; x < 8; x++) {
-                probeInfo.text("Channel #" + x + ": " + bundledTheatricalPowerStorage.getEnergyStored(x));
-            }
         }
     }
 }

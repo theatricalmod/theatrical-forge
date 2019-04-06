@@ -11,7 +11,7 @@ public enum CableType {
     NONE(-1, null, ""),
     DMX(0, new ResourceLocation(Reference.MOD_ID, "blocks/cables/cable"), "DMX"),
     POWER(1, new ResourceLocation(Reference.MOD_ID, "blocks/cables/power"), "Power"),
-    PATCH(2, new ResourceLocation(Reference.MOD_ID, "blocks/cables/patch"), "Patch"),
+    SOCAPEX(2, new ResourceLocation(Reference.MOD_ID, "blocks/cables/socapex"), "Socapex"),
     BUNDLED(99, new ResourceLocation(Reference.MOD_ID, "blocks/cables/bundled"), "Bundled");
 
     private int index;
@@ -52,8 +52,8 @@ public enum CableType {
                 return TheatricalItems.ITEM_POWER_CABLE;
             case DMX:
                 return TheatricalItems.ITEM_DMX_CABLE;
-            case PATCH:
-                return TheatricalItems.ITEM_PATCH_CABLE;
+            case SOCAPEX:
+                return TheatricalItems.ITEM_SOCAPEX_CABLE;
             default:
                 return null;
         }

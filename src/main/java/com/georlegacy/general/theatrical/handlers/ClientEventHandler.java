@@ -46,7 +46,7 @@ public class ClientEventHandler {
         registerItemRenderer(TheatricalItems.ITEM_DMX_CABLE, 0, "cable/dmx");
         registerItemRenderer(TheatricalItems.ITEM_POWER_CABLE, 0, "cable/power");
         registerItemRenderer(TheatricalItems.ITEM_BUNDLED_CABLE, 0, "cable/bundled");
-        registerItemRenderer(TheatricalItems.ITEM_PATCH_CABLE, 0, "cable/patch");
+        registerItemRenderer(TheatricalItems.ITEM_SOCAPEX_CABLE, 0, "cable/socapex");
         ClientRegistry.bindTileEntitySpecialRenderer(TileFresnel.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePipePanel.class, new PlugPanelRenderer());

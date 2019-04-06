@@ -1,9 +1,10 @@
 package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
 import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import com.georlegacy.general.theatrical.tiles.rigging.TilePipe;
 import java.util.ArrayList;
@@ -27,14 +28,13 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
 
     private IBlockState state = Blocks.AIR.getDefaultState();
 
-    private BundledTheatricalPower bundledTheatricalPower;
-
     private ArrayList<BlockPos> pipes = new ArrayList<>();
 
     private int ticks = 0;
+    private SocapexReceiver socapexReceiver;
 
     public TilePipePanel() {
-        bundledTheatricalPower = new BundledTheatricalPower(255, 1000, 10000);
+        socapexReceiver = new SocapexReceiver(this.pos);
     }
 
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
@@ -42,14 +42,14 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
             nbtTagCompound = new NBTTagCompound();
         }
         nbtTagCompound.setInteger("skin", Block.getStateId(state));
-        nbtTagCompound.setTag("power", bundledTheatricalPower.serializeNBT());
+        nbtTagCompound.setTag("socapex", socapexReceiver.serializeNBT());
         return nbtTagCompound;
     }
 
     public void readNBT(NBTTagCompound nbtTagCompound) {
         state = Block.getStateById(nbtTagCompound.getInteger("skin"));
-        if (nbtTagCompound.hasKey("power")) {
-            bundledTheatricalPower.deserializeNBT(nbtTagCompound.getCompoundTag("power"));
+        if (nbtTagCompound.hasKey("socapex")) {
+            socapexReceiver.deserializeNBT(nbtTagCompound.getCompoundTag("socapex"));
         }
     }
 
@@ -120,7 +120,7 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
         int[] extractedPower = new int[8];
         for (int i = 0; i < 8; i++) {
             if (i > (pipes.size() - 1)) {
-                bundledTheatricalPower.extractEnergy(extractedPower, false);
+                socapexReceiver.extractSocapex(extractedPower, false);
                 return;
             }
             BlockPos provider = pipes.get(i);
@@ -128,12 +128,14 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
             if (tile != null && (tile instanceof TilePipe)) {
                 ITheatricalPowerStorage powerStorage = tile.getCapability(TheatricalPower.CAP, null);
                 if (powerStorage != null) {
-                    powerStorage.receiveEnergy(bundledTheatricalPower.getEnergyStored(i), false);
-                    extractedPower[i] = bundledTheatricalPower.getEnergyStored(i);
+                    if (powerStorage.getEnergyStored() < socapexReceiver.getEnergyStored(i)) {
+                        powerStorage.receiveEnergy(socapexReceiver.getEnergyStored(i), false);
+                        extractedPower[i] = socapexReceiver.getEnergyStored(i);
+                    }
                 }
             }
         }
-        bundledTheatricalPower.extractEnergy(extractedPower, false);
+        socapexReceiver.extractSocapex(extractedPower, false);
     }
 
     public void refreshDevices() {
@@ -158,12 +160,12 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
 
     @Override
     public CableType[] getAcceptedCables() {
-        return new CableType[]{CableType.PATCH};
+        return new CableType[]{CableType.SOCAPEX};
     }
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == BundledTheatricalPower.CAP) {
+        if (capability == SocapexReceiver.CAP) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -172,8 +174,8 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == BundledTheatricalPower.CAP) {
-            return BundledTheatricalPower.CAP.cast(bundledTheatricalPower);
+        if (capability == SocapexReceiver.CAP) {
+            return SocapexReceiver.CAP.cast(socapexReceiver);
         }
         return super.getCapability(capability, facing);
     }
@@ -185,4 +187,24 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
         }
         sendPower();
     }
+
+
+    @Override
+    public void invalidate() {
+        if (hasWorld()) {
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+
+        super.invalidate();
+    }
+
+    @Override
+    public void setWorld(World world) {
+        super.setWorld(world);
+
+        if (hasWorld()) {
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
+        }
+    }
+
 }

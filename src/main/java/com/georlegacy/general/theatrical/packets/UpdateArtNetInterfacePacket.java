@@ -18,7 +18,7 @@ package com.georlegacy.general.theatrical.packets;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileArtnetInterface;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -95,7 +95,7 @@ public class UpdateArtNetInterfacePacket implements IMessage {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
-                TileArtNetInterface tileFresnel = (TileArtNetInterface) world
+                TileArtnetInterface tileFresnel = (TileArtnetInterface) world
                     .getTileEntity(blockPos);
                 tileFresnel.setSubnet(message.getSubnet());
                 tileFresnel.setUniverse(message.getUniverse());
@@ -119,7 +119,7 @@ public class UpdateArtNetInterfacePacket implements IMessage {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = TheatricalMain.proxy.getWorld();
                 BlockPos blockPos = message.getPos();
-                TileArtNetInterface tileFresnel = (TileArtNetInterface) world.getTileEntity(blockPos);
+                TileArtnetInterface tileFresnel = (TileArtnetInterface) world.getTileEntity(blockPos);
                 tileFresnel.setSubnet(message.getSubnet());
                 tileFresnel.setUniverse(message.getUniverse());
                 tileFresnel.setIp(message.getIp());

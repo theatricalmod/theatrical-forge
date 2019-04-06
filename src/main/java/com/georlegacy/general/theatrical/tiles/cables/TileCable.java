@@ -1,11 +1,11 @@
 package com.georlegacy.general.theatrical.tiles.cables;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.IBundledTheatricalPowerStorage;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import java.util.ArrayList;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +19,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileCable extends TileEntity implements IEnergyStorage, ITickable, IBundledTheatricalPowerStorage {
+public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
 
     public CableSide[] sides = new CableSide[6];
 
@@ -109,17 +109,22 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
             }
             return false;
         }
-        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
-            if (!hasSide(0) && !hasSide(1)) {
-                return false;
-            }
-        } else {
-            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
-                return false;
-            }
-        }
+//        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
+//            if (!hasSide(0) && !hasSide(1)) {
+//                return false;
+//            }
+//        } else {
+//            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
+//                return false;
+//            }
+//        }
         if (sides[side] != null && sides[side].hasType(CableType.POWER)) {
             if (tileEntity.hasCapability(CapabilityEnergy.ENERGY, enumFacing.getOpposite())) {
+                return true;
+            }
+        }
+        if (sides[side] != null && sides[side].hasType(CableType.SOCAPEX)) {
+            if (tileEntity.hasCapability(SocapexReceiver.CAP, enumFacing.getOpposite())) {
                 return true;
             }
         }
@@ -206,14 +211,14 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
                 }
             }
         }
-        if (capability == BundledTheatricalPower.CAP) {
-            if (facing == null && hasType(CableType.PATCH)) {
+        if (capability == SocapexReceiver.CAP) {
+            if (facing == null && hasType(CableType.SOCAPEX)) {
                 return true;
             }
             for (int i = 0; i < 6; i++) {
                 CableSide side = sides[i];
                 if (side != null) {
-                    if (side.hasType(CableType.PATCH) && isConnected(facing, i, CableType.PATCH)) {
+                    if (side.hasType(CableType.SOCAPEX) && isConnected(facing, i, CableType.SOCAPEX)) {
                         return true;
                     }
                 }
@@ -250,15 +255,15 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
                 }
             }
         }
-        if (capability == BundledTheatricalPower.CAP) {
-            if (facing == null && hasType(CableType.PATCH)) {
-                return BundledTheatricalPower.CAP.cast(this);
+        if (capability == SocapexReceiver.CAP) {
+            if (facing == null && hasType(CableType.SOCAPEX)) {
+                return null;
             }
             for (int i = 0; i < 6; i++) {
                 CableSide side = sides[i];
                 if (side != null) {
-                    if (side.hasType(CableType.PATCH) && isConnected(facing, i, CableType.PATCH)) {
-                        return BundledTheatricalPower.CAP.cast(this);
+                    if (side.hasType(CableType.SOCAPEX) && isConnected(facing, i, CableType.SOCAPEX)) {
+                        return null;
                     }
                 }
             }
@@ -272,6 +277,7 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
         if (hasWorld())
         {
             WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
         }
 
         super.invalidate();
@@ -285,6 +291,7 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
         if (hasWorld())
         {
             WorldDMXNetwork.getCapability(getWorld()).setRefresh(true);
+            WorldSocapexNetwork.getCapability(getWorld()).setRefresh(true);
         }
     }
 
@@ -317,58 +324,6 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
     @Override
     public int getEnergyStored() {
         return power;
-    }
-
-    @Override
-    public int[] receiveEnergy(int[] channels, boolean simulate) {
-        int[] energyReceived = new int[8];
-        for (int i = 0; i < channels.length; i++) {
-            if (!canReceive(i)) {
-                energyReceived[i] = 0;
-                continue;
-            }
-            energyReceived[i] = Math.min(capacityPerChannel - this.channels[i], Math.min(this.transferRate, channels[i]));
-            if (!simulate) {
-                this.channels[i] += energyReceived[i];
-            }
-        }
-        return energyReceived;
-    }
-
-    @Override
-    public int[] extractEnergy(int[] channels, boolean simulate) {
-        int[] energyExtracted = new int[8];
-        for (int i = 0; i < channels.length; i++) {
-            if (!canExtract(i)) {
-                energyExtracted[i] = 0;
-                continue;
-            }
-            energyExtracted[i] = Math.min(this.channels[i], Math.min(this.transferRate, channels[i]));
-            if (!simulate) {
-                this.channels[i] -= energyExtracted[i];
-            }
-        }
-        return energyExtracted;
-    }
-
-    @Override
-    public int getEnergyStored(int channel) {
-        return channels[channel];
-    }
-
-    @Override
-    public int getMaxEnergyStored(int channel) {
-        return capacityPerChannel;
-    }
-
-    @Override
-    public boolean canExtract(int channel) {
-        return channels[channel] > 0;
-    }
-
-    @Override
-    public boolean canReceive(int channel) {
-        return channels[channel] <= capacityPerChannel;
     }
 
     @Override
@@ -446,43 +401,6 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
         }
     }
 
-    public void doBundledTransfer() {
-        if (!hasType(CableType.PATCH)) {
-            return;
-        }
-        ArrayList<IBundledTheatricalPowerStorage> acceptors = new ArrayList<>();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            TileEntity tile = world.getTileEntity(pos.offset(face));
-            if (tile == null) {
-                continue;
-            } else if (tile instanceof TileCable) {
-                TileCable cable = (TileCable) tile;
-                if (cable.hasType(CableType.PATCH)) {
-                    acceptors.add((IBundledTheatricalPowerStorage) tile);
-                    if (!sendingFace.contains(face)) {
-                        sendingFace.add(face);
-                    }
-                }
-            } else if (tile.getCapability(BundledTheatricalPower.CAP, face.getOpposite()) != null) {
-                IBundledTheatricalPowerStorage energyTile = tile.getCapability(BundledTheatricalPower.CAP, face.getOpposite());
-                if (energyTile != null && energyTile.canReceive(0)) {
-                    acceptors.add(energyTile);
-                }
-            }
-        }
-
-        if (acceptors.size() > 0) {
-            for (IBundledTheatricalPowerStorage tile : acceptors) {
-                int[] drain = new int[8];
-                for (int i = 0; i < channels.length; i++) {
-                    drain[i] = Math.min(channels[i], transferRate);
-                }
-                int[] move = tile.receiveEnergy(drain, false);
-                extractEnergy(move, false);
-            }
-        }
-    }
-
     @Override
     public void update() {
         if (world.isRemote) {
@@ -495,6 +413,5 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable, 
         }
 
         doEnergyTransfer();
-        doBundledTransfer();
     }
 }

@@ -20,7 +20,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TileArtNetInterface extends TileEntity implements ITickable {
+public class TileArtnetInterface extends TileEntity implements ITickable {
 
     private final IDMXProvider idmxProvider;
 
@@ -30,7 +30,7 @@ public class TileArtNetInterface extends TileEntity implements ITickable {
     private ArtNetClient client;
     private boolean errored = false;
 
-    public TileArtNetInterface() {
+    public TileArtnetInterface() {
         this.idmxProvider = new DMXProvider(new DMXUniverse());
         client = new ArtNetClient();
     }

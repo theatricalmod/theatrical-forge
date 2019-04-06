@@ -9,6 +9,8 @@ tile.moving_head.name=Moving Head
 tile.dmx_cable.name=DMX Cable
 tile.dmx_interface.name=DMX Interface
 tile.artnet_interface.name=Artnet Interface
+tile.dimmer_rack.name=Dimmer Rack
+tile.plug_panel.name=Pipe Panel
 
 tile.bar.name=Rigging Bar
 tile.ladder_bar.name=Rigging Ladder Bar

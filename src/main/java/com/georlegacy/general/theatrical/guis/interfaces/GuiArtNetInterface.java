@@ -3,7 +3,7 @@ package com.georlegacy.general.theatrical.guis.interfaces;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.UpdateArtNetInterfacePacket;
-import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileArtnetInterface;
 import com.georlegacy.general.theatrical.util.Reference;
 import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
@@ -19,15 +19,15 @@ public class GuiArtNetInterface extends GuiContainer {
         "textures/gui/big_blank.png");
 
     private ContainerArtNetInterface inventoryPlayer;
-    private TileArtNetInterface tileArtNetInterface;
+    private TileArtnetInterface tileArtnetInterface;
     private GuiTextField subnetField;
     private GuiTextField universeField;
     private GuiTextField ipField;
 
-    public GuiArtNetInterface(TileArtNetInterface tileArtNetInterface, ContainerArtNetInterface inventorySlotsIn) {
+    public GuiArtNetInterface(TileArtnetInterface tileArtnetInterface, ContainerArtNetInterface inventorySlotsIn) {
         super(inventorySlotsIn);
         this.inventoryPlayer = inventorySlotsIn;
-        this.tileArtNetInterface = tileArtNetInterface;
+        this.tileArtnetInterface = tileArtnetInterface;
 
         this.xSize = 176;
         this.ySize = 252;
@@ -78,15 +78,15 @@ public class GuiArtNetInterface extends GuiContainer {
         this.subnetField = new GuiTextField(0, this.fontRenderer, width - 50, height - 100, 100, 20);
         this.subnetField.setFocused(true);
         this.subnetField
-                .setText(Integer.toString(tileArtNetInterface.getSubnet()));
+            .setText(Integer.toString(tileArtnetInterface.getSubnet()));
         this.universeField = new GuiTextField(1, this.fontRenderer, width - 50, height - 65, 100, 20);
         this.universeField.setFocused(true);
         this.universeField
-                .setText(Integer.toString(tileArtNetInterface.getUniverse()));
+            .setText(Integer.toString(tileArtnetInterface.getUniverse()));
         this.ipField = new GuiTextField(2, this.fontRenderer, width - 60, height - 30, 120, 20);
         this.ipField.setFocused(true);
         this.ipField
-                .setText(tileArtNetInterface.getIp());
+            .setText(tileArtnetInterface.getIp());
     }
 
     @Override
@@ -122,7 +122,7 @@ public class GuiArtNetInterface extends GuiContainer {
                 }
                 TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateArtNetInterfacePacket(Integer.parseInt(
                     subnetField.getText()), Integer.parseInt(
-                    universeField.getText()), ipField.getText(), tileArtNetInterface.getPos()));
+                    universeField.getText()), ipField.getText(), tileArtnetInterface.getPos()));
             }
         }
     }

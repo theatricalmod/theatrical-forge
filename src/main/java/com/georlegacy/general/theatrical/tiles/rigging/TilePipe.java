@@ -69,8 +69,10 @@ public class TilePipe extends TileBase implements ITickable, ITheatricalPowerSto
                 TileTungstenFixture tileTungstenFixture = (TileTungstenFixture) tileEntity;
                 ITheatricalPowerStorage theatricalPowerStorage = tileTungstenFixture.getCapability(TheatricalPower.CAP, null);
                 int drain = theatricalPowerStorage.receiveEnergy(getEnergyStored(), false);
-                world.notifyBlockUpdate(light, world.getBlockState(light), world.getBlockState(light), 11);
                 extractEnergy(drain, false);
+                if (drain > 0) {
+                    world.notifyBlockUpdate(light, world.getBlockState(light), world.getBlockState(light), 11);
+                }
             }
         }
     }
@@ -83,7 +85,7 @@ public class TilePipe extends TileBase implements ITickable, ITheatricalPowerSto
 
         int energyReceived = Math.min(255 - power, Math.min(1000, maxReceive));
         if (!simulate) {
-            power += energyReceived;
+            power = energyReceived;
         }
         return energyReceived;
     }

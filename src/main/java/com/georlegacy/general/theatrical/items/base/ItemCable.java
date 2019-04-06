@@ -1,5 +1,6 @@
 package com.georlegacy.general.theatrical.items.base;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.cables.BlockCable;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
@@ -102,7 +103,11 @@ public class ItemCable extends ItemBase {
                     tile.sides[opposite.getIndex()] = cableSide;
                 }
                 tileEntity.markDirty();
-                WorldDMXNetwork.getCapability(world).setRefresh(true);
+                if (type == CableType.DMX) {
+                    WorldDMXNetwork.getCapability(world).setRefresh(true);
+                } else if (type == CableType.SOCAPEX) {
+                    WorldSocapexNetwork.getCapability(world).setRefresh(true);
+                }
             }
 
             IBlockState state = world.getBlockState(pos);

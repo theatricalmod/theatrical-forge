@@ -124,7 +124,7 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<NBTTagCompoun
             if(tile != null && !(tile instanceof TileCable)) {
                 IDMXReceiver idmxReceiver = tile.getCapability(DMXReceiver.CAP, null);
                 if (idmxReceiver != null) {
-                    tile.getCapability(DMXReceiver.CAP, null).receiveDMXValues(dmxUniverse.getDMXChannels(), world, provider);
+                    idmxReceiver.receiveDMXValues(dmxUniverse.getDMXChannels(), world, provider);
                 }
             }
         }

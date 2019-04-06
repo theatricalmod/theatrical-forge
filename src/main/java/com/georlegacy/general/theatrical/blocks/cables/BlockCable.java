@@ -1,8 +1,7 @@
 package com.georlegacy.general.theatrical.blocks.cables;
 
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.BundledTheatricalPower;
-import com.georlegacy.general.theatrical.api.capabilities.power.bundled.IBundledTheatricalPowerStorage;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
@@ -252,17 +251,23 @@ public class BlockCable extends Block implements ITileEntityProvider, IHasTileEn
                 if(tile.hasSide(i)){
                     BlockPos offset = pos.offset(EnumFacing.byIndex(i));
                     if(worldIn.getBlockState(offset).getBlock() instanceof BlockAir){
-                        spawnAsEntity(worldIn, pos, new ItemStack(TheatricalItems.ITEM_DMX_CABLE));
+                        for (int x = 0; x < tile.sides[i].getTypes().length; x++) {
+                            if (tile.sides[i].getTypes()[x] != CableType.NONE) {
+                                spawnAsEntity(worldIn, pos, new ItemStack(CableType.getItemForCable(tile.sides[i].getTypes()[x])));
+                            }
+                        }
                         tile.sides[i] = null;
                         if (hasSide(tile))
                         {
                             worldIn.notifyBlockUpdate(pos, state, state, 11);
                             WorldDMXNetwork.getCapability(worldIn).setRefresh(true);
+                            WorldSocapexNetwork.getCapability(worldIn).setRefresh(true);
                         }
                         else
                         {
                             worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), worldIn.isRemote ? 11 : 3);
                             WorldDMXNetwork.getCapability(worldIn).setRefresh(true);
+                            WorldSocapexNetwork.getCapability(worldIn).setRefresh(true);
                         }
                     }
                 }
@@ -364,16 +369,6 @@ public class BlockCable extends Block implements ITileEntityProvider, IHasTileEn
                         for (int i = 0; i < 5; i++) {
                             if (tile.sides[side.getIndex()].getTypes()[i] != CableType.NONE) {
                                 probeInfo.text("#" + i + ": " + tile.sides[side.getIndex()].getTypes()[i].getName());
-                            }
-                        }
-                    }
-                    if (tile.sides[side.getIndex()].hasType(CableType.PATCH)) {
-                        for (int i = 0; i < 5; i++) {
-                            if (tile.sides[side.getIndex()].getTypes()[i] == CableType.PATCH) {
-                                IBundledTheatricalPowerStorage bundledTheatricalPowerStorage = tile.getCapability(BundledTheatricalPower.CAP, null);
-                                for (int x = 0; x < 8; x++) {
-                                    probeInfo.text("Channel #" + x + ": " + bundledTheatricalPowerStorage.getEnergyStored(x));
-                                }
                             }
                         }
                     }

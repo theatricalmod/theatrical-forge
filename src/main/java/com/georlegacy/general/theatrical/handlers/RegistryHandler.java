@@ -17,6 +17,7 @@
 package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.api.capabilities.WorldPipePanelNetwork;
+import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
@@ -43,6 +44,7 @@ public class RegistryHandler {
     private static final ResourceLocation LOC = new ResourceLocation("theatrical:mcmp");
     private static final ResourceLocation WORLD_CAP_ID = new ResourceLocation(Reference.MOD_ID, "dmx_world_network");
     private static final ResourceLocation PIPE_PANEL_NETWORK = new ResourceLocation(Reference.MOD_ID, "pipe_panel_network");
+    private static final ResourceLocation SOCAPEX_NETWORK_ID = new ResourceLocation(Reference.MOD_ID, "socapex_network");
 
 
     @SubscribeEvent
@@ -67,9 +69,7 @@ public class RegistryHandler {
 
     @SubscribeEvent
     public static void onSoundEventRegister(RegistryEvent.Register<SoundEvent> event) {
-        TheatricalSoundEvents.SOUNDS.forEach(sound -> {
-            event.getRegistry().register(sound);
-        });
+        TheatricalSoundEvents.SOUNDS.forEach(sound -> event.getRegistry().register(sound));
     }
 
     @SubscribeEvent
@@ -77,6 +77,7 @@ public class RegistryHandler {
     {
         event.addCapability(WORLD_CAP_ID, new WorldDMXNetwork(event.getObject()));
         event.addCapability(PIPE_PANEL_NETWORK, new WorldPipePanelNetwork(event.getObject()));
+        event.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork(event.getObject()));
     }
 
     @SubscribeEvent
@@ -86,6 +87,7 @@ public class RegistryHandler {
         {
             WorldDMXNetwork.getCapability(event.world).tick();
             WorldPipePanelNetwork.getCapability(event.world).tick();
+            WorldSocapexNetwork.getCapability(event.world).tick();
         }
     }
 

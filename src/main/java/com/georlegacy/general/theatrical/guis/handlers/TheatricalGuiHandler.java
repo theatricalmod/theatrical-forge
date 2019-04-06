@@ -1,5 +1,7 @@
 package com.georlegacy.general.theatrical.guis.handlers;
 
+import com.georlegacy.general.theatrical.guis.dimming.ContainerDimmerRack;
+import com.georlegacy.general.theatrical.guis.dimming.GuiDimmerRack;
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerIntelligentFixture;
 import com.georlegacy.general.theatrical.guis.fixtures.gui.GuiFresnel;
@@ -8,8 +10,9 @@ import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.guis.interfaces.ContainerArtNetInterface;
 import com.georlegacy.general.theatrical.guis.interfaces.GuiArtNetInterface;
 import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
+import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
 import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
-import com.georlegacy.general.theatrical.tiles.interfaces.TileArtNetInterface;
+import com.georlegacy.general.theatrical.tiles.interfaces.TileArtnetInterface;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +32,9 @@ public class TheatricalGuiHandler implements IGuiHandler {
             case FIXTURE_MOVING_HEAD:
                 return new ContainerIntelligentFixture(player.inventory, (TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)));
             case ARTNET_INTERFACE:
-                return new ContainerArtNetInterface(player.inventory, (TileArtNetInterface) world.getTileEntity(new BlockPos(x, y, z)));
+                return new ContainerArtNetInterface(player.inventory, (TileArtnetInterface) world.getTileEntity(new BlockPos(x, y, z)));
+            case DIMMER_RACK:
+                return new ContainerDimmerRack(player.inventory, (TileDimmerRack) world.getTileEntity(new BlockPos(x, y, z)));
             default:
                 return null;
         }
@@ -47,7 +52,9 @@ public class TheatricalGuiHandler implements IGuiHandler {
             case FIXTURE_MOVING_HEAD:
                 return new GuiIntelligentFixture((TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)), (ContainerIntelligentFixture) getServerGuiElement(id, player, world, x, y, z));
             case ARTNET_INTERFACE:
-                return new GuiArtNetInterface((TileArtNetInterface) world.getTileEntity(new BlockPos(x, y, z)), (ContainerArtNetInterface) getServerGuiElement(id, player, world, x,y,z));
+                return new GuiArtNetInterface((TileArtnetInterface) world.getTileEntity(new BlockPos(x, y, z)), (ContainerArtNetInterface) getServerGuiElement(id, player, world, x, y, z));
+            case DIMMER_RACK:
+                return new GuiDimmerRack((TileDimmerRack) world.getTileEntity(new BlockPos(x, y, z)), (ContainerDimmerRack) getServerGuiElement(id, player, world, x, y, z));
             default:
                 return null;
         }
