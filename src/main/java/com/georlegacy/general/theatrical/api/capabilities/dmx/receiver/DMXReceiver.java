@@ -81,4 +81,7 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     }
 
 
+    public byte[] getDmxValues() {
+        return dmxValues;
+    }
 }

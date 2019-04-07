@@ -31,13 +31,14 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
         if (tileEntity != null && tileEntity.hasCapability(SocapexReceiver.CAP, facing)) {
             if (scanned.add(pos)) {
                 if (tileEntity instanceof TileCable) {
-                    for (EnumFacing facing1 : EnumFacing.VALUES) {
-                        if (facing1 != facing) {
-                            for (int i = 0; i < 6; i++) {
-                                TileCable cable = (TileCable) tileEntity;
-                                if (cable.hasSide(i)) {
-                                    if (cable.isConnected(facing1, i, CableType.SOCAPEX)) {
-                                        addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
+                    TileCable cable = (TileCable) tileEntity;
+                    for (int i = 0; i < 6; i++) {
+                        if (cable.hasSide(i)) {
+                            for (EnumFacing facing1 : EnumFacing.VALUES) {
+                                if (facing1 != facing) {
+                                    BlockPos connected = cable.isConnectedSides(facing1, i, CableType.SOCAPEX);
+                                    if (connected != null) {
+                                        addToList(scanned, world, connected, facing1.getOpposite());
                                     }
                                 }
                             }
@@ -47,34 +48,6 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
                     for (EnumFacing facing1 : EnumFacing.VALUES) {
                         if (facing1 != facing) {
                             addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
-                        }
-                    }
-                }
-                if (tileEntity instanceof TileCable) {
-                    for (int i = 0; i < 6; i++) {
-                        if (((TileCable) tileEntity).hasSide(i) && ((TileCable) tileEntity).sides[i].hasType(CableType.SOCAPEX)) {
-                            EnumFacing sideDirection = EnumFacing.byIndex(i);
-                            BlockPos offset = pos.offset(sideDirection);
-                            for (EnumFacing facing1 : EnumFacing.VALUES) {
-                                if (facing1 != sideDirection) {
-                                    BlockPos offset1 = offset.offset(facing1);
-                                    if (world.getTileEntity(offset1) != null && world.getTileEntity(offset1) instanceof TileCable) {
-                                        TileCable tileEntity1 = (TileCable) world.getTileEntity(offset1);
-                                        if (i != EnumFacing.DOWN.getIndex() && i != EnumFacing.UP.getIndex()) {
-                                            if (tileEntity1.hasSide(EnumFacing.UP.getIndex()) || tileEntity1.hasSide(EnumFacing.DOWN.getIndex())) {
-                                                addToList(scanned, world, offset1, facing1.getOpposite());
-                                            }
-                                        } else {
-                                            if ((tileEntity1.hasSide(EnumFacing.NORTH.getIndex()) || tileEntity1.hasSide(EnumFacing.SOUTH.getIndex()))) {
-                                                addToList(scanned, world, offset1, facing1.getOpposite());
-                                            }
-                                            if ((tileEntity1.hasSide(EnumFacing.WEST.getIndex()) || tileEntity1.hasSide(EnumFacing.EAST.getIndex()))) {
-                                                addToList(scanned, world, offset1, facing1.getOpposite());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -258,6 +231,13 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         nbtTagCompound.setInteger("lastIdentifier", lastIdentifier);
+        NBTTagCompound patchTag = new NBTTagCompound();
+        for (int i = 0; i < patch.length; i++) {
+            if (patch[i] != null) {
+                patchTag.setString("patch_" + i, patch[i]);
+            }
+        }
+        nbtTagCompound.setTag("patch", patchTag);
         return nbtTagCompound;
     }
 
@@ -266,5 +246,14 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
         if (nbt.hasKey("lastIdentifier")) {
             lastIdentifier = nbt.getInteger("lastIdentifier");
         }
+        if (nbt.hasKey("patch")) {
+            NBTTagCompound patchTag = nbt.getCompoundTag("patch");
+            for (int i = 0; i < 6; i++) {
+                if (patchTag.hasKey("patch_" + i)) {
+                    patch[i] = patchTag.getString("patch_" + i);
+                }
+            }
+        }
     }
 }
+

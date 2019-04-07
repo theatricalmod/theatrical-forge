@@ -13,6 +13,8 @@ tile.dimmer_rack.name=Dimmer Rack
 tile.plug_panel.name=Pipe Panel
 
 tile.bar.name=Rigging Bar
+tile.dmx_bar.name=Rigging Bar with DMX
+tile.socapex_bar.name=Rigging Bar with Socapex
 tile.ladder_bar.name=Rigging Ladder Bar
 
 item.dmx_cable.name=DMX Cable

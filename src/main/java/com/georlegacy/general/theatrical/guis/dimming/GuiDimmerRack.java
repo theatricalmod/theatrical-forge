@@ -132,9 +132,9 @@ public class GuiDimmerRack extends GuiContainer {
             int x = (width - 95) + 46 * (i < 3 ? i : i - 3);
             int y = height - (i < 3 ? 75 : 30);
             if (patch != null) {
-                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, patch));
+                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, tileDimmerRack.getDmxStart() + i, patch));
             } else {
-                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y));
+                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, tileDimmerRack.getDmxStart() + i));
             }
         }
         buttonList.addAll(sockets);

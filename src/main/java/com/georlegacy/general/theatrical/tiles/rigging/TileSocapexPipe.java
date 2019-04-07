@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-public class TilePipe extends TileBase implements ITickable, ITheatricalPowerStorage {
+public class TileSocapexPipe extends TileBase implements ITickable, ITheatricalPowerStorage {
 
 
     private int ticks = 0;

@@ -14,15 +14,17 @@ public class ButtonSocket extends GuiButton {
         "textures/gui/dimmer_rack.png");
 
     public final ContainerDimmerRack containerDimmerRack;
+    private int channelNumber = 0;
     private String patch;
 
-    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y) {
+    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, int channelNumber) {
         super(buttonId, x, y, 17, 17, "");
         this.containerDimmerRack = containerDimmerRack;
+        this.channelNumber = channelNumber;
     }
 
-    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, String patch) {
-        this(containerDimmerRack, buttonId, x, y);
+    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, int channelNumber, String patch) {
+        this(containerDimmerRack, buttonId, x, y, channelNumber);
         this.patch = patch;
     }
 
@@ -44,7 +46,9 @@ public class ButtonSocket extends GuiButton {
         hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
         mc.getTextureManager().bindTexture(background);
         drawModalRectWithCustomSizedTexture(x, y, 269, 0, 17, 17, 512, 512);
+        mc.fontRenderer.drawString("" + (channelNumber + 1), x + 5, y - 10, 0x000000);
         if (isPatched()) {
+            mc.getTextureManager().bindTexture(background);
             drawModalRectWithCustomSizedTexture(x - 1, y, 250, 0, 19, 17, 512, 512);
             GlStateManager.pushMatrix();
             GlStateManager.translate(x + 5, y + 7, 0);
@@ -58,5 +62,6 @@ public class ButtonSocket extends GuiButton {
         if (hovered) {
             drawRect(x, y, x + width, y + height, -2130706433);
         }
+
     }
 }

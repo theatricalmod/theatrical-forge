@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.blocks.rigging;
+package com.georlegacy.general.theatrical.blocks.rigging.bars;
 
 import com.georlegacy.general.theatrical.api.ISupport;
-import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
-import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
 import com.georlegacy.general.theatrical.blocks.base.BlockBase;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
-import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.rigging.TilePipe;
+import com.georlegacy.general.theatrical.tiles.rigging.TileDMXPipe;
 import javax.annotation.Nullable;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -46,7 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider, IHasTileEntity, ITOPProvider {
+public class BlockDMXBar extends BlockBase implements ISupport, ITileEntityProvider, IHasTileEntity {
 
     public static final PropertyDirection AXIS = PropertyDirection.create("axis",
         Plane.HORIZONTAL);
@@ -54,8 +48,8 @@ public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider
     private final AxisAlignedBB X_BOX = new AxisAlignedBB(0.35, 0, 0, 0.65, 0.2, 1);
     private final AxisAlignedBB Z_BOX = new AxisAlignedBB(0, 0, 0.4, 1, 0.2, 0.6);
 
-    public BlockBar() {
-        super("bar");
+    public BlockDMXBar() {
+        super("dmx_bar");
         this.setCreativeTab(CreativeTabs.RIGGING_TAB);
     }
 
@@ -63,13 +57,14 @@ public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
         EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY,
         float hitZ) {
-        if(!playerIn.getHeldItem(hand).isEmpty()){
+        if (!playerIn.getHeldItem(hand).isEmpty()) {
             Item item = playerIn.getHeldItem(hand).getItem();
-            if(getBlockFromItem(item) instanceof BlockHangable){
+            if (getBlockFromItem(item) instanceof BlockHangable) {
                 BlockHangable hangable = (BlockHangable) getBlockFromItem(item);
                 BlockPos down = pos.offset(EnumFacing.DOWN);
-                if(!worldIn.isAirBlock(down))
+                if (!worldIn.isAirBlock(down)) {
                     return false;
+                }
                 worldIn.setBlockState(down, hangable.getDefaultState().withProperty(BlockHangable.FACING, playerIn.getHorizontalFacing()));
                 return true;
             }
@@ -103,13 +98,13 @@ public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return state.getValue(AXIS).getAxis() == EnumFacing.Axis.X ? X_BOX : Z_BOX;
+        return state.getValue(AXIS).getAxis() == Axis.X ? X_BOX : Z_BOX;
     }
 
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state.getValue(AXIS).getAxis() == EnumFacing.Axis.X ? X_BOX : Z_BOX;
+        return state.getValue(AXIS).getAxis() == Axis.X ? X_BOX : Z_BOX;
     }
 
     @Override
@@ -139,23 +134,13 @@ public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider
 
     @Override
     public Class<? extends TileEntity> getTileEntity() {
-        return TilePipe.class;
+        return TileDMXPipe.class;
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TilePipe();
+        return new TileDMXPipe();
     }
 
-    @Override
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        TileEntity tileEntity = world.getTileEntity(data.getPos());
-
-        if (tileEntity instanceof TilePipe) {
-            TilePipe pipe = (TilePipe) tileEntity;
-            ITheatricalPowerStorage theatricalPower = pipe.getCapability(TheatricalPower.CAP, null);
-            probeInfo.text("Power: " + theatricalPower.getEnergyStored());
-        }
-    }
 }

@@ -38,7 +38,9 @@ repositories {
         url "http://maven.tterrag.com/"
 
     }
-
+    maven {
+        url = 'https://repo.elytradev.com/'
+    }
 }
 
 minecraft {

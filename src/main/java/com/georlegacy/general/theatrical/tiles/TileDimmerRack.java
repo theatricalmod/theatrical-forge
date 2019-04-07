@@ -166,4 +166,8 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
     public boolean canReceive() {
         return getEnergyStored() < getMaxEnergyStored();
     }
+
+    public int getDmxStart() {
+        return dmxStart;
+    }
 }

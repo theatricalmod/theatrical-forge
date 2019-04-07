@@ -24,9 +24,11 @@ import com.georlegacy.general.theatrical.blocks.fixtures.BlockFresnel;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockArtnetInterface;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockDMXInterface;
-import com.georlegacy.general.theatrical.blocks.rigging.BlockBar;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockLadderBar;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockSquareTruss;
+import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockBar;
+import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockDMXBar;
+import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockSocapexBar;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.block.Block;
@@ -42,6 +44,10 @@ public class TheatricalBlocks {
     public static BlockMovingHead BLOCK_MOVING_HEAD = new BlockMovingHead();
 
     public static BlockBar BLOCK_BAR = new BlockBar();
+    public static BlockSocapexBar BLOCK_SOCAPEX_BAR = new BlockSocapexBar();
+    public static BlockDMXBar BLOCK_DMX_BAR = new BlockDMXBar();
+
+
     public static BlockLadderBar BLOCK_LADDER_BAR = new BlockLadderBar();
     public static BlockSquareTruss BLOCK_SQUARE_TRUSS = new BlockSquareTruss();
 

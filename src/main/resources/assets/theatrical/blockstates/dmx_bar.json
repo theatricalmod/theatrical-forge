@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "theatrical:dmx_bar"
+  },
+  "variants": {
+    "normal": [
+      {}
+    ],
+    "inventory": [
+      {}
+    ],
+    "axis": {
+      "north": {},
+      "south": {},
+      "east": {
+        "y": 90
+      },
+      "west": {
+        "y": 90
+      }
+    }
+  }
+}

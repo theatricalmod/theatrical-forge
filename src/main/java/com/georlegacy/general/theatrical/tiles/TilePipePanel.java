@@ -6,7 +6,7 @@ import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPower
 import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
-import com.georlegacy.general.theatrical.tiles.rigging.TilePipe;
+import com.georlegacy.general.theatrical.tiles.rigging.TileSocapexPipe;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.annotation.Nullable;
@@ -101,7 +101,7 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
             return;
         }
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof TilePipe) {
+        if (tileEntity instanceof TileSocapexPipe) {
             if (scanned.add(pos)) {
                 for (EnumFacing facing1 : EnumFacing.VALUES) {
                     if (facing1 != facing) {
@@ -124,7 +124,7 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
             }
             BlockPos provider = pipes.get(i);
             TileEntity tile = world.getTileEntity(provider);
-            if (tile != null && (tile instanceof TilePipe)) {
+            if (tile != null && (tile instanceof TileSocapexPipe)) {
                 ITheatricalPowerStorage powerStorage = tile.getCapability(TheatricalPower.CAP, null);
                 if (powerStorage != null) {
                     if (powerStorage.getEnergyStored() < socapexReceiver.getEnergyStored(i)) {

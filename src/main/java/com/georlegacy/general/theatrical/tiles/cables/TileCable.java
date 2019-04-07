@@ -14,6 +14,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -96,11 +97,95 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
         return sides[side] != null;
     }
 
+    public BlockPos isConnectedSides(EnumFacing enumFacing, int side, CableType typer) {
+        TileEntity tileEntity = world.getTileEntity(pos.offset(enumFacing));
+        if (tileEntity == null) {
+            if (enumFacing != EnumFacing.UP && enumFacing != EnumFacing.DOWN) {
+                tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(EnumFacing.UP));
+                if (tileEntity == null) {
+                    tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(EnumFacing.DOWN));
+                    if (tileEntity == null) {
+                        return null;
+                    } else {
+                        side = enumFacing.getOpposite().getIndex();
+                    }
+                }
+            } else {
+                for (EnumFacing horizontals : EnumFacing.HORIZONTALS) {
+                    tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(horizontals));
+                    if (tileEntity != null) {
+                        break;
+                    }
+                }
+                if (tileEntity == null) {
+                    return null;
+                } else {
+                    side = enumFacing.getOpposite().getIndex();
+                }
+            }
+        }
+        if (tileEntity instanceof TileCable) {
+            TileCable tileCable = (TileCable) tileEntity;
+            if (tileCable.sides[side] != null) {
+                return tileCable.sides[side].hasType(typer) ? tileEntity.getPos() : null;
+            }
+            return null;
+        }
+        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
+            if (!hasSide(0) && !hasSide(1)) {
+                return null;
+            }
+        } else {
+            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
+                return null;
+            }
+        }
+        if (sides[side] != null && sides[side].hasType(CableType.POWER)) {
+            if (tileEntity.hasCapability(CapabilityEnergy.ENERGY, enumFacing.getOpposite())) {
+                return tileEntity.getPos();
+            }
+        }
+        if (sides[side] != null && sides[side].hasType(CableType.SOCAPEX)) {
+            if (tileEntity.hasCapability(SocapexReceiver.CAP, enumFacing.getOpposite())) {
+                return tileEntity.getPos();
+            }
+        }
+        if (tileEntity instanceof IAcceptsCable) {
+            if (sides[side].hasAnyType(((IAcceptsCable) tileEntity).getAcceptedCables())) {
+                return tileEntity.getPos();
+            }
+        }
+        return tileEntity.hasCapability(DMXReceiver.CAP, enumFacing.getOpposite()) || tileEntity.hasCapability(
+            DMXProvider.CAP, enumFacing.getOpposite()) ? tileEntity.getPos() : null;
+    }
+
 
     public boolean isConnected(EnumFacing enumFacing, int side, CableType typer) {
         TileEntity tileEntity = world.getTileEntity(pos.offset(enumFacing));
         if (tileEntity == null) {
-            return false;
+            if (enumFacing != EnumFacing.UP && enumFacing != EnumFacing.DOWN) {
+                tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(EnumFacing.UP));
+                if (tileEntity == null) {
+                    tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(EnumFacing.DOWN));
+                    if (tileEntity == null) {
+                        return false;
+                    }
+                }
+            } else {
+                EnumFacing found = null;
+                for (EnumFacing horizontals : EnumFacing.HORIZONTALS) {
+                    tileEntity = world.getTileEntity(pos.offset(enumFacing).offset(horizontals));
+                    if (tileEntity != null) {
+                        found = horizontals;
+                        break;
+                    }
+                }
+                if (tileEntity == null) {
+                    return false;
+                } else {
+                    side = found.getOpposite().getIndex();
+                }
+            }
         }
         if (tileEntity instanceof TileCable) {
             TileCable tileCable = (TileCable) tileEntity;
@@ -109,15 +194,15 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
             }
             return false;
         }
-//        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
-//            if (!hasSide(0) && !hasSide(1)) {
-//                return false;
-//            }
-//        } else {
-//            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
-//                return false;
-//            }
-//        }
+        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
+            if (!hasSide(0) && !hasSide(1)) {
+                return false;
+            }
+        } else {
+            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
+                return false;
+            }
+        }
         if (sides[side] != null && sides[side].hasType(CableType.POWER)) {
             if (tileEntity.hasCapability(CapabilityEnergy.ENERGY, enumFacing.getOpposite())) {
                 return true;
@@ -305,6 +390,7 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
         if (!simulate) {
             power += energyReceived;
         }
+//        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
         return energyReceived;
     }
 
@@ -372,7 +458,19 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
         }
         ArrayList<IEnergyStorage> acceptors = new ArrayList<>();
         for (EnumFacing face : EnumFacing.VALUES) {
-            TileEntity tile = world.getTileEntity(pos.offset(face));
+            BlockPos newPos = pos.offset(face);
+            TileEntity tile = world.getTileEntity(newPos);
+            if (tile == null) {
+                if (face != EnumFacing.UP && face != EnumFacing.DOWN) {
+                    tile = world.getTileEntity(newPos.offset(EnumFacing.UP));
+                    if (tile == null) {
+                        tile = world.getTileEntity(newPos.offset(EnumFacing.DOWN));
+                        if (tile == null) {
+                            continue;
+                        }
+                    }
+                }
+            }
             if (tile == null) {
                 continue;
             } else if (tile instanceof TileCable) {
