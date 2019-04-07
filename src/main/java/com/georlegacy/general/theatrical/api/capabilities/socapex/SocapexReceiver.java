@@ -49,32 +49,54 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<NBTTa
 
     @Override
     public int[] receiveSocapex(int[] channels, boolean simulate) {
-        return new int[0];
+        int[] energyReceived = new int[8];
+        for (int i = 0; i < channels.length; i++) {
+            if (!canReceive(i)) {
+                energyReceived[i] = 0;
+                continue;
+            }
+            energyReceived[i] = Math.min(255 - this.channels[i], Math.min(1000, channels[i]));
+            if (!simulate) {
+                this.channels[i] = energyReceived[i];
+            }
+        }
+        return energyReceived;
     }
 
     @Override
     public int[] extractSocapex(int[] channels, boolean simulate) {
-        return new int[0];
+        int[] energyExtracted = new int[8];
+        for (int i = 0; i < channels.length; i++) {
+            if (!canExtract(i)) {
+                energyExtracted[i] = 0;
+                continue;
+            }
+            energyExtracted[i] = Math.min(this.channels[i], Math.min(1000, channels[i]));
+            if (!simulate) {
+                this.channels[i] -= energyExtracted[i];
+            }
+        }
+        return energyExtracted;
     }
 
     @Override
     public int getEnergyStored(int channel) {
-        return 0;
+        return this.channels[channel];
     }
 
     @Override
     public int getMaxEnergyStored(int channel) {
-        return 0;
+        return 255;
     }
 
     @Override
     public boolean canExtract(int channel) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canReceive(int channel) {
-        return false;
+        return true;
     }
 
     @Override

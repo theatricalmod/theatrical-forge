@@ -1,19 +1,26 @@
 package com.georlegacy.general.theatrical.guis.dimming;
 
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
-import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
+import com.georlegacy.general.theatrical.guis.widgets.ButtonPlug;
 import com.georlegacy.general.theatrical.guis.widgets.ButtonSocket;
+import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.packets.ChangeDimmerPatchPacket;
 import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
 import com.georlegacy.general.theatrical.util.Reference;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiDimmerRack extends GuiContainer {
 
@@ -23,8 +30,11 @@ public class GuiDimmerRack extends GuiContainer {
     private ContainerDimmerRack inventoryPlayer;
     private TileDimmerRack tileDimmerRack;
     private List<ButtonSocket> sockets;
+    private List<ButtonPlug> plugs;
     private List<ISocapexReceiver> receivers;
     private int currentPage = 0;
+
+    private int activePlug = -1;
 
     public GuiDimmerRack(TileDimmerRack tileDimmerRack, ContainerDimmerRack inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -34,6 +44,7 @@ public class GuiDimmerRack extends GuiContainer {
         this.xSize = 250;
         this.ySize = 203;
         sockets = new ArrayList<>();
+        plugs = new ArrayList<>();
         receivers = inventoryPlayer.getDevices();
     }
 
@@ -61,6 +72,45 @@ public class GuiDimmerRack extends GuiContainer {
             .drawString(pageName, 170 + fontRenderer.getStringWidth(
                 pageName
             ) / 2, 17, 0x404040);
+
+        if (activePlug != -1) {
+            int width = this.width / 2;
+            int height = this.height / 2;
+            int plugX = width + 45 + (20 * (activePlug < 4 ? activePlug : activePlug - 4));
+            int plugY = height - (activePlug < 4 ? 65 : 45);
+            int xDist = plugX - mouseX;
+            int yDist = plugY - mouseY;
+            float lineWidth = 2;
+            if (Minecraft.getMinecraft().currentScreen != null) {
+                long distanceSq = xDist * xDist + yDist * yDist;
+                int screenDim = Minecraft.getMinecraft().currentScreen.width * Minecraft.getMinecraft().currentScreen.height;
+                float percentOfDim = Math.min(1, distanceSq / (float) screenDim);
+                lineWidth = 1 + ((1 - (percentOfDim)) * 3);
+            }
+            final int color = 0x13C90A;
+            float red = (float) (color >> 24 & 255) / 255.0F;
+            float green = (float) (color >> 16 & 255) / 255.0F;
+            float blue = (float) (color >> 8 & 255) / 255.0F;
+            float alpha = (float) (color & 255) / 255.0F;
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
+            GlStateManager.disableLighting();
+            GlStateManager.disableTexture2D();
+            GlStateManager.pushMatrix();
+            GlStateManager.glLineWidth(lineWidth);
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            bufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            bufferBuilder.pos(0, 0, 0).color(red, green, blue, 255).endVertex();
+            bufferBuilder.pos(mouseX, mouseY, 0).color(red, green, blue, 255).endVertex();
+            tessellator.draw();
+            GlStateManager.popMatrix();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableCull();
+            GlStateManager.enableLighting();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+        }
     }
 
     @Override
@@ -70,25 +120,45 @@ public class GuiDimmerRack extends GuiContainer {
     }
 
 
-    @Override
-    public void initGui() {
-        super.initGui();
+    public void generateButtons() {
         int width = this.width / 2;
         int height = this.height / 2;
-        this.buttonList.clear();
+        this.buttonList.removeAll(sockets);
+        this.buttonList.removeAll(plugs);
+        this.sockets.clear();
+        this.plugs.clear();
         for (int i = 0; i < 6; i++) {
-            String patch = tileDimmerRack.getCapability(SocapexProvider.CAP, null).getPatch(i);
+            String patch = inventoryPlayer.getPatch(i);
             int x = (width - 95) + 46 * (i < 3 ? i : i - 3);
-            int y = height - (i < 3 ? 30 : 75);
+            int y = height - (i < 3 ? 75 : 30);
             if (patch != null) {
-                sockets.add(new ButtonSocket(inventoryPlayer, i, x, y, patch));
+                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, patch));
             } else {
-                sockets.add(new ButtonSocket(inventoryPlayer, i, x, y));
+                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y));
             }
         }
         buttonList.addAll(sockets);
+        ISocapexReceiver iSocapexReceiver = receivers.get(currentPage);
+        int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
+        for (int i = 0; i < channels.length; i++) {
+            int x = width + 45 + (20 * (i < 4 ? i : i - 4));
+            int y = height - (i < 4 ? 65 : 45);
+            if (channels[i] != 1) {
+                plugs.add(new ButtonPlug(200 + i, x, y, i + 1, iSocapexReceiver.getIdentifier(), activePlug == i));
+            }
+        }
+        buttonList.addAll(plugs);
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+        this.buttonList.clear();
+        int width = this.width / 2;
+        int height = this.height / 2;
         this.buttonList.add(new GuiButton(101, width + 45, height - 90, 15, 20, "<"));
         this.buttonList.add(new GuiButton(102, width + 43 + 60, height - 90, 15, 20, ">"));
+        generateButtons();
     }
 
     @Override
@@ -100,6 +170,12 @@ public class GuiDimmerRack extends GuiContainer {
         super.keyTyped(typedChar, keyCode);
     }
 
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        generateButtons();
+    }
+
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.enabled) {
             if (button.id == 101) {
@@ -108,11 +184,42 @@ public class GuiDimmerRack extends GuiContainer {
                 } else {
                     currentPage--;
                 }
+                activePlug = -1;
+                generateButtons();
             } else if (button.id == 102) {
                 if (currentPage + 1 > receivers.size() - 1) {
                     currentPage = 0;
                 } else {
                     currentPage++;
+                }
+                activePlug = -1;
+                generateButtons();
+            } else if (button.id >= 200 && button.id < 300) {
+                int plug = button.id - 200;
+                if (activePlug == -1) {
+                    activePlug = plug;
+                    ((ButtonPlug) button).setActive(true);
+                } else {
+                    if (activePlug == plug) {
+                        activePlug = -1;
+                        ((ButtonPlug) button).setActive(false);
+                    }
+                }
+            } else if (button.id >= 300) {
+                int socket = button.id - 300;
+                ButtonSocket socketButton = (ButtonSocket) button;
+                if (activePlug == -1) {
+                    if (socketButton.isPatched()) {
+                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), socket, ""));
+                        generateButtons();
+                    }
+                } else {
+                    if (!socketButton.isPatched()) {
+                        String patch = receivers.get(currentPage).getIdentifier() + ":" + activePlug;
+                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), socket, patch));
+                        activePlug = -1;
+                        generateButtons();
+                    }
                 }
             }
         }

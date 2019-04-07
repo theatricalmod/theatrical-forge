@@ -120,6 +120,7 @@ public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable
         if (getEnergyStored() < 1) {
             return;
         }
+        socapexProvider.receiveSocapex(powerChannels, false);
         socapexProvider.updateDevices(world, pos);
         extractEnergy(totalPower, false);
     }

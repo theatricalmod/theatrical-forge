@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.handlers;
 
+import com.georlegacy.general.theatrical.packets.ChangeDimmerPatchPacket;
 import com.georlegacy.general.theatrical.packets.SendDMXPacket;
 import com.georlegacy.general.theatrical.packets.UpdateArtNetInterfacePacket;
 import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
@@ -49,6 +50,10 @@ public class TheatricalPacketHandler {
             .registerMessage(UpdateArtNetInterfacePacket.ServerHandler.class,
                 UpdateArtNetInterfacePacket.class, 8,
                 Side.SERVER);
+        INSTANCE
+            .registerMessage(ChangeDimmerPatchPacket.ServerHandler.class,
+                ChangeDimmerPatchPacket.class, 9,
+                Side.SERVER);
     }
 
     public static void clientInit(){
@@ -69,6 +74,10 @@ public class TheatricalPacketHandler {
         INSTANCE
             .registerMessage(UpdateArtNetInterfacePacket.ClientHandler.class,
                 UpdateArtNetInterfacePacket.class, 7,
+                Side.CLIENT);
+        INSTANCE
+            .registerMessage(ChangeDimmerPatchPacket.ClientHandler.class,
+                ChangeDimmerPatchPacket.class, 10,
                 Side.CLIENT);
     }
 

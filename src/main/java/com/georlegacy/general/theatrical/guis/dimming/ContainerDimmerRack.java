@@ -76,4 +76,12 @@ public class ContainerDimmerRack extends Container {
         return receivers;
     }
 
+    public int[] getChannelsForReceiver(ISocapexReceiver iSocapexReceiver) {
+        return tileDimmerRack.getCapability(SocapexProvider.CAP, null).getPatchedCables(iSocapexReceiver);
+    }
+
+    public String getPatch(int i) {
+        return tileDimmerRack.getCapability(SocapexProvider.CAP, null).getPatch(i);
+    }
+
 }

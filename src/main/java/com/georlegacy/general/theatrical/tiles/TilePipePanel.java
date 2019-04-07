@@ -8,7 +8,6 @@ import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceive
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import com.georlegacy.general.theatrical.tiles.rigging.TilePipe;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -153,7 +152,11 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
                 addToList(receivers, world, pos.offset(facing), facing.getOpposite());
             }
             pipes = new ArrayList<>(receivers);
-            Collections.reverse(pipes);
+            pipes.sort((o1, o2) -> {
+                double dis1 = pos.getDistance(o1.getX(), o1.getY(), o1.getZ());
+                double dis2 = pos.getDistance(o2.getX(), o2.getY(), o2.getZ());
+                return Double.compare(dis1, dis2);
+            });
         }
         sendPower();
     }

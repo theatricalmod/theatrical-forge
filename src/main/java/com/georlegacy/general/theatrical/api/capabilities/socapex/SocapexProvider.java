@@ -27,9 +27,6 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     private String[] patch = new String[6];
 
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, EnumFacing facing) {
-        if (pos.getX() == 111 && pos.getZ() == 1664 && pos.getY() == 8) {
-            System.out.printf("Heh");
-        }
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null && tileEntity.hasCapability(SocapexReceiver.CAP, facing)) {
             if (scanned.add(pos)) {
@@ -130,11 +127,11 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     public int[] receiveSocapex(int[] channels, boolean simulate) {
         int[] energyReceived = new int[8];
         for (int i = 0; i < channels.length; i++) {
-            if (!canReceive(i)) {
+            if (channels[i] > this.channels[i] && !canReceive(i)) {
                 energyReceived[i] = 0;
                 continue;
             }
-            energyReceived[i] = Math.min(255 - this.channels[i], Math.min(1000, channels[i]));
+            energyReceived[i] = channels[i];
             if (!simulate) {
                 this.channels[i] = energyReceived[i];
             }
@@ -182,6 +179,11 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     }
 
     @Override
+    public void patch(int dmxChannel, String patch) {
+        this.patch[dmxChannel] = patch;
+    }
+
+    @Override
     public boolean hasPatch(ISocapexReceiver receiver) {
         for (String string : patch) {
             if (string != null && receiver.getIdentifier() != null && receiver.getIdentifier().equalsIgnoreCase(string.split(":")[0])) {
@@ -196,8 +198,25 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
         int[] channels = new int[8];
         for (int i = 0; i < patch.length; i++) {
             String patchString = patch[i];
-            if (patchString.split(":")[0].equalsIgnoreCase(receiver.getIdentifier())) {
-                channels[Integer.parseInt(patchString.split(":")[1])] = channels[i];
+            if (patchString != null && receiver != null) {
+                if (patchString.split(":")[0].equalsIgnoreCase(receiver.getIdentifier())) {
+                    channels[Integer.parseInt(patchString.split(":")[1])] = this.channels[i];
+                }
+            }
+        }
+        return channels;
+    }
+
+
+    @Override
+    public int[] getPatchedCables(ISocapexReceiver socapexReceiver) {
+        int[] channels = new int[8];
+        for (int i = 0; i < patch.length; i++) {
+            String patchString = patch[i];
+            if (patchString != null && socapexReceiver != null) {
+                if (patchString.split(":")[0].equalsIgnoreCase(socapexReceiver.getIdentifier())) {
+                    channels[Integer.parseInt(patchString.split(":")[1])] = 1;
+                }
             }
         }
         return channels;
@@ -206,12 +225,14 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     @Override
     public List<ISocapexReceiver> getDevices(World world, BlockPos controller) {
         List<ISocapexReceiver> receivers = new ArrayList<>();
-        HashSet<BlockPos> blockPos = new HashSet<>();
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            addToList(blockPos, world, controller.offset(facing), facing.getOpposite());
+        if (world.isRemote || devices == null) {
+            HashSet<BlockPos> blockPos = new HashSet<>();
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                addToList(blockPos, world, controller.offset(facing), facing.getOpposite());
+            }
+            devices = new HashSet<>(blockPos);
+            updateDevices(world, controller);
         }
-        devices = new HashSet<>(blockPos);
-        updateDevices(world, controller);
         for (BlockPos pos : devices) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity != null) {

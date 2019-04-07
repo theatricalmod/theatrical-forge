@@ -22,9 +22,13 @@ public interface ISocapexProvider {
 
     void patch(int dmxChannel, ISocapexReceiver receiver, int socket);
 
+    void patch(int channel, String patch);
+
     boolean hasPatch(ISocapexReceiver receiver);
 
     int[] getChannelsForReceiver(ISocapexReceiver receiver);
 
     List<ISocapexReceiver> getDevices(World world, BlockPos controller);
+
+    int[] getPatchedCables(ISocapexReceiver socapexReceiver);
 }

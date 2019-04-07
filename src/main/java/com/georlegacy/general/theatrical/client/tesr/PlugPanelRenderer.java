@@ -1,9 +1,12 @@
 package com.georlegacy.general.theatrical.client.tesr;
 
+import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.tiles.TilePipePanel;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -41,10 +44,42 @@ public class PlugPanelRenderer extends TileEntitySpecialRenderer<TilePipePanel> 
             buffer.pos(1, 0, 0).tex(1, 0).endVertex();
             buffer.pos(0, 0, 0).tex(0, 0).endVertex();
             tessellator.draw();
+            if (te.getCapability(SocapexReceiver.CAP, null) != null) {
+                ISocapexReceiver socapexReceiver = te.getCapability(SocapexReceiver.CAP, null);
+                if (socapexReceiver.getIdentifier() != null) {
+                    GlStateManager.scale(0.7F, 0.7F, 1F);
+                    drawString(Minecraft.getMinecraft().fontRenderer, socapexReceiver.getIdentifier(), 0.5, 0.4D);
+                }
+            }
             setLightmapDisabled(false);
             GlStateManager.enableLighting();
         }
         GlStateManager.popMatrix();
     }
 
+
+    private void drawString(FontRenderer font, String string, double y, double size) {
+        if (string.isEmpty()) {
+            return;
+        }
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0.6D, y, 0D);
+        int len = font.getStringWidth(string);
+        double scale = size / 9D;
+        double w = len * scale;
+
+        if (w > 1D) {
+            scale /= w;
+            w = 1D;
+        }
+
+        if (w > 0.9D) {
+            scale *= 0.9D;
+        }
+
+        GlStateManager.scale(scale, scale, 1D);
+        font.drawString(string, 0, 0, 0xFFD8D8D8);
+        GlStateManager.popMatrix();
+    }
 }

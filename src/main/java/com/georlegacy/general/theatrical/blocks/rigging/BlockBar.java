@@ -38,6 +38,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -118,7 +119,12 @@ public class BlockBar extends BlockBase implements ISupport, ITileEntityProvider
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(AXIS, EnumFacing.byIndex(meta));
+        EnumFacing facing = EnumFacing.byIndex(meta);
+        if (facing.getAxis() == Axis.X || facing.getAxis() == Axis.Z) {
+            return getDefaultState().withProperty(AXIS, facing);
+        } else {
+            return getDefaultState();
+        }
     }
 
     @Override

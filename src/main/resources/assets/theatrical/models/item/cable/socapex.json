@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "theatrical:items/cable/patch"
+    "layer0": "theatrical:items/cable/socapex"
   }
 }
