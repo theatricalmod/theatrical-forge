@@ -131,15 +131,6 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
             }
             return null;
         }
-        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
-            if (!hasSide(0) && !hasSide(1)) {
-                return null;
-            }
-        } else {
-            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
-                return null;
-            }
-        }
         if (sides[side] != null && sides[side].hasType(CableType.POWER)) {
             if (tileEntity.hasCapability(CapabilityEnergy.ENERGY, enumFacing.getOpposite())) {
                 return tileEntity.getPos();
@@ -193,15 +184,6 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
                 return tileCable.sides[side].hasType(typer);
             }
             return false;
-        }
-        if (enumFacing == EnumFacing.EAST || enumFacing == EnumFacing.WEST || enumFacing == EnumFacing.NORTH || enumFacing == EnumFacing.SOUTH) {
-            if (!hasSide(0) && !hasSide(1)) {
-                return false;
-            }
-        } else {
-            if (!hasSide(2) && !hasSide(3) && !hasSide(4) && !hasSide(5)) {
-                return false;
-            }
         }
         if (sides[side] != null && sides[side].hasType(CableType.POWER)) {
             if (tileEntity.hasCapability(CapabilityEnergy.ENERGY, enumFacing.getOpposite())) {

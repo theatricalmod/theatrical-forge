@@ -36,7 +36,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
                         if (cable.hasSide(i)) {
                             for (EnumFacing facing1 : EnumFacing.VALUES) {
                                 if (facing1 != facing) {
-                                    BlockPos connected = cable.isConnectedSides(facing1, i, CableType.SOCAPEX);
+                                        BlockPos connected = cable.isConnectedSides(facing1, i, CableType.SOCAPEX);
                                     if (connected != null) {
                                         addToList(scanned, world, connected, facing1.getOpposite());
                                     }

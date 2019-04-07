@@ -67,12 +67,13 @@ public class GuiDimmerRack extends GuiContainer {
         fontRenderer
             .drawString(inventoryPlayer.getPlayerInventory().getDisplayName().getUnformattedText(),
                 8, ySize - 94, 0x404040);
-        String pageName = "Panel " + receivers.get(currentPage).getIdentifier();
-        fontRenderer
-            .drawString(pageName, 170 + fontRenderer.getStringWidth(
-                pageName
-            ) / 2, 17, 0x404040);
-
+        if(receivers.size() > 0) {
+            String pageName = "Panel " + receivers.get(currentPage).getIdentifier();
+            fontRenderer
+                .drawString(pageName, 170 + fontRenderer.getStringWidth(
+                    pageName
+                ) / 2, 17, 0x404040);
+        }
         if (activePlug != -1) {
             int width = this.width / 2;
             int height = this.height / 2;
@@ -88,28 +89,22 @@ public class GuiDimmerRack extends GuiContainer {
                 lineWidth = 1 + ((1 - (percentOfDim)) * 3);
             }
             final int color = 0x13C90A;
-            float red = (float) (color >> 24 & 255) / 255.0F;
-            float green = (float) (color >> 16 & 255) / 255.0F;
-            float blue = (float) (color >> 8 & 255) / 255.0F;
-            float alpha = (float) (color & 255) / 255.0F;
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-            GlStateManager.disableLighting();
+            int red = (color >> 16) & 255;
+            int green =  (color >> 8) & 255;
+            int blue =  (color) & 255;
+            int alpha = (color >> 24) & 255;
             GlStateManager.disableTexture2D();
-            GlStateManager.pushMatrix();
-            GlStateManager.glLineWidth(lineWidth);
+            GlStateManager.disableCull();
+            GlStateManager.glLineWidth(3);
+            GlStateManager.color(1F, 1F, 1F, 1F);
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             bufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            bufferBuilder.pos(0, 0, 0).color(red, green, blue, 255).endVertex();
-            bufferBuilder.pos(mouseX, mouseY, 0).color(red, green, blue, 255).endVertex();
+            bufferBuilder.pos(plugX - guiLeft, plugY - guiTop, 0).color(red, green, blue, 255).endVertex();
+            bufferBuilder.pos(mouseX - guiLeft, mouseY - guiTop, 0).color(red, green, blue, 255).endVertex();
             tessellator.draw();
-            GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
             GlStateManager.enableCull();
-            GlStateManager.enableLighting();
-            GlStateManager.depthMask(true);
-            GlStateManager.enableDepth();
         }
     }
 
@@ -117,6 +112,7 @@ public class GuiDimmerRack extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+
     }
 
 
@@ -138,13 +134,15 @@ public class GuiDimmerRack extends GuiContainer {
             }
         }
         buttonList.addAll(sockets);
-        ISocapexReceiver iSocapexReceiver = receivers.get(currentPage);
-        int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
-        for (int i = 0; i < channels.length; i++) {
-            int x = width + 45 + (20 * (i < 4 ? i : i - 4));
-            int y = height - (i < 4 ? 65 : 45);
-            if (channels[i] != 1) {
-                plugs.add(new ButtonPlug(200 + i, x, y, i + 1, iSocapexReceiver.getIdentifier(), activePlug == i));
+        if(receivers.size() > 0) {
+            ISocapexReceiver iSocapexReceiver = receivers.get(currentPage);
+            int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
+            for (int i = 0; i < channels.length; i++) {
+                int x = width + 45 + (20 * (i < 4 ? i : i - 4));
+                int y = height - (i < 4 ? 65 : 45);
+                if (channels[i] != 1) {
+                    plugs.add(new ButtonPlug(200 + i, x, y, i + 1, iSocapexReceiver.getIdentifier(), activePlug == i));
+                }
             }
         }
         buttonList.addAll(plugs);
