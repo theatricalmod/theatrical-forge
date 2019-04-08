@@ -1,6 +1,9 @@
 package com.georlegacy.general.theatrical.api.capabilities.socapex;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -14,6 +17,8 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<NBTTa
     private int[] channels;
     private String identifier;
     private BlockPos pos;
+
+    private List<BlockPos> blockPosList = new ArrayList<>();
 
 
     public SocapexReceiver(BlockPos pos) {
@@ -30,6 +35,7 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<NBTTa
         for (int i = 0; i < channels.length; i++) {
             nbtTagCompound.setInteger("channel_" + i, channels[i]);
         }
+        nbtTagCompound.setTag("pos", NBTUtil.createPosTag(pos));
         return nbtTagCompound;
     }
 
@@ -43,6 +49,9 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<NBTTa
             if (nbt.hasKey("channel_" + i)) {
                 channels[i] = nbt.getInteger("channel_" + i);
             }
+        }
+        if (nbt.hasKey("pos")) {
+            pos = NBTUtil.getPosFromTag(nbt.getCompoundTag("pos"));
         }
         this.channels = channels;
     }
@@ -112,5 +121,14 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<NBTTa
     @Override
     public BlockPos getPos() {
         return pos;
+    }
+
+    public void setBlockPosList(List<BlockPos> blockPosList) {
+        this.blockPosList = blockPosList;
+    }
+
+    @Override
+    public List<BlockPos> getDevices() {
+        return blockPosList;
     }
 }

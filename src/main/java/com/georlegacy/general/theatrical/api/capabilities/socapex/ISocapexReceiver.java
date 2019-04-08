@@ -1,5 +1,6 @@
 package com.georlegacy.general.theatrical.api.capabilities.socapex;
 
+import java.util.List;
 import net.minecraft.util.math.BlockPos;
 
 public interface ISocapexReceiver {
@@ -21,4 +22,6 @@ public interface ISocapexReceiver {
     void assignIdentifier(String identifier);
 
     BlockPos getPos();
+
+    List<BlockPos> getDevices();
 }

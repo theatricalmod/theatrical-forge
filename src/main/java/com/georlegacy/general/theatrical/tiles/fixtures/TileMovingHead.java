@@ -105,7 +105,7 @@ public class TileMovingHead extends TileRGBFixture implements ILightProvider {
 
     @Override
     public float getRayTraceRotation() {
-        return 180F;
+        return world.getBlockState(pos).getValue(BlockMovingHead.FLIPPED) ? 180F : 0;
     }
 
     @Override

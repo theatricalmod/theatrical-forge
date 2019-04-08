@@ -114,7 +114,7 @@ public class TileIlluminator extends TileEntity implements ILightProvider, ITick
         int b = color & 0xFF;
         return Light.builder().pos(pos)
             .color(r, g, b, ((tileFresnel.getIntensity() * 0.009F) / 255))
-            .radius(Math.max(value / 2, 1)).build();
+            .radius(50 / tileFresnel.getFocus()).build();
     }
 
     @Override
