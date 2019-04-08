@@ -90,8 +90,13 @@ public class TileFresnel extends TileTungstenFixture implements IPeripheral {
     }
 
     @Override
+    public boolean emitsLight() {
+        return true;
+    }
+
+    @Override
     public float getMaxLightDistance() {
-        return 7;
+        return 25;
     }
 
     @Override
@@ -141,5 +146,10 @@ public class TileFresnel extends TileTungstenFixture implements IPeripheral {
     @Override
     public float getBeamWidth() {
         return 0.25F;
+    }
+
+    @Override
+    public float getRayTraceRotation() {
+        return 0;
     }
 }

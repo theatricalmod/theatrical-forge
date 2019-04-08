@@ -21,4 +21,6 @@ public interface IFixtureModelProvider {
     float[] getBeamStartPosition();
 
     float getBeamWidth();
+
+    float getRayTraceRotation();
 }

@@ -14,6 +14,7 @@ tile.plug_panel.name=Pipe Panel
 
 tile.bar.name=Rigging Bar
 tile.dmx_bar.name=Rigging Bar with DMX
+tile.dmx_power_bar.name=Rigging Bar with DMX and Power
 tile.socapex_bar.name=Rigging Bar with Socapex
 tile.ladder_bar.name=Rigging Ladder Bar
 

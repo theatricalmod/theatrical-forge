@@ -30,6 +30,7 @@ public class WorldDMXNetwork implements ICapabilityProvider {
         this.world = world;
     }
 
+
     public void updateDevices(){
         for(IDMXProvider provider : providerList.keySet()){
             provider.updateDevices(world, providerList.get(provider));

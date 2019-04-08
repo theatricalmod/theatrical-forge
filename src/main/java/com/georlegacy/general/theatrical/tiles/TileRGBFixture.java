@@ -110,6 +110,11 @@ public abstract class TileRGBFixture extends TileDMXAcceptor implements IRGB, IE
     }
 
     @Override
+    public boolean shouldTrace() {
+        return power > 0;
+    }
+
+    @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         if (!canReceive()) {
             return 0;
@@ -118,7 +123,8 @@ public abstract class TileRGBFixture extends TileDMXAcceptor implements IRGB, IE
         int energyReceived = Math.min(getMaxEnergyStored() - getEnergyStored(), Math.min(Integer.MAX_VALUE, maxReceive));
         if (!simulate) {
             power += energyReceived;
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+            markDirty();
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
         }
         return energyReceived;
     }

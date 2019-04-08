@@ -30,6 +30,9 @@ public class TheatricalConfig {
 
         @Config.Comment("How often the fresnel uses energy in ticks")
         public int fresnelEnergyUsage = 10;
+
+        @Config.Comment("Whether or not the lights emit actual light")
+        public boolean emitLight = true;
     }
 
     public static void sync() {

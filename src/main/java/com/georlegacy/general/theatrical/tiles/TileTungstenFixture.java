@@ -100,14 +100,20 @@ public abstract class TileTungstenFixture extends TileFixture implements IGelabl
         if (world.isRemote) {
             return;
         }
-        lastPower = power;
-        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
-        ticksSinceUsage++;
-        if (ticksSinceUsage > 20) {
-            ticksSinceUsage = 0;
-
-//            extractSocapex(getEnergyStored(), false);
+        if (power != lastPower) {
+            lastPower = power;
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
         }
+//        ticksSinceUsage++;
+//        if (ticksSinceUsage > 20) {
+//            ticksSinceUsage = 0;
+//            extractSocapex(getEnergyStored(), false);
+//        }
+    }
+
+    @Override
+    public boolean shouldTrace() {
+        return power > 0;
     }
 
     @Override

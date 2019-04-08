@@ -1,11 +1,13 @@
 package com.georlegacy.general.theatrical.guis.dimming;
 
+import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import com.georlegacy.general.theatrical.guis.widgets.ButtonPlug;
 import com.georlegacy.general.theatrical.guis.widgets.ButtonSocket;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.ChangeDimmerPatchPacket;
+import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
 import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
 import com.georlegacy.general.theatrical.util.Reference;
 import java.io.IOException;
@@ -13,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -32,6 +36,7 @@ public class GuiDimmerRack extends GuiContainer {
     private List<ButtonSocket> sockets;
     private List<ButtonPlug> plugs;
     private List<ISocapexReceiver> receivers;
+    private GuiTextField dmxStartField;
     private int currentPage = 0;
 
     private int activePlug = -1;
@@ -112,7 +117,7 @@ public class GuiDimmerRack extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
-
+        this.dmxStartField.drawTextBox();
     }
 
 
@@ -156,16 +161,29 @@ public class GuiDimmerRack extends GuiContainer {
         int height = this.height / 2;
         this.buttonList.add(new GuiButton(101, width + 45, height - 90, 15, 20, "<"));
         this.buttonList.add(new GuiButton(102, width + 43 + 60, height - 90, 15, 20, ">"));
+        this.dmxStartField = new GuiTextField(50, this.fontRenderer, width + 43, height - 20, 50, 10);
+        this.dmxStartField.setFocused(true);
+        if (tileDimmerRack.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)) {
+            this.dmxStartField.setText(Integer.toString(tileDimmerRack.getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).getStartPoint()));
+        }
         generateButtons();
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
+        this.dmxStartField.mouseClicked(mouseX, mouseY, state);
     }
 
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
+        this.dmxStartField.textboxKeyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        TheatricalPacketHandler.INSTANCE.sendToServer(new UpdateDMXStartAddressPacket(Integer.parseInt(this.dmxStartField.getText()), tileDimmerRack.getPos()));
     }
 
     @Override

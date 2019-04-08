@@ -23,12 +23,17 @@ import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.tiles.TileRGBFixture;
+import com.georlegacy.general.theatrical.util.FixtureUtils;
+import elucent.albedo.lighting.ILightProvider;
+import elucent.albedo.lighting.Light;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.Optional;
 
-public class TileMovingHead extends TileRGBFixture {
+@Optional.Interface(iface = "elucent.albedo.lighting.ILightProvider", modid = "albedo")
+public class TileMovingHead extends TileRGBFixture implements ILightProvider {
 
     public TileMovingHead() {
         super(18, 0, 5, TheatricalConfig.general.movingHeadEnergyCost, TheatricalConfig.general.movingHeadEnergyUsage);
@@ -40,8 +45,13 @@ public class TileMovingHead extends TileRGBFixture {
     }
 
     @Override
+    public boolean emitsLight() {
+        return false;
+    }
+
+    @Override
     public float getMaxLightDistance() {
-        return 7;
+        return 50;
     }
 
     @Override
@@ -91,6 +101,11 @@ public class TileMovingHead extends TileRGBFixture {
     @Override
     public float getBeamWidth() {
         return 0.15F;
+    }
+
+    @Override
+    public float getRayTraceRotation() {
+        return 180F;
     }
 
     @Override
@@ -160,6 +175,22 @@ public class TileMovingHead extends TileRGBFixture {
     @Override
     public int getColorHex() {
         return (getRed() << 16) | (getGreen() << 8) | getBlue();
+    }
+
+    @Optional.Method(modid = "albedo")
+    @Override
+    public Light provideLight() {
+        if (getLightBlock() == null) {
+            return null;
+        }
+        int value = world.getBlockState(pos).getLightValue(world, pos);
+        int color = FixtureUtils.getColorFromTE(this);
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        return Light.builder().pos(getLightBlock())
+            .color(r, g, b, ((this.getIntensity() * 0.009F) / 255))
+            .radius(16).build();
     }
 
 }

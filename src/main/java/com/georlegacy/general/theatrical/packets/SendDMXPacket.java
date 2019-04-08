@@ -91,12 +91,12 @@ public class SendDMXPacket implements IMessage {
                                 dmxReceiver
                                     .updateChannel(i, data[i]);
                             }
+//                            tileFresnel.markDirty();
+//                            TheatricalMain.proxy.getWorld().notifyBlockUpdate(pos, TheatricalMain.proxy.getWorld().getBlockState(pos), TheatricalMain.proxy.getWorld().getBlockState(pos), 11);
+//                            TheatricalMain.proxy.getWorld().markChunkDirty(pos, tileFresnel);
                         }
                     }
-                    tileFresnel.markDirty();
                 }
-                TheatricalMain.proxy.getWorld().notifyBlockUpdate(pos, TheatricalMain.proxy.getWorld().getBlockState(pos), TheatricalMain.proxy.getWorld().getBlockState(pos), 11);
-                TheatricalMain.proxy.getWorld().markChunkDirty(pos, tileFresnel);
             });
         }
     }

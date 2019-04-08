@@ -10,4 +10,8 @@ public interface IFixture {
 
     Class<? extends Block> getBlock();
 
+    boolean shouldTrace();
+
+    boolean emitsLight();
+
 }

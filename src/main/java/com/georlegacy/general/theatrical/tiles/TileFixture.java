@@ -1,5 +1,6 @@
 package com.georlegacy.general.theatrical.tiles;
 
+import com.georlegacy.general.theatrical.TheatricalConfig;
 import com.georlegacy.general.theatrical.api.IFixture;
 import com.georlegacy.general.theatrical.api.IFixtureModelProvider;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
@@ -53,6 +54,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         nbtTagCompound.setInteger("prevTilt", prevTilt);
         nbtTagCompound.setInteger("prevFocus", prevFocus);
         nbtTagCompound.setLong("timer", timer);
+        nbtTagCompound.setDouble("distance", distance);
         return nbtTagCompound;
     }
 
@@ -64,6 +66,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         prevTilt = nbtTagCompound.getInteger("prevTilt");
         prevFocus = nbtTagCompound.getInteger("prevFocus");
         timer = nbtTagCompound.getLong("timer");
+        distance = nbtTagCompound.getDouble("distance");
     }
 
     public int getPan() {
@@ -189,7 +192,7 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
             BlockDirectional.FACING);
         float horizontalAngle = direction.getOpposite().getHorizontalAngle();
         float lookingAngle = -(horizontalAngle + getPan());
-        float tilt = getTilt() + getDefaultRotation();
+        float tilt = getTilt() + getDefaultRotation() + getRayTraceRotation();
         Vec3d look = getVectorForRotation(-tilt, lookingAngle);
         double distance = getMaxLightDistance();
         BlockPos start = pos.add( 0.5 + (look.x * 0.65) , 0.5 + (look.y * 0.65), 0.5 + (look.z * 0.65));
@@ -217,15 +220,17 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         distance = new Vec3d(lightPos).distanceTo(new Vec3d(pos));
         if (lightPos.equals(lightBlock)) {
             if (world.getBlockState(lightBlock).getBlock() instanceof BlockAir) {
-                world.setBlockState(lightPos,
-                    TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
-                TileEntity tileEntity = world.getTileEntity(lightPos);
-                if (tileEntity != null) {
-                    TileIlluminator illuminator = (TileIlluminator) tileEntity;
-                    illuminator.setController(pos);
-                    if (world.isRemote) {
-                        TheatricalPacketHandler.INSTANCE
-                            .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                if (TheatricalConfig.general.emitLight && this.emitsLight()) {
+                    world.setBlockState(lightPos,
+                        TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
+                    TileEntity tileEntity = world.getTileEntity(lightPos);
+                    if (tileEntity != null) {
+                        TileIlluminator illuminator = (TileIlluminator) tileEntity;
+                        illuminator.setController(pos);
+                        if (world.isRemote) {
+                            TheatricalPacketHandler.INSTANCE
+                                .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                        }
                     }
                 }
             }
@@ -238,18 +243,20 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
             return distance;
         }
         setLightBlock(lightPos);
-        world.setBlockState(lightPos,
-            TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
-        TileEntity tileEntity = world.getTileEntity(lightPos);
-        if (tileEntity != null) {
-            TileIlluminator illuminator = (TileIlluminator) tileEntity;
-            illuminator.setController(pos);
-            if (lightBlock != null) {
-                world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
-            }
-            if (world.isRemote) {
-                TheatricalPacketHandler.INSTANCE
-                    .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+        if (TheatricalConfig.general.emitLight && this.emitsLight()) {
+            world.setBlockState(lightPos,
+                TheatricalBlocks.BLOCK_ILLUMINATOR.getDefaultState(), 3);
+            TileEntity tileEntity = world.getTileEntity(lightPos);
+            if (tileEntity != null) {
+                TileIlluminator illuminator = (TileIlluminator) tileEntity;
+                illuminator.setController(pos);
+                if (lightBlock != null) {
+                    world.checkLightFor(EnumSkyBlock.BLOCK, lightBlock);
+                }
+                if (world.isRemote) {
+                    TheatricalPacketHandler.INSTANCE
+                        .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
+                }
             }
         }
         return distance;
@@ -262,7 +269,10 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         prevTilt = tilt;
         timer++;
         if (timer >= 20) {
-            this.distance = doRayTrace();
+            if (shouldTrace()) {
+                this.distance = doRayTrace();
+                markDirty();
+            }
             timer = 0;
         }
     }

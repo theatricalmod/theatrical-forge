@@ -142,7 +142,7 @@ public class TileCable extends TileEntity implements IEnergyStorage, ITickable {
             }
         }
         if (tileEntity instanceof IAcceptsCable) {
-            if (sides[side].hasAnyType(((IAcceptsCable) tileEntity).getAcceptedCables())) {
+            if (sides[side] != null && sides[side].hasAnyType(((IAcceptsCable) tileEntity).getAcceptedCables())) {
                 return tileEntity.getPos();
             }
         }

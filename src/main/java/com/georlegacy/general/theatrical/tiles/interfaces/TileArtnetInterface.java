@@ -10,6 +10,7 @@ import com.georlegacy.general.theatrical.util.ArtnetThread;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.annotation.Nullable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -104,7 +105,7 @@ public class TileArtnetInterface extends TileEntity implements ITickable {
     }
 
     public void sendDMXSignal(){
-        WorldDMXNetwork.getCapability(world).updateDevices();
+        idmxProvider.updateDevices(world, pos);
     }
 
     public int getSubnet() {
@@ -138,8 +139,11 @@ public class TileArtnetInterface extends TileEntity implements ITickable {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             errored = true;
-            world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 2, false).sendMessage(new
-                TextComponentString("We were unable to find a network interface on that IP."));
+            EntityPlayer player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 2, false);
+            if (player != null) {
+                player.sendMessage(new
+                    TextComponentString("We were unable to find a network interface on that IP."));
+            }
         }
         return errored;
     }

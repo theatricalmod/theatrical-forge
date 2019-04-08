@@ -28,6 +28,7 @@ import com.georlegacy.general.theatrical.blocks.rigging.BlockLadderBar;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockSquareTruss;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockBar;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockDMXBar;
+import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockDMXPowerBar;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockSocapexBar;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class TheatricalBlocks {
     public static BlockBar BLOCK_BAR = new BlockBar();
     public static BlockSocapexBar BLOCK_SOCAPEX_BAR = new BlockSocapexBar();
     public static BlockDMXBar BLOCK_DMX_BAR = new BlockDMXBar();
+    public static BlockDMXPowerBar BLOCK_DMX_POWER_BAR = new BlockDMXPowerBar();
 
 
     public static BlockLadderBar BLOCK_LADDER_BAR = new BlockLadderBar();

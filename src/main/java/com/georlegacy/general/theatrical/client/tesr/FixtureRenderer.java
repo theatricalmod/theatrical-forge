@@ -40,28 +40,40 @@ import org.lwjgl.opengl.GL11;
 public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
 
     private static float lastBrightnessX, lastBrightnessY;
+    private static BlockRendererDispatcher blockRendererDispatcher;
 
     public FixtureRenderer() {
+
     }
 
     @Override
     public void render(TileFixture te, double x, double y, double z, float partialTicks,
         int destroyStage, float a) {
-        if(!(te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockDirectional)){
+        te.getWorld().profiler.startSection("movingHead");
+        if (blockRendererDispatcher == null) {
+            blockRendererDispatcher = Minecraft.getMinecraft()
+                .getBlockRendererDispatcher();
+        }
+        IBlockState state = te.getWorld().getBlockState(te.getPos());
+        if (!(state.getBlock() instanceof BlockDirectional)) {
             return;
         }
-        EnumFacing direction = te.getWorld().getBlockState(te.getPos())
+        EnumFacing direction = state
             .getValue(BlockDirectional.FACING);
         boolean isFlipped = false;
         if(te.getBlock() == BlockMovingHead.class){
-            isFlipped = te.getWorld().getBlockState(te.getPos()).getValue(BlockMovingHead.FLIPPED);
+            isFlipped = state.getValue(BlockMovingHead.FLIPPED);
         }
+        boolean isHanging = ((BlockHangable) state.getBlock()).isHanging(getWorld(), te.getPos());
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.glNormal3f(0F, 1F, 0F);
         GlStateManager.translate(0F, 1F, 1F);
         GlStateManager.disableLighting();
-        renderLight(te, direction, partialTicks, isFlipped);
+        te.getWorld().profiler.startSection("renderModel");
+        renderLight(te, direction, partialTicks, isFlipped, state, isHanging);
+        te.getWorld().profiler.endSection();
+        te.getWorld().profiler.startSection("renderBeam");
         double distance = te.getDistance();
         float[] startPos = te.getBeamStartPosition();
         GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
@@ -69,8 +81,10 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
             renderLightBeam(te, partialTicks, (te.getIntensity() * 0.4f) / 255, te.getBeamWidth(), distance,
                 FixtureUtils.getColorFromTE(te));
         }
+        te.getWorld().profiler.endSection();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
+        te.getWorld().profiler.endSection();
     }
 
     @Override
@@ -79,11 +93,11 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     }
 
 
-    public void renderLight(TileFixture te, EnumFacing direction, float partialTicks, boolean isFlipped) {
-        if(te.getHangType() == HangableType.BRACE_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
+    public void renderLight(TileFixture te, EnumFacing direction, float partialTicks, boolean isFlipped, IBlockState state, boolean isHanging) {
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             GlStateManager.translate(0, 0.175, 0);
         }
-        if(te.getHangType() == HangableType.HOOK_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
+        if (te.getHangType() == HangableType.HOOK_BAR && isHanging) {
             GlStateManager.translate(0, 0.05, 0);
         }
         GlStateManager.translate(0.5F, 0, -.5F);
@@ -92,31 +106,28 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         GlStateManager.translate(0.5, -.5F, -0.5F);
         GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
         GlStateManager.translate(-.5F, .5F, 0.5F);
-        renderHookBar(te);
-        if(te.getHangType() == HangableType.BRACE_BAR && ((BlockHangable) te.getWorld().getBlockState(te.getPos()).getBlock()).isHanging(te.getWorld(), te.getPos())){
+        renderHookBar(te, state);
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             GlStateManager.translate(0, 0.19, 0);
         }
         float[] pans = te.getPanRotationPosition();
         GlStateManager.translate(pans[0], pans[1], pans[2]);
         GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
         GlStateManager.translate(-pans[0], -pans[1], -pans[2]);
-        renderLightHandle(te);
+        renderLightHandle(te, state);
         float[] tilts = te.getTiltRotationPosition();
         GlStateManager.translate(tilts[0], tilts[1], tilts[2]);
         GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks,
             1, 0, 0);
         GlStateManager.translate(-tilts[0], -tilts[1], -tilts[2]);
-        renderLightBody(te);
+        renderLightBody(te, state);
         GlStateManager.translate(0.5F, 0, -.5F);
         GlStateManager.rotate(te.getDefaultRotation(), 1, 0, 0);
         GlStateManager.translate(-.5F, 0, 0.5F);
     }
 
-    public void renderModel(IBakedModel model, TileFixture te){
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft()
-            .getBlockRendererDispatcher();
+    public void renderModel(IBakedModel model, TileFixture te, IBlockState state) {
         BlockPos pos = te.getPos();
-        IBlockState state = getWorld().getBlockState(pos);
         state = state.getBlock().getActualState(state, getWorld(), pos);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -127,24 +138,26 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         bufferbuilder.setTranslation(-pos.getX(), -1 - pos.getY(), -1 - pos.getZ());
         bufferbuilder.color(255, 255, 255, 255);
-        blockrendererdispatcher.getBlockModelRenderer()
+        te.getWorld().profiler.startSection("blockDispatcher");
+        blockRendererDispatcher.getBlockModelRenderer()
             .renderModel(getWorld(), model, state, pos, bufferbuilder, false);
+        te.getWorld().profiler.endSection();
         bufferbuilder.setTranslation(0, 0, 0);
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }
 
-    public void renderHookBar(TileFixture te) {
-        renderModel(te.getStaticModel(), te);
+    public void renderHookBar(TileFixture te, IBlockState state) {
+        renderModel(te.getStaticModel(), te, state);
     }
 
-    public void renderLightHandle(TileFixture te) {
-       renderModel(te.getPanModel(), te);
+    public void renderLightHandle(TileFixture te, IBlockState state) {
+        renderModel(te.getPanModel(), te, state);
     }
 
-    public void renderLightBody(TileFixture te) {
-        renderModel(te.getTiltModel(), te);
+    public void renderLightBody(TileFixture te, IBlockState state) {
+        renderModel(te.getTiltModel(), te, state);
     }
 
     public static void pushBrightness(int u, int t) {

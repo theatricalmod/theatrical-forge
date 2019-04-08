@@ -18,9 +18,9 @@ package com.georlegacy.general.theatrical.packets;
 
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -81,14 +81,14 @@ public class UpdateDMXStartAddressPacket implements IMessage {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 World world = ctx.getServerHandler().player.world;
                 BlockPos blockPos = message.getPos();
-                TileDMXAcceptor tileFresnel = (TileDMXAcceptor) world
+                TileEntity tile = world
                     .getTileEntity(blockPos);
-                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)){
-                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).setDMXStartPoint(message.getDmxStartPoint());
+                if (tile.hasCapability(DMXReceiver.CAP, null)) {
+                    tile.getCapability(DMXReceiver.CAP, null).setDMXStartPoint(message.getDmxStartPoint());
                 }
-                world.markChunkDirty(blockPos, tileFresnel);
+                world.markChunkDirty(blockPos, tile);
                 TheatricalPacketHandler.INSTANCE.sendToAll(
-                    new UpdateDMXStartAddressPacket(message.getDmxStartPoint(), tileFresnel.getPos()));
+                    new UpdateDMXStartAddressPacket(message.getDmxStartPoint(), tile.getPos()));
             });
         }
     }
@@ -105,12 +105,12 @@ public class UpdateDMXStartAddressPacket implements IMessage {
         private void doTheFuckingThing(UpdateDMXStartAddressPacket message, MessageContext ctx){
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 BlockPos blockPos = message.getPos();
-                TileDMXAcceptor tileFresnel = (TileDMXAcceptor) Minecraft
+                TileEntity tile = Minecraft
                     .getMinecraft().world.getTileEntity(blockPos);
-                if(tileFresnel.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)){
-                    tileFresnel.getCapability(DMXReceiver.CAP, EnumFacing.SOUTH).setDMXStartPoint(message.getDmxStartPoint());
+                if (tile.hasCapability(DMXReceiver.CAP, EnumFacing.SOUTH)) {
+                    tile.getCapability(DMXReceiver.CAP, null).setDMXStartPoint(message.getDmxStartPoint());
                 }
-                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tileFresnel);
+                Minecraft.getMinecraft().world.markChunkDirty(blockPos, tile);
             });
         }
     }
