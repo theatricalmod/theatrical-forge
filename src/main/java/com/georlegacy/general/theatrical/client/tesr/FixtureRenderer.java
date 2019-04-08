@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -41,6 +42,9 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
 
     private static float lastBrightnessX, lastBrightnessY;
     private static BlockRendererDispatcher blockRendererDispatcher;
+    private int hookDisplayList = -1;
+    private int lightHandleList = -1;
+    private int lightBodyList = -1;
 
     public FixtureRenderer() {
 
@@ -106,10 +110,10 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         GlStateManager.translate(0.5, -.5F, -0.5F);
         GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
         GlStateManager.translate(-.5F, .5F, 0.5F);
-        renderHookBar(te, state);
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             GlStateManager.translate(0, 0.19, 0);
         }
+        renderHookBar(te, state);
         float[] pans = te.getPanRotationPosition();
         GlStateManager.translate(pans[0], pans[1], pans[2]);
         GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
@@ -149,15 +153,54 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     }
 
     public void renderHookBar(TileFixture te, IBlockState state) {
-        renderModel(te.getStaticModel(), te, state);
+        if (hookDisplayList == -1) {
+            hookDisplayList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.hookDisplayList, 4864);
+            renderModel(te.getStaticModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.hookDisplayList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
     }
 
     public void renderLightHandle(TileFixture te, IBlockState state) {
-        renderModel(te.getPanModel(), te, state);
+        if (lightHandleList == -1) {
+            lightHandleList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.lightHandleList, 4864);
+            renderModel(te.getPanModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.lightHandleList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
     }
 
     public void renderLightBody(TileFixture te, IBlockState state) {
-        renderModel(te.getTiltModel(), te, state);
+        if (lightBodyList == -1) {
+            lightBodyList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.lightBodyList, 4864);
+            renderModel(te.getTiltModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.lightBodyList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
     }
 
     public static void pushBrightness(int u, int t) {

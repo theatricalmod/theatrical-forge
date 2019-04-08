@@ -52,11 +52,13 @@ public class TilePipePanel extends TileEntity implements IAcceptsCable, ITickabl
             nbtTagCompound.setInteger("channel_" + i, channels[i]);
         }
         nbtTagCompound.setTag("pos", NBTUtil.createPosTag(pos));
-        NBTTagCompound nbtTagCompound1 = new NBTTagCompound();
-        for (int i = 0; i < pipes.size(); i++) {
-            nbtTagCompound1.setTag("pipes_" + i, NBTUtil.createPosTag(pipes.get(i)));
+        if (pipes != null) {
+            NBTTagCompound nbtTagCompound1 = new NBTTagCompound();
+            for (int i = 0; i < pipes.size(); i++) {
+                nbtTagCompound1.setTag("pipes_" + i, NBTUtil.createPosTag(pipes.get(i)));
+            }
+            nbtTagCompound.setTag("pipes", nbtTagCompound1);
         }
-        nbtTagCompound.setTag("pipes", nbtTagCompound1);
         return nbtTagCompound;
     }
 
