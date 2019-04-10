@@ -6,8 +6,8 @@ import net.minecraft.world.World;
 
 public interface ISupport {
 
-    EnumFacing getBlockPlacementDirection(World world, BlockPos pos);
+    EnumFacing getBlockPlacementDirection(World world, BlockPos pos, EnumFacing facing);
 
-    float[] getLightTransforms();
+    float[] getLightTransforms(World world, BlockPos pos, EnumFacing facing);
 
 }

@@ -118,7 +118,7 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock() instanceof ISupport) {
                 ISupport support = (ISupport) te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock();
-                float[] transforms = support.getLightTransforms();
+                float[] transforms = support.getLightTransforms(te.getWorld(), te.getPos(), direction);
                 GlStateManager.translate(transforms[0], transforms[1], transforms[2]);
             } else {
                 GlStateManager.translate(0, 0.19, 0);
