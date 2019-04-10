@@ -16,6 +16,7 @@
 
 package com.georlegacy.general.theatrical.client.tesr;
 
+import com.georlegacy.general.theatrical.api.ISupport;
 import com.georlegacy.general.theatrical.api.fixtures.HangableType;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockIntelligentFixture;
@@ -114,9 +115,14 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         GlStateManager.translate(0.5, -.5F, -0.5F);
         GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
         GlStateManager.translate(-.5F, .5F, 0.5F);
-
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
-            GlStateManager.translate(0, 0.19, 0);
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock() instanceof ISupport) {
+                ISupport support = (ISupport) te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock();
+                float[] transforms = support.getLightTransforms();
+                GlStateManager.translate(transforms[0], transforms[1], transforms[2]);
+            } else {
+                GlStateManager.translate(0, 0.19, 0);
+            }
         }
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getProperties().containsKey(BlockBar.AXIS)) {

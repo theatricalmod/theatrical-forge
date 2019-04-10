@@ -77,7 +77,7 @@ public class BlockIntelligentFixture extends BlockHangable implements ITileEntit
         if (worldIn.getBlockState(up).getBlock() != Blocks.AIR && worldIn.getBlockState(up).getBlock() instanceof ISupport) {
             ISupport support = (ISupport) worldIn.getBlockState(up).getBlock();
             for (EnumFacing facing : allowedPlaces) {
-                if (support.getBlockPlacementDirection().equals(facing)) {
+                if (support.getBlockPlacementDirection(worldIn, pos).equals(facing)) {
                     return true;
                 }
             }

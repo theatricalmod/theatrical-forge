@@ -133,8 +133,13 @@ public class BlockSocapexBar extends BlockBase implements ISupport, ITileEntityP
     }
 
     @Override
-    public EnumFacing getBlockPlacementDirection() {
+    public EnumFacing getBlockPlacementDirection(World world, BlockPos pos) {
         return EnumFacing.DOWN;
+    }
+
+    @Override
+    public float[] getLightTransforms() {
+        return new float[]{0, 0.19F, 0};
     }
 
     @Override
