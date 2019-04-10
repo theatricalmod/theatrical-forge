@@ -3,7 +3,7 @@ package com.georlegacy.general.theatrical.client.tesr;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.tiles.TilePipePanel;
+import com.georlegacy.general.theatrical.tiles.dimming.TilePipePanel;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

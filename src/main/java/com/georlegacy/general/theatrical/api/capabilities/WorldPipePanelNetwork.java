@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.api.capabilities;
 
-import com.georlegacy.general.theatrical.tiles.TilePipePanel;
+import com.georlegacy.general.theatrical.tiles.dimming.TilePipePanel;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;

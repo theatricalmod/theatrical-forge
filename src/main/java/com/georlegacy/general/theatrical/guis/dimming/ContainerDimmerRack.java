@@ -3,7 +3,7 @@ package com.georlegacy.general.theatrical.guis.dimming;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
-import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
+import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

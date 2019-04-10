@@ -1,10 +1,11 @@
-package com.georlegacy.general.theatrical.tiles;
+package com.georlegacy.general.theatrical.tiles.dimming;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
 import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
+import com.georlegacy.general.theatrical.tiles.TileBase;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +19,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class TileDimmerRack extends TileBase implements IAcceptsCable, ITickable, IEnergyStorage {
 
     private int dmxStart = 0;
-
 
     private DMXReceiver dmxReceiver;
     private SocapexProvider socapexProvider;

@@ -5,7 +5,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
+import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import javax.annotation.Nullable;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;

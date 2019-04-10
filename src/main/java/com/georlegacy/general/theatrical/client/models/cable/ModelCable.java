@@ -118,6 +118,7 @@ public class ModelCable implements IModel {
     @Override
     public Collection<ResourceLocation> getDependencies() {
         Stream<ResourceLocation> combinedStream = Stream.of(modelCenter, modelNorth, modelSouth, modelEast, modelWest).flatMap(Collection::stream);
+
         return combinedStream.collect(Collectors.toList());
     }
 

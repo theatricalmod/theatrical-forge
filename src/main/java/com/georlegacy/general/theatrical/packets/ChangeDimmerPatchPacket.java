@@ -20,7 +20,7 @@ import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexProvider;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
+import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

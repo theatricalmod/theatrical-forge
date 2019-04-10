@@ -8,7 +8,7 @@ import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.ChangeDimmerPatchPacket;
 import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
-import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
+import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import com.georlegacy.general.theatrical.util.Reference;
 import java.io.IOException;
 import java.util.ArrayList;

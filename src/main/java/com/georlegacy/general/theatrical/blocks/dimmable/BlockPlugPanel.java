@@ -4,7 +4,7 @@ import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.TilePipePanel;
+import com.georlegacy.general.theatrical.tiles.dimming.TilePipePanel;
 import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

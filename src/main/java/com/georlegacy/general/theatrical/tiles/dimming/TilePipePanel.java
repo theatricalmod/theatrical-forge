@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.tiles;
+package com.georlegacy.general.theatrical.tiles.dimming;
 
 import com.georlegacy.general.theatrical.api.IAcceptsCable;
 import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
