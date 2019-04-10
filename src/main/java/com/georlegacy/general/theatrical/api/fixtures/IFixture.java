@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.api;
+package com.georlegacy.general.theatrical.api.fixtures;
 
 import net.minecraft.block.Block;
 

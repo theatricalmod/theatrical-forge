@@ -16,9 +16,9 @@
 
 package com.georlegacy.general.theatrical.client.tesr;
 
-import com.georlegacy.general.theatrical.api.HangableType;
+import com.georlegacy.general.theatrical.api.fixtures.HangableType;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
-import com.georlegacy.general.theatrical.blocks.fixtures.BlockMovingHead;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockIntelligentFixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.tiles.TileFixture;
 import com.georlegacy.general.theatrical.util.FixtureUtils;
@@ -65,8 +65,8 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         EnumFacing direction = state
             .getValue(BlockDirectional.FACING);
         boolean isFlipped = false;
-        if(te.getBlock() == BlockMovingHead.class){
-            isFlipped = state.getValue(BlockMovingHead.FLIPPED);
+        if (te.getBlock() == BlockIntelligentFixture.class) {
+            isFlipped = state.getValue(BlockIntelligentFixture.FLIPPED);
         }
         boolean isHanging = ((BlockHangable) state.getBlock()).isHanging(getWorld(), te.getPos());
         GlStateManager.pushMatrix();

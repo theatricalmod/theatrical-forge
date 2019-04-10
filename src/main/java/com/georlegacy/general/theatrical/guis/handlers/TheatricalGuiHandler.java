@@ -11,7 +11,7 @@ import com.georlegacy.general.theatrical.guis.interfaces.ContainerArtNetInterfac
 import com.georlegacy.general.theatrical.guis.interfaces.GuiArtNetInterface;
 import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import com.georlegacy.general.theatrical.tiles.TileDimmerRack;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import com.georlegacy.general.theatrical.tiles.interfaces.TileArtnetInterface;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +28,7 @@ public class TheatricalGuiHandler implements IGuiHandler {
         switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
                 return new ContainerFresnel(player.inventory,
-                    (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)));
+                    (TileTungstenFixture) world.getTileEntity(new BlockPos(x, y, z)));
             case FIXTURE_MOVING_HEAD:
                 return new ContainerIntelligentFixture(player.inventory, (TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)));
             case ARTNET_INTERFACE:
@@ -47,7 +47,7 @@ public class TheatricalGuiHandler implements IGuiHandler {
         switch (GUIID.getByNid(id)) {
             case FIXTURE_FRESNEL:
                 return new GuiFresnel(
-                    (TileFresnel) world.getTileEntity(new BlockPos(x, y, z)),
+                    (TileTungstenFixture) world.getTileEntity(new BlockPos(x, y, z)),
                     (ContainerFresnel) getServerGuiElement(id, player, world, x, y, z));
             case FIXTURE_MOVING_HEAD:
                 return new GuiIntelligentFixture((TileDMXAcceptor) world.getTileEntity(new BlockPos(x, y, z)), (ContainerIntelligentFixture) getServerGuiElement(id, player, world, x, y, z));

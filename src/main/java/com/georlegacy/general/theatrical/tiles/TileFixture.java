@@ -1,9 +1,11 @@
 package com.georlegacy.general.theatrical.tiles;
 
 import com.georlegacy.general.theatrical.TheatricalConfig;
-import com.georlegacy.general.theatrical.api.IFixture;
-import com.georlegacy.general.theatrical.api.IFixtureModelProvider;
 import com.georlegacy.general.theatrical.api.ISupport;
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
+import com.georlegacy.general.theatrical.api.fixtures.HangableType;
+import com.georlegacy.general.theatrical.api.fixtures.IFixture;
+import com.georlegacy.general.theatrical.api.fixtures.IFixtureModelProvider;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.base.BlockIlluminator;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
@@ -15,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -33,7 +36,7 @@ import net.minecraft.world.World;
 public abstract  class TileFixture extends TileEntity implements IFixture, ITickable,
     IFixtureModelProvider {
 
-
+    private Fixture fixture;
     private double distance = 0;
     private int pan, tilt = 0;
     private int focus = 6;
@@ -45,6 +48,14 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     private BlockPos lightBlock;
 
     public TileFixture(){}
+
+    public void setFixture(Fixture fixture) {
+        this.fixture = fixture;
+    }
+
+    public Fixture getFixture() {
+        return fixture;
+    }
 
     public NBTTagCompound getNBT(@Nullable NBTTagCompound nbtTagCompound) {
         if (nbtTagCompound == null) {
@@ -436,6 +447,79 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
     public double getDistance() {
         return distance;
     }
+
+    @Override
+    public HangableType getHangType() {
+        return getFixture().getHangableType();
+    }
+
+    @Override
+    public IBakedModel getStaticModel() {
+        Block block = getWorld().getBlockState(pos).getBlock();
+        if (block instanceof BlockHangable && ((BlockHangable) block).isHanging(world, pos)) {
+            return getFixture().getHookedModel();
+        }
+        return getFixture().getStaticModel();
+    }
+
+    @Override
+    public IBakedModel getTiltModel() {
+        return getFixture().getTiltModel();
+    }
+
+    @Override
+    public IBakedModel getPanModel() {
+        return getFixture().getPanModel();
+    }
+
+    @Override
+    public float[] getTiltRotationPosition() {
+        if (getFixture() == null) {
+            return new float[]{};
+        }
+        return getFixture().getTiltRotationPosition();
+    }
+
+    @Override
+    public float[] getPanRotationPosition() {
+        if (getFixture() == null) {
+            return new float[]{};
+        }
+        return getFixture().getPanRotationPosition();
+    }
+
+    @Override
+    public float getDefaultRotation() {
+        if (getFixture() == null) {
+            return 0;
+        }
+        return getFixture().getDefaultRotation();
+    }
+
+    @Override
+    public float[] getBeamStartPosition() {
+        if (getFixture() == null) {
+            return new float[]{};
+        }
+        return getFixture().getBeamStartPosition();
+    }
+
+    @Override
+    public float getBeamWidth() {
+        if (getFixture() == null) {
+            return 0;
+        }
+        return getFixture().getBeamWidth();
+    }
+
+    @Override
+    public float getRayTraceRotation() {
+        if (getFixture() == null) {
+            return 0;
+        }
+        return getFixture().getRayTraceRotation();
+    }
+
 
 
 }

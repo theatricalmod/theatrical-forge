@@ -2,7 +2,7 @@ package com.georlegacy.general.theatrical.guis.fixtures.containers;
 
 import com.georlegacy.general.theatrical.guis.widgets.GelSlot;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -13,10 +13,10 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFresnel extends Container {
 
-    private TileFresnel tileFresnel;
+    private TileTungstenFixture tileFresnel;
     private IInventory playerInventory;
 
-    public ContainerFresnel(IInventory playerInventory, TileFresnel tileFresnel) {
+    public ContainerFresnel(IInventory playerInventory, TileTungstenFixture tileFresnel) {
         this.tileFresnel = tileFresnel;
         addOwnSlots();
         addPlayerSlots(playerInventory);

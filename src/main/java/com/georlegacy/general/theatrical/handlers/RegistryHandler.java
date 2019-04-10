@@ -19,8 +19,13 @@ package com.georlegacy.general.theatrical.handlers;
 import com.georlegacy.general.theatrical.api.capabilities.WorldPipePanelNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.WorldSocapexNetwork;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
+import com.georlegacy.general.theatrical.api.fixtures.FixtureType;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockIntelligentFixture;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockTungstenLight;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
+import com.georlegacy.general.theatrical.init.TheatricalFixtures;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.init.TheatricalSoundEvents;
 import com.georlegacy.general.theatrical.tiles.cables.TileCable;
@@ -63,8 +68,23 @@ public class RegistryHandler {
                 GameRegistry.registerTileEntity(fixture.getTileEntity(), block.getRegistryName());
             }
         });
+        for (Fixture fixture : Fixture.getRegistry()) {
+            if (fixture.getFixtureType() == FixtureType.TUNGSTEN) {
+                event.getRegistry().register(new BlockTungstenLight(fixture));
+            } else if (fixture.getFixtureType() == FixtureType.INTELLIGENT) {
+                event.getRegistry().register(new BlockIntelligentFixture(fixture));
+            }
+            GameRegistry.registerTileEntity(fixture.getFixtureType().getTileClass().get().getClass(), fixture.getName());
+        }
         event.getRegistry().register(TheatricalBlocks.BLOCK_CABLE);
         GameRegistry.registerTileEntity(TileCable.class, TheatricalBlocks.BLOCK_CABLE.getRegistryName());
+    }
+
+    @SubscribeEvent
+    public static void onFixtureRegister(RegistryEvent.Register<Fixture> event) {
+//        event.getRegistry().register(TheatricalFixtures.FRESNEL);
+        event.getRegistry().register(TheatricalFixtures.MOVING_HEAD);
+        event.getRegistry().registerAll(TheatricalFixtures.fixtures.toArray(new Fixture[0]));
     }
 
     @SubscribeEvent

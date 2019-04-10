@@ -16,8 +16,8 @@
 
 package com.georlegacy.general.theatrical.armor.utility;
 
+import com.georlegacy.general.theatrical.api.fixtures.IHasModel;
 import com.georlegacy.general.theatrical.armor.materials.FixtureDetailArmorMaterial;
-import com.georlegacy.general.theatrical.api.IHasModel;
 import com.georlegacy.general.theatrical.handlers.ClientEventHandler;
 import com.georlegacy.general.theatrical.init.TheatricalArmorMaterials;
 import com.georlegacy.general.theatrical.util.Reference;

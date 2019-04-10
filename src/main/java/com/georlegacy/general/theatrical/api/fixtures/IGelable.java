@@ -1,4 +1,4 @@
-package com.georlegacy.general.theatrical.api;
+package com.georlegacy.general.theatrical.api.fixtures;
 
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 

@@ -2,13 +2,11 @@ package com.georlegacy.general.theatrical.guis.fixtures.gui;
 
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerFresnel;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.UpdateLightPacket;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiSlider;
 
@@ -17,14 +15,14 @@ public class GuiFresnel extends GuiContainer {
     private static final ResourceLocation background = new ResourceLocation(Reference.MOD_ID,
         "textures/gui/frensel.png");
     private ContainerFresnel inventoryPlayer;
-    private TileFresnel tileFresnel;
+    private TileTungstenFixture tileFresnel;
 
     private GuiSlider tiltSlider;
     private GuiSlider panSlider;
 
     private int pan, tilt = 0;
 
-    public GuiFresnel(TileFresnel tileFresnel, ContainerFresnel inventorySlotsIn) {
+    public GuiFresnel(TileTungstenFixture tileFresnel, ContainerFresnel inventorySlotsIn) {
         super(inventorySlotsIn);
         this.inventoryPlayer = inventorySlotsIn;
         this.tileFresnel = tileFresnel;
@@ -44,7 +42,7 @@ public class GuiFresnel extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(TheatricalBlocks.BLOCK_FRESNEL.getTranslationKey() + ".name");
+        String name = tileFresnel.getFixture().getName().getPath();
         fontRenderer
             .drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
         fontRenderer.drawString("Gel", xSize / 2 - fontRenderer.getStringWidth("Gel") / 2,

@@ -1,17 +1,21 @@
 package com.georlegacy.general.theatrical.tiles;
 
-import com.georlegacy.general.theatrical.api.IGelable;
 import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
 import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
+import com.georlegacy.general.theatrical.api.fixtures.IGelable;
+import com.georlegacy.general.theatrical.blocks.fixtures.BlockTungstenLight;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import javax.annotation.Nullable;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public abstract class TileTungstenFixture extends TileFixture implements IGelable, ITheatricalPowerStorage {
+public class TileTungstenFixture extends TileFixture implements IGelable, ITheatricalPowerStorage {
+
 
     private int ticksSinceUsage = 0;
 
@@ -23,9 +27,11 @@ public abstract class TileTungstenFixture extends TileFixture implements IGelabl
     private int maxReceive = 255;
     private int maxExtract = 255;
 
-    public TileTungstenFixture(int energyCost, int energyUsage) {
-        this.energyCost = energyCost;
-        this.energyUsage = energyUsage;
+    @Override
+    public void setFixture(Fixture fixture) {
+        super.setFixture(fixture);
+        energyCost = fixture.getEnergyUse();
+        energyUsage = fixture.getEnergyUseTimer();
     }
 
     private GelType gelType = GelType.CLEAR;
@@ -117,6 +123,11 @@ public abstract class TileTungstenFixture extends TileFixture implements IGelabl
     }
 
     @Override
+    public boolean emitsLight() {
+        return false;
+    }
+
+    @Override
     public float getIntensity() {
         return lastPower;
     }
@@ -165,5 +176,10 @@ public abstract class TileTungstenFixture extends TileFixture implements IGelabl
     @Override
     public boolean canReceive() {
         return this.maxReceive > 0;
+    }
+
+    @Override
+    public Class<? extends Block> getBlock() {
+        return BlockTungstenLight.class;
     }
 }

@@ -22,12 +22,15 @@ import static com.georlegacy.general.theatrical.util.Reference.MOD_ID;
 import static com.georlegacy.general.theatrical.util.Reference.NAME;
 import static com.georlegacy.general.theatrical.util.Reference.VERSION;
 
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
 import com.georlegacy.general.theatrical.guis.handlers.TheatricalGuiHandler;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.init.TheatricalCapabilities;
+import com.georlegacy.general.theatrical.init.TheatricalFixtures;
 import com.georlegacy.general.theatrical.integration.cc.ComputerCraftIntegration;
 import com.georlegacy.general.theatrical.integration.top.TOPIntegration;
 import com.georlegacy.general.theatrical.proxy.CommonProxy;
+import java.io.File;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -35,12 +38,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.Logger;
 
-/**
- * Main class for Theatrical
- *
- * @author James Conway
- */
 @Mod(modid = MOD_ID, name = NAME, version = VERSION, dependencies = "after:computercraft;after:mcmultipart")
 public class TheatricalMain {
 
@@ -50,9 +49,18 @@ public class TheatricalMain {
     @SidedProxy(clientSide = CLIENT_PROXY_CLASS, serverSide = COMMON_PROXY_CLASS)
     public static CommonProxy proxy;
 
+    public static File lightsDirectory;
+    public static Logger logger;
 
     @Mod.EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
+        lightsDirectory = new File(event.getModConfigurationDirectory(), "theatrical/lights");
+        if (!lightsDirectory.exists()) {
+            lightsDirectory.mkdirs();
+        }
+        logger = event.getModLog();
+        TheatricalFixtures.init();
+        Fixture.createRegistry();
         TheatricalPacketHandler.init();
         TheatricalPacketHandler.clientInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TheatricalGuiHandler());
@@ -63,13 +71,17 @@ public class TheatricalMain {
         ComputerCraftIntegration.init();
     }
 
+    private void initTop() {
+        TOPIntegration.init();
+    }
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         if (Loader.isModLoaded("computercraft")) {
             initComputer();
         }
         if (Loader.isModLoaded("theoneprobe")) {
-            TOPIntegration.init();
+            initTop();
         }
     }
 
