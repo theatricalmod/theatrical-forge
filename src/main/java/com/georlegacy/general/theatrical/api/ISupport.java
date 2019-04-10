@@ -6,5 +6,4 @@ public interface ISupport {
 
     EnumFacing getBlockPlacementDirection();
 
-
 }

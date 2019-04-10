@@ -119,17 +119,21 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
             GlStateManager.translate(0, 0.19, 0);
         }
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
-            EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
-            GlStateManager.translate(0.5F, 0, -.5F);
-            GlStateManager.rotate(facing.getHorizontalAngle(), 0, 1, 0);
-            GlStateManager.translate(-.5F, 0, 0.5F);
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getProperties().containsKey(BlockBar.AXIS)) {
+                EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+                GlStateManager.translate(0.5F, 0, -.5F);
+                GlStateManager.rotate(facing.getHorizontalAngle(), 0, 1, 0);
+                GlStateManager.translate(-.5F, 0, 0.5F);
+            }
         }
         renderHookBar(te, state);
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
-            EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
-            GlStateManager.translate(0.5F, 0, -.5F);
-            GlStateManager.rotate(-facing.getHorizontalAngle(), 0, 1, 0);
-            GlStateManager.translate(-.5F, 0, 0.5F);
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getProperties().containsKey(BlockBar.AXIS)) {
+                EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+                GlStateManager.translate(0.5F, 0, -.5F);
+                GlStateManager.rotate(-facing.getHorizontalAngle(), 0, 1, 0);
+                GlStateManager.translate(-.5F, 0, 0.5F);
+            }
         }
         float[] pans = te.getPanRotationPosition();
         GlStateManager.translate(pans[0], pans[1], pans[2]);
