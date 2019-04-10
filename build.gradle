@@ -15,7 +15,7 @@ configurations {
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 def ENV = System.getenv()
-def buildVersion = ENV.BUILD ? "${ENV.BUILD.BUILD_NUMBER}" : "beta"
+def buildVersion = ENV.BUILD_BUILDNUMBER ? "${ENV.BUILD_BUILDNUMBER}" : "beta"
 
 version = "1.0-${buildVersion}"
 group = "com.georlegacy.general.theatrical" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
