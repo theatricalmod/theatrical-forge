@@ -32,10 +32,12 @@ public class TileMovingHead extends TileDMXAcceptor implements IRGB, IEnergyStor
     @Override
     public void setFixture(Fixture fixture) {
         super.setFixture(fixture);
-        this.maxPower = fixture.getMaxEnergy();
-        this.energyCost = fixture.getEnergyUse();
-        this.energyUsage = fixture.getEnergyUseTimer();
-        this.getIdmxReceiver().setChannelCount(fixture.getChannelCount());
+        if (fixture != null) {
+            this.maxPower = fixture.getMaxEnergy();
+            this.energyCost = fixture.getEnergyUse();
+            this.energyUsage = fixture.getEnergyUseTimer();
+            this.getIdmxReceiver().setChannelCount(fixture.getChannelCount());
+        }
     }
 
 //    public TileMovingHead(int channelCount, int channelStartPoint, int maxPower, int energyCost, int energyUsage) {
@@ -70,7 +72,6 @@ public class TileMovingHead extends TileDMXAcceptor implements IRGB, IEnergyStor
         nbtTagCompound.setInteger("green", green);
         nbtTagCompound.setInteger("blue", blue);
         nbtTagCompound.setInteger("power", power);
-        nbtTagCompound.setInteger("channelStartPoint", channelStartPoint);
         return nbtTagCompound;
     }
 
@@ -81,7 +82,6 @@ public class TileMovingHead extends TileDMXAcceptor implements IRGB, IEnergyStor
         green = nbtTagCompound.getInteger("green");
         blue = nbtTagCompound.getInteger("blue");
         power = nbtTagCompound.getInteger("power");
-        channelStartPoint = nbtTagCompound.getInteger("channelStartPoint");
     }
 
     public void setRed(int red) {
@@ -139,7 +139,10 @@ public class TileMovingHead extends TileDMXAcceptor implements IRGB, IEnergyStor
 
     @Override
     public int getMaxEnergyStored() {
-        return maxPower;
+        if (getFixture() != null) {
+            return getFixture().getMaxEnergy();
+        }
+        return 0;
     }
 
     @Override
@@ -288,5 +291,13 @@ public class TileMovingHead extends TileDMXAcceptor implements IRGB, IEnergyStor
     @Override
     public Class<? extends Block> getBlock() {
         return BlockIntelligentFixture.class;
+    }
+
+    @Override
+    public float getRayTraceRotation() {
+        if (getFixture() != null) {
+            return world.getBlockState(pos).getValue(BlockIntelligentFixture.FLIPPED) ? getFixture().getRayTraceRotation() : 0;
+        }
+        return 0;
     }
 }

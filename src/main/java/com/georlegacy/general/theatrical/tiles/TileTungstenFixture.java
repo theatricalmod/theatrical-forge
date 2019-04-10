@@ -30,8 +30,10 @@ public class TileTungstenFixture extends TileFixture implements IGelable, ITheat
     @Override
     public void setFixture(Fixture fixture) {
         super.setFixture(fixture);
-        energyCost = fixture.getEnergyUse();
-        energyUsage = fixture.getEnergyUseTimer();
+        if (fixture != null) {
+            energyCost = fixture.getEnergyUse();
+            energyUsage = fixture.getEnergyUseTimer();
+        }
     }
 
     private GelType gelType = GelType.CLEAR;

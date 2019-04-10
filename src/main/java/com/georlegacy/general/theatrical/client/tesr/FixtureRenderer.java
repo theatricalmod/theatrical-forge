@@ -20,6 +20,7 @@ import com.georlegacy.general.theatrical.api.fixtures.HangableType;
 import com.georlegacy.general.theatrical.blocks.base.BlockDirectional;
 import com.georlegacy.general.theatrical.blocks.fixtures.BlockIntelligentFixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
+import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockBar;
 import com.georlegacy.general.theatrical.tiles.TileFixture;
 import com.georlegacy.general.theatrical.util.FixtureUtils;
 import net.minecraft.block.state.IBlockState;
@@ -53,6 +54,9 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
     @Override
     public void render(TileFixture te, double x, double y, double z, float partialTicks,
         int destroyStage, float a) {
+        if (te.getStaticModel() == null) {
+            return;
+        }
         te.getWorld().profiler.startSection("movingHead");
         if (blockRendererDispatcher == null) {
             blockRendererDispatcher = Minecraft.getMinecraft()
@@ -110,10 +114,23 @@ public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
         GlStateManager.translate(0.5, -.5F, -0.5F);
         GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
         GlStateManager.translate(-.5F, .5F, 0.5F);
+
         if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
             GlStateManager.translate(0, 0.19, 0);
         }
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+            GlStateManager.translate(0.5F, 0, -.5F);
+            GlStateManager.rotate(facing.getHorizontalAngle(), 0, 1, 0);
+            GlStateManager.translate(-.5F, 0, 0.5F);
+        }
         renderHookBar(te, state);
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+            GlStateManager.translate(0.5F, 0, -.5F);
+            GlStateManager.rotate(-facing.getHorizontalAngle(), 0, 1, 0);
+            GlStateManager.translate(-.5F, 0, 0.5F);
+        }
         float[] pans = te.getPanRotationPosition();
         GlStateManager.translate(pans[0], pans[1], pans[2]);
         GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);

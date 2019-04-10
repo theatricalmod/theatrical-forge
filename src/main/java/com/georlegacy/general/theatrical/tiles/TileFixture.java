@@ -25,6 +25,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -69,6 +70,9 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         nbtTagCompound.setInteger("prevFocus", prevFocus);
         nbtTagCompound.setLong("timer", timer);
         nbtTagCompound.setDouble("distance", distance);
+        if (getFixture() != null) {
+            nbtTagCompound.setString("fixture_type", getFixture().getRegistryName().toString());
+        }
         return nbtTagCompound;
     }
 
@@ -81,6 +85,11 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
         prevFocus = nbtTagCompound.getInteger("prevFocus");
         timer = nbtTagCompound.getLong("timer");
         distance = nbtTagCompound.getDouble("distance");
+        if (nbtTagCompound.hasKey("fixture_type")) {
+            setFixture(Fixture.getRegistry().getValue(new ResourceLocation(nbtTagCompound.getString("fixture_type"))));
+        } else {
+            setFixture(null);
+        }
     }
 
     public int getPan() {
@@ -441,6 +450,9 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
 
     @Override
     public float getMaxLightDistance() {
+        if (fixture != null) {
+            return fixture.getMaxLightDistance();
+        }
         return 10;
     }
 
@@ -450,26 +462,38 @@ public abstract  class TileFixture extends TileEntity implements IFixture, ITick
 
     @Override
     public HangableType getHangType() {
-        return getFixture().getHangableType();
+        if (getFixture() != null) {
+            return getFixture().getHangableType();
+        }
+        return HangableType.NONE;
     }
 
     @Override
     public IBakedModel getStaticModel() {
-        Block block = getWorld().getBlockState(pos).getBlock();
-        if (block instanceof BlockHangable && ((BlockHangable) block).isHanging(world, pos)) {
-            return getFixture().getHookedModel();
+        if (fixture != null) {
+            Block block = getWorld().getBlockState(pos).getBlock();
+            if (block instanceof BlockHangable && ((BlockHangable) block).isHanging(world, pos)) {
+                return getFixture().getHookedModel();
+            }
+            return getFixture().getStaticModel();
         }
-        return getFixture().getStaticModel();
+        return null;
     }
 
     @Override
     public IBakedModel getTiltModel() {
-        return getFixture().getTiltModel();
+        if (fixture != null) {
+            return getFixture().getTiltModel();
+        }
+        return null;
     }
 
     @Override
     public IBakedModel getPanModel() {
-        return getFixture().getPanModel();
+        if (fixture != null) {
+            return getFixture().getPanModel();
+        }
+        return null;
     }
 
     @Override
