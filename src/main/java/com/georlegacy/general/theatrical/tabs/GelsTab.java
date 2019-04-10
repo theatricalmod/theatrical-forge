@@ -19,13 +19,13 @@ package com.georlegacy.general.theatrical.tabs;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
 import com.georlegacy.general.theatrical.util.Reference;
 import com.google.common.collect.Ordering;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import scala.actors.threadpool.Arrays;
 
 public class GelsTab extends CreativeTabs {
 
