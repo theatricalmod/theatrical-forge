@@ -15,8 +15,8 @@ public abstract class TileDMXAcceptor extends TileFixture implements IAcceptsCab
 
     private final IDMXReceiver idmxReceiver;
 
-    public TileDMXAcceptor(int channelCount, int channelStartPoint){
-        this.idmxReceiver = new DMXReceiver(channelCount, channelStartPoint);
+    public TileDMXAcceptor() {
+        this.idmxReceiver = new DMXReceiver(0, 0);
     }
 
     @Override
@@ -75,5 +75,9 @@ public abstract class TileDMXAcceptor extends TileFixture implements IAcceptsCab
     @Override
     public CableType[] getAcceptedCables() {
         return new CableType[]{CableType.DMX, CableType.POWER};
+    }
+
+    public IDMXReceiver getIdmxReceiver() {
+        return idmxReceiver;
     }
 }

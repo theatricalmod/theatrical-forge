@@ -19,12 +19,14 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.api.capabilities.power.ITheatricalPowerStorage;
 import com.georlegacy.general.theatrical.api.capabilities.power.TheatricalPower;
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.integration.top.ITOPProvider;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
+import com.georlegacy.general.theatrical.tiles.TileFixture;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -41,27 +43,27 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockFresnel extends BlockHangable implements ITileEntityProvider, IHasTileEntity, ITOPProvider {
+public class BlockTungstenLight extends BlockHangable implements ITileEntityProvider, IHasTileEntity, ITOPProvider {
 
+    private Fixture fixture;
 
-    public BlockFresnel() {
-        super("fresnel", new EnumFacing[]{EnumFacing.DOWN});
+    public BlockTungstenLight(Fixture fixture) {
+        super(fixture.getName().getPath(), new EnumFacing[]{EnumFacing.DOWN});
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
+        this.fixture = fixture;
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
-        return new TileFresnel();
+        TileFixture fixture = this.fixture.getFixtureType().getTileClass().get();
+        fixture.setFixture(this.fixture);
+        return fixture;
     }
 
     @Override
     public Class<? extends TileEntity> getTileEntity() {
-        return TileFresnel.class;
-    }
-
-    private TileFresnel getTE(World world, BlockPos pos) {
-        return (TileFresnel) world.getTileEntity(pos);
+        return fixture.getFixtureType().getTileClass().get().getClass();
     }
 
     @Override
@@ -102,7 +104,7 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileFresnel tileFresnel = (TileFresnel) worldIn.getTileEntity(pos);
+        TileTungstenFixture tileFresnel = (TileTungstenFixture) worldIn.getTileEntity(pos);
         if (tileFresnel != null && tileFresnel.getLightBlock() != null) {
             worldIn.setBlockToAir(tileFresnel.getLightBlock());
         }
@@ -111,8 +113,8 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (world.getTileEntity(pos) instanceof TileFresnel) {
-            TileFresnel tileFresnel = (TileFresnel) world.getTileEntity(pos);
+        if (world.getTileEntity(pos) instanceof TileTungstenFixture) {
+            TileTungstenFixture tileFresnel = (TileTungstenFixture) world.getTileEntity(pos);
             if (tileFresnel != null) {
                 return (int) (tileFresnel.getIntensity() * 4 / 255);
             }
@@ -125,8 +127,8 @@ public class BlockFresnel extends BlockHangable implements ITileEntityProvider, 
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         TileEntity tileEntity = world.getTileEntity(data.getPos());
 
-        if (tileEntity instanceof TileFresnel) {
-            TileFresnel pipe = (TileFresnel) tileEntity;
+        if (tileEntity instanceof TileTungstenFixture) {
+            TileTungstenFixture pipe = (TileTungstenFixture) tileEntity;
             ITheatricalPowerStorage theatricalPower = pipe.getCapability(TheatricalPower.CAP, null);
             probeInfo.text("Power: " + theatricalPower.getEnergyStored());
         }

@@ -1,23 +1,22 @@
 package com.georlegacy.general.theatrical.handlers;
 
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
 import com.georlegacy.general.theatrical.client.models.cable.ModelCableLoader;
 import com.georlegacy.general.theatrical.client.models.truss.ModelTrussLoader;
 import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.client.tesr.PlugPanelRenderer;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.init.TheatricalItems;
-import com.georlegacy.general.theatrical.init.TheatricalModels;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
+import com.georlegacy.general.theatrical.tiles.TileMovingHead;
 import com.georlegacy.general.theatrical.tiles.TilePipePanel;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
+import com.georlegacy.general.theatrical.tiles.TileTungstenFixture;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -47,7 +46,7 @@ public class ClientEventHandler {
         registerItemRenderer(TheatricalItems.ITEM_POWER_CABLE, 0, "cable/power");
         registerItemRenderer(TheatricalItems.ITEM_BUNDLED_CABLE, 0, "cable/bundled");
         registerItemRenderer(TheatricalItems.ITEM_SOCAPEX_CABLE, 0, "cable/socapex");
-        ClientRegistry.bindTileEntitySpecialRenderer(TileFresnel.class, new FixtureRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileTungstenFixture.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMovingHead.class, new FixtureRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePipePanel.class, new PlugPanelRenderer());
         ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
@@ -57,7 +56,7 @@ public class ClientEventHandler {
         ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_SQUARE_TRUSS, ModelTrussLoader.INSTANCE);
     }
 
-    public static IBakedModel loadModel(ResourceLocation location){
+    public static IBakedModel bakeModel(ResourceLocation location) {
         try {
             IModel iModel = ModelLoaderRegistry.getModel(location);
             IBakedModel iBakedModel = iModel.bake(iModel.getDefaultState(), DefaultVertexFormats.BLOCK,
@@ -71,15 +70,12 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent bakeEvent){
-        TheatricalModels.FRESNEL_BODY = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_body_only"));
-        TheatricalModels.FRESNEL_HOOK_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook_bar"));
-        TheatricalModels.FRESNEL_HANDLE = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_handle_only"));
-        TheatricalModels.FRESNEL_HOOK = loadModel(new ResourceLocation(Reference.MOD_ID, "block/fresnel/fresnel_hook"));
-
-        TheatricalModels.MOVING_HEAD_STATIC = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_static"));
-        TheatricalModels.MOVING_HEAD_PAN = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_pan"));
-        TheatricalModels.MOVING_HEAD_TILT = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_tilt"));
-        TheatricalModels.MOVING_HEAD_BAR = loadModel(new ResourceLocation(Reference.MOD_ID, "block/movinghead/moving_head_bar"));
+        for (Fixture fixture : Fixture.getRegistry()) {
+            fixture.setStaticModel(bakeModel(fixture.getStaticModelLocation()));
+            fixture.setTiltModel(bakeModel(fixture.getTiltModelLocation()));
+            fixture.setPanModel(bakeModel(fixture.getPanModelLocation()));
+            fixture.setHookedModel(bakeModel(fixture.getHookedModelLocation()));
+        }
     }
 
     @SubscribeEvent
@@ -89,21 +85,21 @@ public class ClientEventHandler {
             TheatricalItems.ITEM_GEL);
     }
 
-    @SubscribeEvent
-    public static void registerColors(ColorHandlerEvent.Block event) {
-        event.getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
-            if (pos == null || worldIn == null) {
-                return 0xFFFFFFFF;
-            }
-            if (tintIndex == 0) {
-                TileEntity tileEntity = worldIn.getTileEntity(pos);
-                if (tileEntity instanceof TileFresnel) {
-                    return 0xFF000000 | ((TileFresnel) tileEntity).getGel().getHex();
-                }
-            }
-            return 0;
-        }, TheatricalBlocks.BLOCK_FRESNEL);
-    }
+//    @SubscribeEvent
+//    public static void registerColors(ColorHandlerEvent.Block event) {
+//        event.getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
+//            if (pos == null || worldIn == null) {
+//                return 0xFFFFFFFF;
+//            }
+//            if (tintIndex == 0) {
+//                TileEntity tileEntity = worldIn.getTileEntity(pos);
+//                if (tileEntity instanceof TileTungstenFixture) {
+//                    return 0xFF000000 | ((TileTungstenFixture) tileEntity).getGel().getHex();
+//                }
+//            }
+//            return 0;
+//        }, TheatricalBlocks.BLOCK_FRESNEL);
+//    }
 
     public static void registerItemRenderer(Item item, int meta, String fileName) {
         ModelLoader.setCustomModelResourceLocation(item, meta,

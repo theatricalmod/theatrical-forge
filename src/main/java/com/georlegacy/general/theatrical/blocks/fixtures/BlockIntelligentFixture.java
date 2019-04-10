@@ -18,12 +18,13 @@ package com.georlegacy.general.theatrical.blocks.fixtures;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.api.ISupport;
+import com.georlegacy.general.theatrical.api.fixtures.Fixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.BlockHangable;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.guis.handlers.enumeration.GUIID;
 import com.georlegacy.general.theatrical.tabs.base.CreativeTabs;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileFresnel;
-import com.georlegacy.general.theatrical.tiles.fixtures.TileMovingHead;
+import com.georlegacy.general.theatrical.tiles.TileFixture;
+import com.georlegacy.general.theatrical.tiles.TileMovingHead;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -43,13 +44,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockMovingHead extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
+public class BlockIntelligentFixture extends BlockHangable implements ITileEntityProvider, IHasTileEntity {
+
+    private Fixture fixture;
 
     public static final PropertyBool FLIPPED = PropertyBool.create("flipped");
 
-    public BlockMovingHead() {
-        super("moving_head", new EnumFacing[]{EnumFacing.DOWN, EnumFacing.UP});
+    public BlockIntelligentFixture(Fixture fixture) {
+        super(fixture.getName().getPath(), new EnumFacing[]{EnumFacing.DOWN, EnumFacing.UP});
         this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
+        this.fixture = fixture;
     }
 
     @Override
@@ -93,12 +97,14 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
-        return new TileMovingHead();
+        TileFixture fixture = this.fixture.getFixtureType().getTileClass().get();
+        fixture.setFixture(this.fixture);
+        return fixture;
     }
 
     @Override
     public Class<? extends TileEntity> getTileEntity() {
-        return TileMovingHead.class;
+        return fixture.getFixtureType().getTileClass().get().getClass();
     }
 
     @Override
@@ -140,7 +146,7 @@ public class BlockMovingHead extends BlockHangable implements ITileEntityProvide
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (world.getTileEntity(pos) instanceof TileFresnel) {
+        if (world.getTileEntity(pos) instanceof TileMovingHead) {
             TileMovingHead tileFresnel = (TileMovingHead) world.getTileEntity(pos);
             if (tileFresnel != null) {
                 return (int) (tileFresnel.getIntensity() * 4 / 255);

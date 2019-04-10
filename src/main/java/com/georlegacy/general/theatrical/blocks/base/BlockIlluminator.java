@@ -1,6 +1,6 @@
 package com.georlegacy.general.theatrical.blocks.base;
 
-import com.georlegacy.general.theatrical.api.IFixture;
+import com.georlegacy.general.theatrical.api.fixtures.IFixture;
 import com.georlegacy.general.theatrical.blocks.fixtures.base.IHasTileEntity;
 import com.georlegacy.general.theatrical.tiles.TileIlluminator;
 import javax.annotation.Nullable;

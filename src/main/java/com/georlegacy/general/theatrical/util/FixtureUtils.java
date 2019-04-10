@@ -1,7 +1,7 @@
 package com.georlegacy.general.theatrical.util;
 
-import com.georlegacy.general.theatrical.api.IGelable;
-import com.georlegacy.general.theatrical.api.IRGB;
+import com.georlegacy.general.theatrical.api.fixtures.IGelable;
+import com.georlegacy.general.theatrical.api.fixtures.IRGB;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.GelType;
 import com.georlegacy.general.theatrical.tiles.TileFixture;
 

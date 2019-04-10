@@ -65,6 +65,7 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
     @Override
     public void setChannelCount(int channelCount) {
         this.dmxChannels = channelCount;
+        this.dmxValues = Arrays.copyOf(dmxValues, channelCount);
     }
 
     @Override
@@ -77,7 +78,9 @@ public class DMXReceiver implements IDMXReceiver, INBTSerializable<NBTTagCompoun
 
     @Override
     public void updateChannel(int index, byte value) {
-        this.dmxValues[index] = value;
+        if (this.dmxValues.length > index + 1) {
+            this.dmxValues[index] = value;
+        }
     }
 
 

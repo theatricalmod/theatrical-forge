@@ -3,7 +3,6 @@ package com.georlegacy.general.theatrical.guis.fixtures.gui;
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.guis.fixtures.containers.ContainerIntelligentFixture;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
-import com.georlegacy.general.theatrical.init.TheatricalBlocks;
 import com.georlegacy.general.theatrical.packets.UpdateDMXStartAddressPacket;
 import com.georlegacy.general.theatrical.tiles.TileDMXAcceptor;
 import com.georlegacy.general.theatrical.util.Reference;
@@ -46,7 +45,7 @@ public class GuiIntelligentFixture extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        String name = I18n.format(TheatricalBlocks.BLOCK_MOVING_HEAD.getTranslationKey() + ".name");
+        String name = tileDMXAcceptor.getFixture().getName().getPath();
         fontRenderer
             .drawString(name, xSize / 2 - fontRenderer.getStringWidth(name) / 2, 6, 0x404040);
         fontRenderer.drawString("DMX Start Address", xSize / 2 - fontRenderer.getStringWidth("DMX Start Address") / 2,

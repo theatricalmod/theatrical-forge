@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package com.georlegacy.general.theatrical.logic.transport.dmx.entities.io;
+package com.georlegacy.general.theatrical.api.fixtures;
 
-import com.georlegacy.general.theatrical.logic.transport.dmx.entities.DMXUniverse;
+public interface IHasModel {
 
-/**
- * DMX Output from controller/fixture
- *
- * @author James Conway
- */
-public class DMXOutput {
-
-    private final DMXUniverse universe;
-
-    public DMXOutput(DMXUniverse universe) {
-        this.universe = universe;
-    }
-
-    public DMXUniverse getUniverse() {
-        return universe;
-    }
+    void registerModels();
 
 }
