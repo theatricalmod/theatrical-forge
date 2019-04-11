@@ -130,6 +130,7 @@ public class TileArtnetInterface extends TileEntity implements ITickable {
 
     public boolean startClient(){
         if(client.isRunning()){
+            client.getArtNetServer().stop();
             client.stop();
         }
         try {
@@ -151,6 +152,7 @@ public class TileArtnetInterface extends TileEntity implements ITickable {
     public void setIp(String ip) {
         this.ip = ip;
         if(client != null) {
+            client.getArtNetServer().stop();
             client.stop();
             startClient();
         }

@@ -2,6 +2,7 @@ package com.georlegacy.general.theatrical.guis.dimming;
 
 import com.georlegacy.general.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexPatch;
 import com.georlegacy.general.theatrical.guis.widgets.ButtonPlug;
 import com.georlegacy.general.theatrical.guis.widgets.ButtonSocket;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
@@ -72,6 +73,11 @@ public class GuiDimmerRack extends GuiContainer {
         fontRenderer
             .drawString(inventoryPlayer.getPlayerInventory().getDisplayName().getUnformattedText(),
                 8, ySize - 94, 0x404040);
+        for (int i = 0; i < 6; i++) {
+            int x = 33 + 46 * (i < 3 ? i : i - 3);
+            int y = (i < 3 ? 15 : 62);
+            fontRenderer.drawString("" + (i + 1), x, y, 0x000000);
+        }
         if(receivers.size() > 0) {
             String pageName = "Panel " + receivers.get(currentPage).getIdentifier();
             fontRenderer
@@ -129,13 +135,21 @@ public class GuiDimmerRack extends GuiContainer {
         this.sockets.clear();
         this.plugs.clear();
         for (int i = 0; i < 6; i++) {
-            String patch = inventoryPlayer.getPatch(i);
+            SocapexPatch[] patch = inventoryPlayer.getPatch(i);
             int x = (width - 95) + 46 * (i < 3 ? i : i - 3);
             int y = height - (i < 3 ? 75 : 30);
-            if (patch != null) {
-                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, tileDimmerRack.getDmxStart() + i, patch));
-            } else {
-                sockets.add(new ButtonSocket(inventoryPlayer, 300 + i, x, y, tileDimmerRack.getDmxStart() + i));
+            for (int j = 0; j < 2; j++) {
+                if (patch == null || j >= patch.length) {
+                    sockets.add(new ButtonSocket(inventoryPlayer, 300 + (i * 10) + j, x, y + 20 * j, tileDimmerRack.getDmxStart() + i));
+                } else {
+                    SocapexPatch patch1 = patch[j];
+                    if (patch1 != null && patch1.getReceiver() != null) {
+                        String identifier = inventoryPlayer.getIdentifier(patch1.getReceiver());
+                        sockets.add(new ButtonSocket(inventoryPlayer, 300 + (i * 10) + j, x, y + 20 * j, tileDimmerRack.getDmxStart() + i, patch1, identifier));
+                    } else {
+                        sockets.add(new ButtonSocket(inventoryPlayer, 300 + (i * 10) + j, x, y + 20 * j, tileDimmerRack.getDmxStart() + i));
+                    }
+                }
             }
         }
         buttonList.addAll(sockets);
@@ -222,17 +236,24 @@ public class GuiDimmerRack extends GuiContainer {
                     }
                 }
             } else if (button.id >= 300) {
-                int socket = button.id - 300;
+                int id = button.id - 300;
+                int channel = 0;
+                if (id >= 10) {
+                    channel = id / 10;
+                } else {
+                    channel = 0;
+                }
+                int socket = id >= 10 ? id - (10 * channel) : id;
                 ButtonSocket socketButton = (ButtonSocket) button;
                 if (activePlug == -1) {
                     if (socketButton.isPatched()) {
-                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), socket, ""));
+                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), channel, new SocapexPatch(), socket));
                         generateButtons();
                     }
                 } else {
                     if (!socketButton.isPatched()) {
-                        String patch = receivers.get(currentPage).getIdentifier() + ":" + activePlug;
-                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), socket, patch));
+                        SocapexPatch patch = new SocapexPatch(receivers.get(currentPage).getPos(), activePlug);
+                        TheatricalPacketHandler.INSTANCE.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), channel, patch, socket));
                         activePlug = -1;
                         generateButtons();
                     }

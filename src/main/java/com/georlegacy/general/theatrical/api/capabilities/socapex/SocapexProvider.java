@@ -3,6 +3,7 @@ package com.georlegacy.general.theatrical.api.capabilities.socapex;
 import com.georlegacy.general.theatrical.tiles.cables.CableType;
 import com.georlegacy.general.theatrical.tiles.cables.TileCable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +25,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     private int lastIdentifier = -1;
     private HashSet<BlockPos> devices = null;
     private int[] channels = new int[8];
-    private String[] patch = new String[6];
+    private HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
 
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, EnumFacing facing) {
         TileEntity tileEntity = world.getTileEntity(pos);
@@ -139,41 +140,55 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     }
 
     @Override
-    public String getPatch(int channel) {
-        return patch[channel];
+    public SocapexPatch[] getPatch(int channel) {
+        return patch.get(channel);
     }
 
     @Override
-    public void patch(int dmxChannel, ISocapexReceiver receiver, int socket) {
+    public void patch(int dmxChannel, ISocapexReceiver receiver, int receiverSocket, int patchSocket) {
         if (!devices.contains(receiver.getPos())) {
             return;
         }
-        patch[dmxChannel] = receiver.getIdentifier() + ":" + socket;
-    }
-
-    @Override
-    public void patch(int dmxChannel, String patch) {
-        this.patch[dmxChannel] = patch;
+        if (patch.containsKey(dmxChannel)) {
+            patch.get(dmxChannel)[patchSocket] = new SocapexPatch(receiver.getPos(), receiverSocket);
+        } else {
+            SocapexPatch[] patches = new SocapexPatch[2];
+            patches[patchSocket] = new SocapexPatch(receiver.getPos(), receiverSocket);
+            patch.put(dmxChannel, patches);
+        }
     }
 
     @Override
     public boolean hasPatch(ISocapexReceiver receiver) {
-        for (String string : patch) {
-            if (string != null && receiver.getIdentifier() != null && receiver.getIdentifier().equalsIgnoreCase(string.split(":")[0])) {
-                return true;
+        for (SocapexPatch[] patches : patch.values()) {
+            for (SocapexPatch socapexPatch : patches) {
+                if (socapexPatch != null && receiver.getPos().equals(socapexPatch.getReceiver())) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     @Override
+    public void removePatch(int dmxChannel, int patchSocket) {
+        if (patch.containsKey(dmxChannel)) {
+            patch.get(dmxChannel)[patchSocket] = new SocapexPatch();
+        }
+    }
+
+    @Override
     public int[] getChannelsForReceiver(ISocapexReceiver receiver) {
         int[] channels = new int[8];
-        for (int i = 0; i < patch.length; i++) {
-            String patchString = patch[i];
-            if (patchString != null && receiver != null) {
-                if (patchString.split(":")[0].equalsIgnoreCase(receiver.getIdentifier())) {
-                    channels[Integer.parseInt(patchString.split(":")[1])] = this.channels[i];
+        for (Integer i : patch.keySet()) {
+            if (patch.containsKey(i)) {
+                SocapexPatch[] patches = patch.get(i);
+                if (patches != null && receiver != null) {
+                    for (SocapexPatch socapexPatch : patches) {
+                        if (socapexPatch != null && receiver.getPos().equals(socapexPatch.getReceiver())) {
+                            channels[socapexPatch.getReceiverSocket()] = this.channels[i];
+                        }
+                    }
                 }
             }
         }
@@ -184,11 +199,15 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
     @Override
     public int[] getPatchedCables(ISocapexReceiver socapexReceiver) {
         int[] channels = new int[8];
-        for (int i = 0; i < patch.length; i++) {
-            String patchString = patch[i];
-            if (patchString != null && socapexReceiver != null) {
-                if (patchString.split(":")[0].equalsIgnoreCase(socapexReceiver.getIdentifier())) {
-                    channels[Integer.parseInt(patchString.split(":")[1])] = 1;
+        for (Integer i : patch.keySet()) {
+            if (patch.containsKey(i)) {
+                SocapexPatch[] patches = patch.get(i);
+                if (patches != null && socapexReceiver != null) {
+                    for (SocapexPatch socapexPatch : patches) {
+                        if (socapexPatch != null && socapexReceiver.getPos().equals(socapexPatch.getReceiver())) {
+                            channels[socapexPatch.getReceiverSocket()] = 1;
+                        }
+                    }
                 }
             }
         }
@@ -232,9 +251,17 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         nbtTagCompound.setInteger("lastIdentifier", lastIdentifier);
         NBTTagCompound patchTag = new NBTTagCompound();
-        for (int i = 0; i < patch.length; i++) {
-            if (patch[i] != null) {
-                patchTag.setString("patch_" + i, patch[i]);
+        for (Integer i : patch.keySet()) {
+            if (patch.get(i) != null) {
+                NBTTagCompound tagCompound = new NBTTagCompound();
+                if (patch.get(i).length < 2) {
+                    tagCompound.setTag("socket_0", patch.get(i)[0].serialize());
+                } else if (patch.get(i).length < 3) {
+                    if (patch.get(i) != null && patch.get(i)[1] != null) {
+                        tagCompound.setTag("socket_1", patch.get(i)[1].serialize());
+                    }
+                }
+                patchTag.setTag("patch_" + i, tagCompound);
             }
         }
         nbtTagCompound.setTag("patch", patchTag);
@@ -247,10 +274,20 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<NBTTa
             lastIdentifier = nbt.getInteger("lastIdentifier");
         }
         if (nbt.hasKey("patch")) {
+            patch.clear();
             NBTTagCompound patchTag = nbt.getCompoundTag("patch");
             for (int i = 0; i < 6; i++) {
                 if (patchTag.hasKey("patch_" + i)) {
-                    patch[i] = patchTag.getString("patch_" + i);
+                    NBTTagCompound patchTag1 = patchTag.getCompoundTag("patch_" + i);
+                    SocapexPatch[] patches = new SocapexPatch[2];
+                    for (int x = 0; x < 2; x++) {
+                        if (patchTag1.hasKey("socket_" + i)) {
+                            SocapexPatch socapexPatch = new SocapexPatch();
+                            socapexPatch.deserialize(patchTag1.getCompoundTag("socket_" + i));
+                            patches[x] = socapexPatch;
+                        }
+                    }
+                    patch.put(i, patches);
                 }
             }
         }

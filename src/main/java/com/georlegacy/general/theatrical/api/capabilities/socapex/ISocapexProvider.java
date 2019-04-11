@@ -18,11 +18,11 @@ public interface ISocapexProvider {
 
     boolean canExtract(int channel);
 
-    String getPatch(int channel);
+    SocapexPatch[] getPatch(int channel);
 
-    void patch(int dmxChannel, ISocapexReceiver receiver, int socket);
+    void patch(int dmxChannel, ISocapexReceiver receiver, int receiverSocket, int patchSocket);
 
-    void patch(int channel, String patch);
+    void removePatch(int dmxChannel, int patchSocket);
 
     boolean hasPatch(ISocapexReceiver receiver);
 

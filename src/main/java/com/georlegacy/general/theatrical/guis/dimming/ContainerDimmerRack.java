@@ -1,7 +1,9 @@
 package com.georlegacy.general.theatrical.guis.dimming;
 
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexPatch;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.items.attr.fixture.gel.ItemGel;
 import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import java.util.List;
@@ -10,6 +12,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 public class ContainerDimmerRack extends Container {
 
@@ -80,8 +84,16 @@ public class ContainerDimmerRack extends Container {
         return tileDimmerRack.getCapability(SocapexProvider.CAP, null).getPatchedCables(iSocapexReceiver);
     }
 
-    public String getPatch(int i) {
+    public SocapexPatch[] getPatch(int i) {
         return tileDimmerRack.getCapability(SocapexProvider.CAP, null).getPatch(i);
+    }
+
+    public String getIdentifier(BlockPos pos) {
+        TileEntity tileEntity = tileDimmerRack.getWorld().getTileEntity(pos);
+        if (tileEntity != null && tileEntity.hasCapability(SocapexReceiver.CAP, null)) {
+            return tileEntity.getCapability(SocapexReceiver.CAP, null).getIdentifier();
+        }
+        return "";
     }
 
 }

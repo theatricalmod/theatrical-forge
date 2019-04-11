@@ -1,5 +1,6 @@
 package com.georlegacy.general.theatrical.guis.widgets;
 
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexPatch;
 import com.georlegacy.general.theatrical.guis.dimming.ContainerDimmerRack;
 import com.georlegacy.general.theatrical.util.Reference;
 import net.minecraft.client.Minecraft;
@@ -16,17 +17,19 @@ public class ButtonSocket extends GuiButton {
 
     public final ContainerDimmerRack containerDimmerRack;
     private int channelNumber = 0;
-    private String patch;
+    private SocapexPatch patch;
+    private String patchIdentifier;
 
     public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, int channelNumber) {
-        super(buttonId, x, y, 17, 17, "");
+        super(buttonId, x, y, 12, 12, "");
         this.containerDimmerRack = containerDimmerRack;
         this.channelNumber = channelNumber;
     }
 
-    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, int channelNumber, String patch) {
+    public ButtonSocket(ContainerDimmerRack containerDimmerRack, int buttonId, int x, int y, int channelNumber, SocapexPatch patch, String patchIdentifier) {
         this(containerDimmerRack, buttonId, x, y, channelNumber);
         this.patch = patch;
+        this.patchIdentifier = patchIdentifier;
     }
 
 
@@ -35,11 +38,7 @@ public class ButtonSocket extends GuiButton {
     }
 
     public boolean isPatched() {
-        return patch != null && !patch.isEmpty();
-    }
-
-    public void setPatch(String patch) {
-        this.patch = patch;
+        return patch != null && patch.getReceiver() != null;
     }
 
     @Override
@@ -51,21 +50,17 @@ public class ButtonSocket extends GuiButton {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        drawModalRectWithCustomSizedTexture(x, y, 269, 0, 17, 17, 512, 512);
+        drawScaledCustomSizeModalRect(x, y, 269, 0, 17, 17, 12, 12, 512, 512);
         if (isPatched()) {
-            drawModalRectWithCustomSizedTexture(x - 1, y, 250, 0, 19, 17, 512, 512);
+            drawScaledCustomSizeModalRect(x, y, 250, 0, 19, 17, 13, 13, 512, 512);
             GlStateManager.pushMatrix();
             GlStateManager.translate(x + 5, y + 7, 0);
             GlStateManager.scale(0.7F, 0.7F, 1F);
-            String[] split = patch.split(":");
-            int channel = Integer.parseInt(split[1]);
-            String identifier = split[0];
-            fontrenderer.drawString(identifier + (channel + 1), 0, 0, 0xFFFFFF);
+            fontrenderer.drawString(patchIdentifier + (patch.getReceiverSocket() + 1), 0, 0, 0xFFFFFF);
             GlStateManager.popMatrix();
         }
         if (hovered) {
             drawRect(x, y, x + width, y + height, -2130706433);
         }
-        fontrenderer.drawString("" + (channelNumber + 1), x + 5, y - 10, 0x000000);
     }
 }

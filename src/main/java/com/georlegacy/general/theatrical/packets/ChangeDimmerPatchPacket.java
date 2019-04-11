@@ -18,10 +18,14 @@ package com.georlegacy.general.theatrical.packets;
 
 import com.georlegacy.general.theatrical.TheatricalMain;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexProvider;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.ISocapexReceiver;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexPatch;
 import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexProvider;
+import com.georlegacy.general.theatrical.api.capabilities.socapex.SocapexReceiver;
 import com.georlegacy.general.theatrical.handlers.TheatricalPacketHandler;
 import com.georlegacy.general.theatrical.tiles.dimming.TileDimmerRack;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -36,15 +40,17 @@ public class ChangeDimmerPatchPacket implements IMessage {
     }
 
 
-    public ChangeDimmerPatchPacket(BlockPos blockPos, int channel, String patch) {
+    public ChangeDimmerPatchPacket(BlockPos blockPos, int channel, SocapexPatch patch, int socketNumber) {
         this.pos = blockPos;
         this.channel = channel;
         this.patch = patch;
+        this.socketNumber = socketNumber;
     }
 
     private BlockPos pos;
     private int channel;
-    private String patch;
+    private int socketNumber;
+    private SocapexPatch patch;
 
     public BlockPos getPos() {
         return pos;
@@ -54,27 +60,34 @@ public class ChangeDimmerPatchPacket implements IMessage {
         return channel;
     }
 
-    public String getPatch() {
+    public SocapexPatch getPatch() {
         return patch;
+    }
+
+    public int getSocketNumber() {
+        return socketNumber;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         channel = buf.readInt();
-        patch = ByteBufUtils.readUTF8String(buf);
+        patch = new SocapexPatch();
+        patch.deserialize(ByteBufUtils.readTag(buf));
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
         pos = new BlockPos(x, y, z);
+        socketNumber = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(channel);
-        ByteBufUtils.writeUTF8String(buf, patch);
+        ByteBufUtils.writeTag(buf, patch.serialize());
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
+        buf.writeInt(socketNumber);
     }
 
     public static class ServerHandler implements IMessageHandler<ChangeDimmerPatchPacket, IMessage> {
@@ -93,11 +106,19 @@ public class ChangeDimmerPatchPacket implements IMessage {
                     .getTileEntity(blockPos);
                 ISocapexProvider socapexProvider = tileDimmerRack.getCapability(SocapexProvider.CAP, null);
                 if (socapexProvider != null) {
-                    socapexProvider.patch(message.getChannel(), message.getPatch());
+                    if (message.getPatch().getReceiver() != null) {
+                        TileEntity receiver = world.getTileEntity(message.getPatch().getReceiver());
+                        if (receiver != null) {
+                            ISocapexReceiver socapexReceiver = receiver.getCapability(SocapexReceiver.CAP, null);
+                            socapexProvider.patch(message.getChannel(), socapexReceiver, message.getPatch().getReceiverSocket(), message.getSocketNumber());
+                        }
+                    } else {
+                        socapexProvider.removePatch(message.getChannel(), message.getSocketNumber());
+                    }
                 }
                 world.markChunkDirty(blockPos, tileDimmerRack);
                 TheatricalPacketHandler.INSTANCE.sendToAll(
-                    new ChangeDimmerPatchPacket(message.getPos(), message.getChannel(), message.getPatch()));
+                    new ChangeDimmerPatchPacket(message.getPos(), message.getChannel(), message.getPatch(), message.getSocketNumber()));
             });
         }
     }
@@ -118,7 +139,15 @@ public class ChangeDimmerPatchPacket implements IMessage {
                     .getTileEntity(blockPos);
                 ISocapexProvider socapexProvider = tileDimmerRack.getCapability(SocapexProvider.CAP, null);
                 if (socapexProvider != null) {
-                    socapexProvider.patch(message.getChannel(), message.getPatch());
+                    if (message.getPatch().getReceiver() != null) {
+                        TileEntity receiver = world.getTileEntity(message.getPatch().getReceiver());
+                        if (receiver != null) {
+                            ISocapexReceiver socapexReceiver = receiver.getCapability(SocapexReceiver.CAP, null);
+                            socapexProvider.patch(message.getChannel(), socapexReceiver, message.getPatch().getReceiverSocket(), message.getSocketNumber());
+                        }
+                    } else {
+                        socapexProvider.removePatch(message.getChannel(), message.getSocketNumber());
+                    }
                 }
                 world.markChunkDirty(blockPos, tileDimmerRack);
             });

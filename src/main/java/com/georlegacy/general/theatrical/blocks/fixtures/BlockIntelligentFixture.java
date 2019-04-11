@@ -70,7 +70,6 @@ public class BlockIntelligentFixture extends BlockHangable implements ITileEntit
             .onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
-
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
         BlockPos up = pos.offset(EnumFacing.UP);
