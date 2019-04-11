@@ -34,7 +34,7 @@ public class ItemCable extends ItemBase {
     public ItemCable(String name, CableType type) {
         super(name);
         this.type = type;
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
 

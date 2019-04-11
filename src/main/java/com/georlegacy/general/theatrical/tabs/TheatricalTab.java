@@ -22,10 +22,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class FixturesTab extends CreativeTabs {
+public class TheatricalTab extends CreativeTabs {
 
-    public FixturesTab() {
-        super(Reference.MOD_ID + "_" + "fixtures");
+    public TheatricalTab() {
+        super(Reference.MOD_ID + "_" + "main");
     }
 
     @Override

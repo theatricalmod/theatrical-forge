@@ -50,7 +50,7 @@ public class BlockDMXBar extends BlockBase implements ISupport, ITileEntityProvi
 
     public BlockDMXBar() {
         super("dmx_bar");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

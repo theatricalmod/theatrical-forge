@@ -20,7 +20,7 @@ public class BlockDimmerRack extends BlockDirectional implements IHasTileEntity,
 
     public BlockDimmerRack() {
         super("dimmer_rack");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

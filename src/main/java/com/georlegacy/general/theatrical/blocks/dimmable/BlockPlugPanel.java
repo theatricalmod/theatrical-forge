@@ -27,7 +27,7 @@ public class BlockPlugPanel extends BlockDirectional implements IHasTileEntity, 
 
     public BlockPlugPanel() {
         super("plug_panel");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

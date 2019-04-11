@@ -23,7 +23,6 @@ import com.georlegacy.general.theatrical.blocks.dimmable.BlockPlugPanel;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockArtnetInterface;
 import com.georlegacy.general.theatrical.blocks.interfaces.BlockDMXInterface;
 import com.georlegacy.general.theatrical.blocks.rigging.BlockLadderBar;
-import com.georlegacy.general.theatrical.blocks.rigging.BlockSquareTruss;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockBar;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockDMXBar;
 import com.georlegacy.general.theatrical.blocks.rigging.bars.BlockDMXPowerBar;
@@ -47,7 +46,7 @@ public class TheatricalBlocks {
 
 
     public static BlockLadderBar BLOCK_LADDER_BAR = new BlockLadderBar();
-    public static BlockSquareTruss BLOCK_SQUARE_TRUSS = new BlockSquareTruss();
+//    public static BlockSquareTruss BLOCK_SQUARE_TRUSS = new BlockSquareTruss();
 
 
     public static BlockCable BLOCK_CABLE = new BlockCable();

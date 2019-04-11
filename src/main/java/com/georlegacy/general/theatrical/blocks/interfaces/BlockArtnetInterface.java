@@ -20,7 +20,7 @@ public class BlockArtnetInterface extends BlockBase implements ITileEntityProvid
 
     public BlockArtnetInterface() {
         super("artnet_interface");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

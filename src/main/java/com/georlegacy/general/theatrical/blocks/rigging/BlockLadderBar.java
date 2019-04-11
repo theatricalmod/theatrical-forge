@@ -40,7 +40,7 @@ public class BlockLadderBar extends BlockBase implements ISupport {
 
     public BlockLadderBar() {
         super("ladder_bar");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
 

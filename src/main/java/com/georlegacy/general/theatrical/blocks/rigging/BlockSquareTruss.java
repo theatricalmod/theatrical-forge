@@ -74,7 +74,7 @@ public class BlockSquareTruss extends BlockBase implements ISupport, ITileEntity
 
     public BlockSquareTruss() {
         super("square");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
 

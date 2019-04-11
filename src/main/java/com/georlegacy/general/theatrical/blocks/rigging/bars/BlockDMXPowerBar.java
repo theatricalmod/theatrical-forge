@@ -50,7 +50,7 @@ public class BlockDMXPowerBar extends BlockBase implements ISupport, ITileEntity
 
     public BlockDMXPowerBar() {
         super("dmx_power_bar");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

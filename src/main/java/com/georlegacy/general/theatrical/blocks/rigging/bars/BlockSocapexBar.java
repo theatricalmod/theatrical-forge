@@ -56,7 +56,7 @@ public class BlockSocapexBar extends BlockBase implements ISupport, ITileEntityP
 
     public BlockSocapexBar() {
         super("socapex_bar");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

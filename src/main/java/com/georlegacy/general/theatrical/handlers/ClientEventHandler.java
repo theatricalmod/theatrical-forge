@@ -2,7 +2,6 @@ package com.georlegacy.general.theatrical.handlers;
 
 import com.georlegacy.general.theatrical.api.fixtures.Fixture;
 import com.georlegacy.general.theatrical.client.models.cable.ModelCableLoader;
-import com.georlegacy.general.theatrical.client.models.truss.ModelTrussLoader;
 import com.georlegacy.general.theatrical.client.tesr.FixtureRenderer;
 import com.georlegacy.general.theatrical.client.tesr.PlugPanelRenderer;
 import com.georlegacy.general.theatrical.init.TheatricalBlocks;
@@ -52,8 +51,8 @@ public class ClientEventHandler {
         ModelLoaderRegistry.registerLoader(ModelCableLoader.INSTANCE);
         ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_CABLE, ModelCableLoader.INSTANCE);
 
-        ModelLoaderRegistry.registerLoader(ModelTrussLoader.INSTANCE);
-        ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_SQUARE_TRUSS, ModelTrussLoader.INSTANCE);
+//        ModelLoaderRegistry.registerLoader(ModelTrussLoader.INSTANCE);
+//        ModelLoader.setCustomStateMapper(TheatricalBlocks.BLOCK_SQUARE_TRUSS, ModelTrussLoader.INSTANCE);
     }
 
     public static IBakedModel bakeModel(ResourceLocation location) {

@@ -8,7 +8,7 @@ public class ItemSocapexCable extends ItemCable {
 
     public ItemSocapexCable() {
         super("socapex_cable", CableType.SOCAPEX);
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
 }

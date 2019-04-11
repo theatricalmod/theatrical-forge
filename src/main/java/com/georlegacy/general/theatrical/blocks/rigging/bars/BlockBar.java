@@ -46,7 +46,7 @@ public class BlockBar extends BlockBase implements ISupport {
 
     public BlockBar() {
         super("bar");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override

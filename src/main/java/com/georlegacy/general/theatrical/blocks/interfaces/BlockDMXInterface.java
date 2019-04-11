@@ -13,7 +13,7 @@ public class BlockDMXInterface extends BlockBase implements ITileEntityProvider,
 
     public BlockDMXInterface() {
         super("dmx_interface");
-        this.setCreativeTab(CreativeTabs.RIGGING_TAB);
+        this.setCreativeTab(CreativeTabs.FIXTURES_TAB);
     }
 
     @Override
