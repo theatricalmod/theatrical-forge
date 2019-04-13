@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = MOD_ID, name = NAME, version = VERSION, dependencies = "after:computercraft;after:mcmultipart")
@@ -49,17 +50,21 @@ public class TheatricalMain {
     @SidedProxy(clientSide = CLIENT_PROXY_CLASS, serverSide = COMMON_PROXY_CLASS)
     public static CommonProxy proxy;
 
-    public static File lightsDirectory;
-    public static Logger logger;
+    public File lightsDirectory;
+    public Logger logger;
 
     @Mod.EventHandler
     public void PreInit(FMLPreInitializationEvent event) {
-        lightsDirectory = new File(event.getModConfigurationDirectory(), "theatrical/lights");
-        if (!lightsDirectory.exists()) {
-            lightsDirectory.mkdirs();
-        }
         logger = event.getModLog();
-        TheatricalFixtures.init();
+        if(event.getSide() == Side.CLIENT) {
+            TheatricalFixtures.init();
+        }else if(event.getSide() == Side.SERVER){
+            lightsDirectory = new File(event.getModConfigurationDirectory(), "theatrical/lights");
+            if (!lightsDirectory.exists()) {
+                lightsDirectory.mkdirs();
+            }
+            TheatricalFixtures.initServer();
+        }
         Fixture.createRegistry();
         TheatricalPacketHandler.init();
         TheatricalPacketHandler.clientInit();
