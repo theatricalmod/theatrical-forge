@@ -55,29 +55,43 @@ public class ContainerFresnel extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemStack = null;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemStack1 = slot.getStack();
-            itemStack = itemStack1.copy();
-            if (itemStack1.getItem() instanceof ItemGel) {
-                if (index < 1) {
-                    if (!this.mergeItemStack(itemStack1, 1, this.inventorySlots.size(), true)) {
-                        return null;
-                    }
-                } else if (!this.mergeItemStack(itemStack1, 0, 1, false)) {
-                    return null;
-                }
-                if (itemStack1.isEmpty()) {
-                    slot.putStack(ItemStack.EMPTY);
-                } else {
-                    slot.onSlotChanged();
+    public ItemStack transferStackInSlot(EntityPlayer player, int index)
+    {
+        Slot slot = inventorySlots.get(index);
+
+        if (slot != null && slot.getHasStack())
+        {
+            ItemStack stack = slot.getStack();
+            ItemStack oldStack = stack.copy();
+
+            if (index < 1)
+            {
+                if (!mergeItemStack(stack, 1, inventorySlots.size(), true))
+                {
+                    return ItemStack.EMPTY;
                 }
             }
+            else if (!mergeItemStack(stack, 0, 1, false))
+            {
+                return ItemStack.EMPTY;
+            }
+
+            if (stack.isEmpty())
+            {
+                slot.putStack(ItemStack.EMPTY);
+            }
+            else
+            {
+                slot.onSlotChanged();
+            }
+
+            return oldStack;
         }
-        return itemStack;
+
+        return ItemStack.EMPTY;
     }
+
+
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
