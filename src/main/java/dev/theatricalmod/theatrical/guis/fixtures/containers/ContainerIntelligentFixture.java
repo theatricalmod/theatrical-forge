@@ -1,6 +1,5 @@
 package dev.theatricalmod.theatrical.guis.fixtures.containers;
 
-import dev.theatricalmod.theatrical.items.attr.fixture.gel.ItemGel;
 import dev.theatricalmod.theatrical.tiles.TileDMXAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -42,28 +41,8 @@ public class ContainerIntelligentFixture extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemStack = null;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemStack1 = slot.getStack();
-            itemStack = itemStack1.copy();
-            if (itemStack1.getItem() instanceof ItemGel) {
-                if (index < 1) {
-                    if (!this.mergeItemStack(itemStack1, 1, this.inventorySlots.size(), true)) {
-                        return null;
-                    }
-                } else if (!this.mergeItemStack(itemStack1, 0, 1, false)) {
-                    return null;
-                }
-                if (itemStack1.isEmpty()) {
-                    slot.putStack(ItemStack.EMPTY);
-                } else {
-                    slot.onSlotChanged();
-                }
-            }
-        }
-        return itemStack;
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        return ItemStack.EMPTY;
     }
 
     @Override
