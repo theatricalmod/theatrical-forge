@@ -1,0 +1,320 @@
+/*
+ * Copyright 2018 Theatrical Team (James Conway (615283) & Stuart (Rushmead)) and it's contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dev.theatricalmod.theatrical.client.tesr;
+
+import dev.theatricalmod.theatrical.api.ISupport;
+import dev.theatricalmod.theatrical.api.fixtures.HangableType;
+import dev.theatricalmod.theatrical.blocks.base.BlockDirectional;
+import dev.theatricalmod.theatrical.blocks.fixtures.BlockIntelligentFixture;
+import dev.theatricalmod.theatrical.blocks.fixtures.base.BlockHangable;
+import dev.theatricalmod.theatrical.blocks.rigging.bars.BlockBar;
+import dev.theatricalmod.theatrical.tiles.TileFixture;
+import dev.theatricalmod.theatrical.util.FixtureUtils;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.MinecraftForgeClient;
+import org.lwjgl.opengl.GL11;
+
+public class FixtureRenderer extends TileEntitySpecialRenderer<TileFixture> {
+
+    private static float lastBrightnessX, lastBrightnessY;
+    private static BlockRendererDispatcher blockRendererDispatcher;
+    private int hookDisplayList = -1;
+    private int lightHandleList = -1;
+    private int lightBodyList = -1;
+
+    public FixtureRenderer() {
+
+    }
+
+    @Override
+    public void render(TileFixture te, double x, double y, double z, float partialTicks,
+        int destroyStage, float a) {
+        if (te.getStaticModel() == null) {
+            return;
+        }
+        te.getWorld().profiler.startSection("movingHead");
+        if (blockRendererDispatcher == null) {
+            blockRendererDispatcher = Minecraft.getMinecraft()
+                .getBlockRendererDispatcher();
+        }
+        IBlockState state = te.getWorld().getBlockState(te.getPos());
+        if (!(state.getBlock() instanceof BlockDirectional)) {
+            return;
+        }
+        EnumFacing direction = state
+            .getValue(BlockDirectional.FACING);
+        boolean isFlipped = false;
+        if (te.getBlock() == BlockIntelligentFixture.class) {
+            isFlipped = state.getValue(BlockIntelligentFixture.FLIPPED);
+        }
+        boolean isHanging = ((BlockHangable) state.getBlock()).isHanging(getWorld(), te.getPos());
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.glNormal3f(0F, 1F, 0F);
+        GlStateManager.translate(0F, 1F, 1F);
+        GlStateManager.disableLighting();
+        te.getWorld().profiler.startSection("renderModel");
+        renderLight(te, direction, partialTicks, isFlipped, state, isHanging);
+        te.getWorld().profiler.endSection();
+        te.getWorld().profiler.startSection("renderBeam");
+        double distance = te.getDistance();
+        float[] startPos = te.getBeamStartPosition();
+        GlStateManager.translate(startPos[0], startPos[1], startPos[2]);
+        if (te.getIntensity() > 0 && MinecraftForgeClient.getRenderPass() == 1) {
+            renderLightBeam(te, partialTicks, (te.getIntensity() * 0.4f) / 255, te.getBeamWidth(), distance,
+                FixtureUtils.getColorFromTE(te));
+        }
+        te.getWorld().profiler.endSection();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        te.getWorld().profiler.endSection();
+    }
+
+    @Override
+    public boolean isGlobalRenderer(TileFixture te) {
+        return true;
+    }
+
+
+    public void renderLight(TileFixture te, EnumFacing direction, float partialTicks, boolean isFlipped, IBlockState state, boolean isHanging) {
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            GlStateManager.translate(0, 0.175, 0);
+        }
+        if (te.getHangType() == HangableType.HOOK_BAR && isHanging) {
+            GlStateManager.translate(0, 0.05, 0);
+        }
+        GlStateManager.translate(0.5F, 0, -.5F);
+        GlStateManager.rotate(direction.getHorizontalAngle() , 0, 1, 0);
+        GlStateManager.translate(-.5F, 0, 0.5F);
+        GlStateManager.translate(0.5, -.5F, -0.5F);
+        GlStateManager.rotate(isFlipped ? 180 : 0, 0, 0, 1);
+        GlStateManager.translate(-.5F, .5F, 0.5F);
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock() instanceof ISupport) {
+                ISupport support = (ISupport) te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getBlock();
+                float[] transforms = support.getLightTransforms(te.getWorld(), te.getPos(), direction);
+                GlStateManager.translate(transforms[0], transforms[1], transforms[2]);
+            } else {
+                GlStateManager.translate(0, 0.19, 0);
+            }
+        }
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getProperties().containsKey(BlockBar.AXIS)) {
+                EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+                GlStateManager.translate(0.5F, 0, -.5F);
+                GlStateManager.rotate(facing.getHorizontalAngle(), 0, 1, 0);
+                GlStateManager.translate(-.5F, 0, 0.5F);
+            }
+        }
+        renderHookBar(te, state);
+        if (te.getHangType() == HangableType.BRACE_BAR && isHanging) {
+            if (te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getProperties().containsKey(BlockBar.AXIS)) {
+                EnumFacing facing = te.getWorld().getBlockState(te.getPos().offset(EnumFacing.UP)).getValue(BlockBar.AXIS);
+                GlStateManager.translate(0.5F, 0, -.5F);
+                GlStateManager.rotate(-facing.getHorizontalAngle(), 0, 1, 0);
+                GlStateManager.translate(-.5F, 0, 0.5F);
+            }
+        }
+        float[] pans = te.getPanRotationPosition();
+        GlStateManager.translate(pans[0], pans[1], pans[2]);
+        GlStateManager.rotate(te.prevPan + (te.getPan() - te.prevPan) * partialTicks, 0, 1, 0);
+        GlStateManager.translate(-pans[0], -pans[1], -pans[2]);
+        renderLightHandle(te, state);
+        float[] tilts = te.getTiltRotationPosition();
+        GlStateManager.translate(tilts[0], tilts[1], tilts[2]);
+        GlStateManager.rotate(te.prevTilt + (te.getTilt() - te.prevTilt) * partialTicks,
+            1, 0, 0);
+        GlStateManager.translate(-tilts[0], -tilts[1], -tilts[2]);
+        renderLightBody(te, state);
+        GlStateManager.translate(0.5F, 0, -.5F);
+        GlStateManager.rotate(te.getDefaultRotation(), 1, 0, 0);
+        GlStateManager.translate(-.5F, 0, 0.5F);
+    }
+
+    public void renderModel(IBakedModel model, TileFixture te, IBlockState state) {
+        BlockPos pos = te.getPos();
+        state = state.getBlock().getActualState(state, getWorld(), pos);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        bufferbuilder.setTranslation(-pos.getX(), -1 - pos.getY(), -1 - pos.getZ());
+        bufferbuilder.color(255, 255, 255, 255);
+        te.getWorld().profiler.startSection("blockDispatcher");
+        blockRendererDispatcher.getBlockModelRenderer()
+            .renderModel(getWorld(), model, state, pos, bufferbuilder, false);
+        te.getWorld().profiler.endSection();
+        bufferbuilder.setTranslation(0, 0, 0);
+        tessellator.draw();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+    }
+
+    public void renderHookBar(TileFixture te, IBlockState state) {
+        if (hookDisplayList == -1) {
+            hookDisplayList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.hookDisplayList, 4864);
+            renderModel(te.getStaticModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.hookDisplayList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
+    }
+
+    public void renderLightHandle(TileFixture te, IBlockState state) {
+        if (lightHandleList == -1) {
+            lightHandleList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.lightHandleList, 4864);
+            renderModel(te.getPanModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.lightHandleList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
+    }
+
+    public void renderLightBody(TileFixture te, IBlockState state) {
+        if (lightBodyList == -1) {
+            lightBodyList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(this.lightBodyList, 4864);
+            renderModel(te.getTiltModel(), te, state);
+            GlStateManager.glEndList();
+        } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.callList(this.lightBodyList);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+        }
+    }
+
+    public static void pushBrightness(int u, int t) {
+        lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, u, t);
+    }
+
+    public static void pushMaxBrightness() {
+        pushBrightness(240, 240);
+    }
+
+    public static void popBrightness() {
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX,
+            lastBrightnessY);
+    }
+
+    public void renderLightBeam(TileFixture tileFresnel, float partialTicks,
+        float alpha, double beamSize, double length, int color) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder render = tessellator.getBuffer();
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+        int a = (int) (alpha * 255);
+        pushMaxBrightness();
+
+        //Open GL Stuff
+        GlStateManager.pushMatrix();
+        GlStateManager.depthMask(false);
+        GlStateManager.translate(0.5, 0.8, 0);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        int func = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
+        float ref = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
+        GlStateManager.alphaFunc(GL11.GL_ALWAYS, 0);
+        GlStateManager.enableCull();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableTexture2D();
+
+        render.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        double width = beamSize;
+        double endMultiplier = width * tileFresnel.getFocus();
+
+
+        //Do the actual beam vertexes
+        render.pos(width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+        render.pos(width, width, 0).color(r, g, b, a).endVertex();
+        render.pos(width, -width, 0).color(r, g, b, a).endVertex();
+        render.pos(width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+
+        render.pos(-width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+        render.pos(-width, -width, 0).color(r, g, b, a).endVertex();
+        render.pos(-width, width, 0).color(r, g, b, a).endVertex();
+        render.pos(-width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+
+        render.pos(-width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+        render.pos(-width, width, 0).color(r, g, b, a).endVertex();
+        render.pos(width, width, 0).color(r, g, b, a).endVertex();
+        render.pos(width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+
+        render.pos(width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+        render.pos(width, -width, 0).color(r, g, b, a).endVertex();
+        render.pos(-width, -width, 0).color(r, g, b, a).endVertex();
+        render.pos(-width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0)
+            .endVertex();
+        tessellator.draw();
+
+        //OpenGL Stuff
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableTexture2D();
+        GlStateManager.alphaFunc(func, ref);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO);
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
+        GlStateManager.popMatrix();
+
+        popBrightness();
+    }
+}

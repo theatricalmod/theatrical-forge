@@ -18,7 +18,7 @@ def ENV = System.getenv()
 def buildVersion = ENV.BUILD_BUILDNUMBER ? "${ENV.BUILD_BUILDNUMBER}" : "beta"
 
 version = "1.0-${buildVersion}"
-group = "com.georlegacy.general.theatrical" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "dev.theatricalmod.theatrical" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "theatrical"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
