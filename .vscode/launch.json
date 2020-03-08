@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "runClient",
+      "request": "launch",
+      "mainClass": "net.minecraftforge.userdev.LaunchTesting",
+      "projectName": "Theatrical1.15.2",
+      "cwd": "${workspaceFolder}\\run",
+      "vmArgs": "-Dforge.logging.console.level\u003ddebug -XX:HeapDumpPath\u003dMojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump \"-Dos.name\u003dWindows 10\" -Dos.version\u003d10.0",
+      "args": "",
+      "env": {
+        "MOD_CLASSES": "theatrical%%${workspaceFolder}\\bin\\main;theatrical%%${workspaceFolder}\\bin\\main",
+        "MCP_MAPPINGS": "snapshot_20200125-1.15.1",
+        "MCP_VERSION": "20200122.131323",
+        "FORGE_VERSION": "31.1.14",
+        "assetIndex": "1.15",
+        "assetDirectory": "C:\\Users\\Stuart\\.gradle\\caches\\forge_gradle\\assets",
+        "nativesDirectory": "${workspaceFolder}\\build\\natives",
+        "FORGE_GROUP": "net.minecraftforge",
+        "target": "fmluserdevclient",
+        "MC_VERSION": "1.15.2"
+      }
+    },
+    {
+      "type": "java",
+      "name": "runData",
+      "request": "launch",
+      "mainClass": "net.minecraftforge.userdev.LaunchTesting",
+      "projectName": "Theatrical1.15.2",
+      "cwd": "${workspaceFolder}\\run",
+      "vmArgs": "-Dforge.logging.console.level\u003ddebug -Dforge.logging.markers\u003dSCAN,REGISTRIES,REGISTRYDUMP",
+      "args": "--mod examplemod --all --output K:\\Theatrical1.15.2\\src\\generated\\resources",
+      "env": {
+        "MOD_CLASSES": "theatrical%%${workspaceFolder}\\bin\\main;theatrical%%${workspaceFolder}\\bin\\main",
+        "MCP_MAPPINGS": "snapshot_20200125-1.15.1",
+        "MCP_VERSION": "20200122.131323",
+        "FORGE_VERSION": "31.1.14",
+        "FORGE_GROUP": "net.minecraftforge",
+        "target": "fmluserdevdata",
+        "MC_VERSION": "1.15.2"
+      }
+    },
+    {
+      "type": "java",
+      "name": "runServer",
+      "request": "launch",
+      "mainClass": "net.minecraftforge.userdev.LaunchTesting",
+      "projectName": "Theatrical1.15.2",
+      "cwd": "${workspaceFolder}\\run",
+      "vmArgs": "-Dforge.logging.console.level\u003ddebug",
+      "args": "",
+      "env": {
+        "MOD_CLASSES": "theatrical%%${workspaceFolder}\\bin\\main;theatrical%%${workspaceFolder}\\bin\\main",
+        "MCP_MAPPINGS": "snapshot_20200125-1.15.1",
+        "MCP_VERSION": "20200122.131323",
+        "FORGE_VERSION": "31.1.14",
+        "FORGE_GROUP": "net.minecraftforge",
+        "target": "fmluserdevserver",
+        "MC_VERSION": "1.15.2"
+      }
+    }
+  ]
+}

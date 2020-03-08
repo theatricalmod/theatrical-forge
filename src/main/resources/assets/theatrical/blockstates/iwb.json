@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model":  "theatrical:block/iwb", "y":  90},
+    "facing=south": {"model":  "theatrical:block/iwb", "y": 90},
+    "facing=west": {"model":  "theatrical:block/iwb"},
+    "facing=east": {"model":  "theatrical:block/iwb"}
+  }
+}
