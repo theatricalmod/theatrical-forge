@@ -1,20 +1,22 @@
 package dev.theatricalmod.theatrical.api.fixtures;
 
-import dev.theatricalmod.theatrical.block.FixtureBlockEntity;
-import dev.theatricalmod.theatrical.block.light.IntelligentFixtureBlockEntity;
+import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
+import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
+import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
 import java.util.function.Supplier;
 
 public enum FixtureType {
 
-    INTELLIGENT(IntelligentFixtureBlockEntity::new);
+    INTELLIGENT(TileEntityIntelligentFixture::new),
+    TUNGSTEN(TileEntityGenericFixture::new);
 
-    private Supplier<? extends FixtureBlockEntity> tileClass;
+    private Supplier<? extends TileEntityFixture> tileClass;
 
-    FixtureType(Supplier<? extends FixtureBlockEntity> tileClass) {
+    FixtureType(Supplier<? extends TileEntityFixture> tileClass) {
         this.tileClass = tileClass;
     }
 
-    public Supplier<? extends FixtureBlockEntity> getTileClass() {
+    public Supplier<? extends TileEntityFixture> getTileClass() {
         return this.tileClass;
     }
 }

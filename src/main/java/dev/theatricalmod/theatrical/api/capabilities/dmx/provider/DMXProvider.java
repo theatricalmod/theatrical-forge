@@ -4,8 +4,9 @@ import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
-import dev.theatricalmod.theatrical.block.cables.CableBlockEntity;
+import dev.theatricalmod.theatrical.block.cables.BlockCable;
 import java.util.HashSet;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -51,17 +52,17 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
 
 
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, Direction facing){
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if(tileEntity != null && (tileEntity.getCapability(DMXReceiver.CAP, facing).isPresent() || tileEntity instanceof CableBlockEntity)){
-            if (scanned.add(pos)) {
-                if(tileEntity instanceof CableBlockEntity){
-                    CableBlockEntity cable = (CableBlockEntity) tileEntity;
-                    for(Direction direction : Direction.values()){
-                        if(cable.hasType(CableType.DMX) && cable.isConnected(direction, CableType.DMX)){
-                            addToList(scanned, world, cable.getPos().offset(direction), direction.getOpposite());
-                        }
-                    }
-                }else{
+        BlockState blockState = world.getBlockState(pos);
+        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.DMX) {
+            for (Direction direction : Direction.values()) {
+                if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
+                    addToList(scanned, world, pos.offset(direction), direction.getOpposite());
+                }
+            }
+        } else {
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity != null && (tileEntity.getCapability(DMXReceiver.CAP, facing).isPresent())) {
+                if (scanned.add(pos)) {
                     for (Direction facing1 : Direction.values()) {
                         if (facing1 != facing) {
                             addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
@@ -86,8 +87,12 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
             devices = new HashSet<>(receivers);
         }
         for (BlockPos receiver : devices) {
+            BlockState blockState = world.getBlockState(receiver);
+            if (blockState.getBlock() instanceof BlockCable) {
+                continue;
+            }
             TileEntity tile = world.getTileEntity(receiver);
-            if(tile != null && !(tile instanceof CableBlockEntity)) {
+            if (tile != null) {
                 IDMXReceiver idmxReceiver = tile.getCapability(DMXReceiver.CAP, null).orElse(null);
                 if (idmxReceiver != null) {
                     idmxReceiver.receiveDMXValues(dmxUniverse.getDMXChannels(), world, receiver);

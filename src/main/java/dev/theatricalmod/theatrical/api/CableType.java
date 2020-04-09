@@ -1,7 +1,6 @@
 package dev.theatricalmod.theatrical.api;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import dev.theatricalmod.theatrical.items.TheatricalItems;
 import javax.annotation.Nullable;
 import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
@@ -49,12 +48,12 @@ public enum CableType implements IStringSerializable {
     @Nullable
     public static Item getItemForCable(CableType type) {
         switch (type) {
-            case POWER:
-                return TheatricalItems.POWER_CABLE;
-            case DMX:
-                return TheatricalItems.DMX_CABLE;
-            case SOCAPEX:
-                return TheatricalItems.SOCAPEX_CABLE;
+//            case POWER:
+//                return TheatricalItems.POWER_CABLE;
+//            case DMX:
+//                return TheatricalItems.DMX_CABLE;
+//            case SOCAPEX:
+//                return TheatricalItems.POWER_CABLE;
             default:
                 return null;
         }

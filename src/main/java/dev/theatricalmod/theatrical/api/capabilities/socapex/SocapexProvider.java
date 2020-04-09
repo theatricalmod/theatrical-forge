@@ -1,11 +1,12 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
 import dev.theatricalmod.theatrical.api.CableType;
-import dev.theatricalmod.theatrical.block.cables.CableBlockEntity;
+import dev.theatricalmod.theatrical.block.cables.BlockCable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -28,15 +29,17 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
     private HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
 
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, Direction facing) {
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity != null && tileEntity.getCapability(SocapexReceiver.CAP, facing).isPresent()) {
-            if (scanned.add(pos)) {
-                if (tileEntity instanceof CableBlockEntity) {
-                    CableBlockEntity cable = (CableBlockEntity) tileEntity;
-                    if (cable.hasType(CableType.SOCAPEX) && cable.isConnected(facing, CableType.SOCAPEX)) {
-                        addToList(scanned, world, cable.getPos(), facing.getOpposite());
-                    }
-                } else {
+        BlockState blockState = world.getBlockState(pos);
+        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.SOCAPEX) {
+            for (Direction direction : Direction.values()) {
+                if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
+                    addToList(scanned, world, pos.offset(direction), direction.getOpposite());
+                }
+            }
+        } else {
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity != null && (tileEntity.getCapability(SocapexProvider.CAP, facing).isPresent())) {
+                if (scanned.add(pos)) {
                     for (Direction facing1 : Direction.values()) {
                         if (facing1 != facing) {
                             addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
@@ -61,8 +64,12 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
             devices = new HashSet<>(receivers);
         }
         for (BlockPos provider : devices) {
+            BlockState blockState = world.getBlockState(provider);
+            if (blockState.getBlock() instanceof BlockCable) {
+                continue;
+            }
             TileEntity tile = world.getTileEntity(provider);
-            if (tile != null && !(tile instanceof CableBlockEntity)) {
+            if (tile != null) {
                 ISocapexReceiver iSocapexReceiver = tile.getCapability(SocapexReceiver.CAP, null).orElse(null);
                 if (iSocapexReceiver != null) {
                     if (iSocapexReceiver.getIdentifier() == null) {

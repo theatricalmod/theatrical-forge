@@ -2,7 +2,6 @@ package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.util.math.BlockPos;
 
 public class SocapexPatch {
@@ -18,7 +17,7 @@ public class SocapexPatch {
         this.receiverSocket = receiverSocket;
     }
 
-    public INBT serialize() {
+    public CompoundNBT serialize() {
         CompoundNBT nbtTagCompound = new CompoundNBT();
         if (receiver != null) {
             nbtTagCompound.putInt("receiver", receiverSocket);

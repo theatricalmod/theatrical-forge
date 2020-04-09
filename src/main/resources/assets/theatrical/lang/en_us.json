@@ -1,4 +1,9 @@
 {
   "block.theatrical.truss": "MT100 Truss",
-  "itemGroup.theatrical": "Theatrical"
+  "itemGroup.theatrical": "Theatrical",
+  "block.theatrical.moving_light": "Moving Light",
+  "block.theatrical.iwb": "IWB (Internally Wired Bar)",
+  "block.theatrical.test_dmx": "Test DMX Block",
+  "block.theatrical.artnet_interface": "ArtNet Interface",
+  "block.theatrical.cable": "DMX Cable"
 }

@@ -13,8 +13,11 @@ public class TheatricalNetworkHandler {
     public static void init(){
         MAIN = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(TheatricalMod.MOD_ID, "main")).clientAcceptedVersions(MAIN_VERSION::equals).serverAcceptedVersions(MAIN_VERSION::equals).networkProtocolVersion(() -> MAIN_VERSION).simpleChannel();
 
-        MAIN.registerMessage(1, SendDMXPacket.class, SendDMXPacket::toBytes, SendDMXPacket::new, SendDMXPacket::handle);
         MAIN.registerMessage(2, SendDMXProviderPacket.class, SendDMXProviderPacket::toBytes, SendDMXProviderPacket::new, SendDMXProviderPacket::handle);
+        MAIN.registerMessage(3, UpdateDMXAddressPacket.class, UpdateDMXAddressPacket::toBytes, UpdateDMXAddressPacket::new, UpdateDMXAddressPacket::handle);
+        MAIN.registerMessage(4, UpdateArtNetInterfacePacket.class, UpdateArtNetInterfacePacket::toBytes, UpdateArtNetInterfacePacket::new, UpdateArtNetInterfacePacket::handle);
+        MAIN.registerMessage(5, UpdateFixturePacket.class, UpdateFixturePacket::toBytes, UpdateFixturePacket::new, UpdateFixturePacket::handle);
+        MAIN.registerMessage(6, ChangeDimmerPatchPacket.class, ChangeDimmerPatchPacket::toBytes, ChangeDimmerPatchPacket::new, ChangeDimmerPatchPacket::handle);
     }
 
 }

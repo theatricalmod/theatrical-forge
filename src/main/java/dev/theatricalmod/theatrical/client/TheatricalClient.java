@@ -5,10 +5,13 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
-import dev.theatricalmod.theatrical.block.TheatricalBlockEntities;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
-import dev.theatricalmod.theatrical.client.gui.screen.IntelligentFixtureScreen;
+import dev.theatricalmod.theatrical.client.gui.screen.ScreenArtNetInterface;
+import dev.theatricalmod.theatrical.client.gui.screen.ScreenDimmerRack;
+import dev.theatricalmod.theatrical.client.gui.screen.ScreenGenericFixture;
+import dev.theatricalmod.theatrical.client.gui.screen.ScreenIntelligentFixture;
+import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -41,14 +44,19 @@ public class TheatricalClient extends TheatricalCommon {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::textureStitch);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelload);
 //        MinecraftForge.EVENT_BUS.addListener(this::highlightDraw);
-        ScreenManager.registerFactory(TheatricalContainers.INTELLIGENT_FIXTURE, IntelligentFixtureScreen::new);
     }
 
     public void setup(FMLClientSetupEvent event){
         RenderType cutout = RenderType.getCutout();
-        RenderTypeLookup.setRenderLayer(TheatricalBlocks.TRUSS, cutout);
-        RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT, cutout);
-        ClientRegistry.bindTileEntityRenderer(TheatricalBlockEntities.MOVING_LIGHT, MovingLightRenderer::new);
+        RenderTypeLookup.setRenderLayer(TheatricalBlocks.TRUSS.get(), cutout);
+        RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT.get(), cutout);
+        RenderTypeLookup.setRenderLayer(TheatricalBlocks.GENERIC_LIGHT.get(), cutout);
+        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.MOVING_LIGHT.get(), MovingLightRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.GENERIC_LIGHT.get(), MovingLightRenderer::new);
+        ScreenManager.registerFactory(TheatricalContainers.INTELLIGENT_FIXTURE.get(), ScreenIntelligentFixture::new);
+        ScreenManager.registerFactory(TheatricalContainers.ARTNET_INTERFACE.get(), ScreenArtNetInterface::new);
+        ScreenManager.registerFactory(TheatricalContainers.GENERIC_FIXTURE.get(), ScreenGenericFixture::new);
+        ScreenManager.registerFactory(TheatricalContainers.DIMMER_RACK.get(), ScreenDimmerRack::new);
 //        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
     }
 

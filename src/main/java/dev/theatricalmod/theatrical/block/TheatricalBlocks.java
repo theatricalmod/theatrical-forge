@@ -1,17 +1,41 @@
 package dev.theatricalmod.theatrical.block;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.api.CableType;
+import dev.theatricalmod.theatrical.block.cables.BlockCable;
+import dev.theatricalmod.theatrical.block.cables.BlockPowerCable;
+import dev.theatricalmod.theatrical.block.dimming.BlockDimmerRack;
+import dev.theatricalmod.theatrical.block.interfaces.BlockArtNetInterface;
+import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
+import dev.theatricalmod.theatrical.block.light.BlockIlluminator;
+import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
+import dev.theatricalmod.theatrical.block.rigging.BlockIWB;
+import dev.theatricalmod.theatrical.block.rigging.BlockTruss;
+import dev.theatricalmod.theatrical.block.test.BlockTestDMX;
+import dev.theatricalmod.theatrical.fixtures.TheatricalFixtures;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.block.Block.Properties;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@ObjectHolder(TheatricalMod.MOD_ID)
 public class TheatricalBlocks {
 
-    public static final Block TRUSS = Blocks.AIR;
-    public static final Block MOVING_LIGHT = Blocks.AIR;
-    public static final Block CABLE = Blocks.AIR;
-    public static final Block ILLUMINATOR = Blocks.AIR;
-    public static final Block ARTNET_INTERFACE = Blocks.AIR;
-    public static final Block IWB = Blocks.AIR;
+    public static final Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY);
+
+    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, TheatricalMod.MOD_ID);
+
+    public static final RegistryObject<Block> TRUSS = BLOCKS.register("truss", BlockTruss::new);
+    public static final RegistryObject<Block> MOVING_LIGHT = BLOCKS.register("moving_light", BlockMovingLight::new);
+    public static final RegistryObject<Block> GENERIC_LIGHT = BLOCKS.register("generic_light", () -> new BlockGenericFixture(TheatricalFixtures.FRESNSEL));
+    public static final RegistryObject<Block> DMX_CABLE = BLOCKS.register("dmx_cable", () -> new BlockCable(CableType.DMX));
+    public static final RegistryObject<Block> SOCAPEX_CABLE = BLOCKS.register("socapex_cable", () -> new BlockCable(CableType.SOCAPEX));
+    public static final RegistryObject<Block> POWER_CABLE = BLOCKS.register("power_cable", BlockPowerCable::new);
+    public static final RegistryObject<Block> ILLUMINATOR = BLOCKS.register("illuminator", BlockIlluminator::new);
+    public static final RegistryObject<Block> ARTNET_INTERFACE = BLOCKS.register("artnet_interface", BlockArtNetInterface::new);
+    public static final RegistryObject<Block> IWB = BLOCKS.register("iwb", BlockIWB::new);
+    public static final RegistryObject<Block> TEST_DMX = BLOCKS.register("test_dmx", BlockTestDMX::new);
+    public static final RegistryObject<Block> DIMMER_RACK = BLOCKS.register("dimmer_rack", BlockDimmerRack::new);
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "theatrical:block/light_side",
+    "front": "theatrical:block/dimmer_front",
+    "side": "theatrical:block/light_side"
+  }
+}
