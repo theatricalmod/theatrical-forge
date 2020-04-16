@@ -2,9 +2,9 @@ package dev.theatricalmod.theatrical.block.cables;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
+import dev.theatricalmod.theatrical.tiles.TileEntityCable;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SixWayBlock;
@@ -84,14 +84,39 @@ public class BlockCable extends SixWayBlock {
         return this.getDefaultState().with(DOWN, down).with(UP, up).with(NORTH, north).with(EAST, east).with(SOUTH, south).with(WEST, west);
     }
 
+    public boolean containsType(CableType[] types){
+        for(CableType type : types){
+            if(type == this.cableType){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canConnect(IBlockReader blockReader, BlockPos pos, Direction direction){
         Block block = blockReader.getBlockState(pos).getBlock();
         TileEntity tileEntity = blockReader.getTileEntity(pos);
-        return block == this || (block.hasTileEntity(blockReader.getBlockState(pos)) && (tileEntity.getCapability(DMXReceiver.CAP, direction).isPresent() || tileEntity.getCapability(DMXProvider.CAP, direction).isPresent() || tileEntity instanceof IAcceptsCable));
+        if(tileEntity instanceof IAcceptsCable){
+            return containsType(((IAcceptsCable) tileEntity).getAcceptedCables(direction.getOpposite()));
+        }
+        return block == this;
     }
 
     @Override
     protected void fillStateContainer(Builder<Block, BlockState> builder) {
         builder.add(NORTH, SOUTH, WEST, EAST, UP, DOWN);
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        TileEntityCable tileEntityCable = new TileEntityCable();
+        tileEntityCable.setCableType(cableType);
+        return tileEntityCable;
     }
 }

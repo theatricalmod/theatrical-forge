@@ -4,11 +4,13 @@ import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.block.cables.BlockCable;
 import dev.theatricalmod.theatrical.block.cables.BlockPowerCable;
-import dev.theatricalmod.theatrical.block.dimming.BlockDimmerRack;
+import dev.theatricalmod.theatrical.block.control.BlockBasicLightingControl;
+import dev.theatricalmod.theatrical.block.power.BlockDimmerRack;
 import dev.theatricalmod.theatrical.block.interfaces.BlockArtNetInterface;
 import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
 import dev.theatricalmod.theatrical.block.light.BlockIlluminator;
 import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
+import dev.theatricalmod.theatrical.block.power.BlockSocapexDistribution;
 import dev.theatricalmod.theatrical.block.rigging.BlockIWB;
 import dev.theatricalmod.theatrical.block.rigging.BlockTruss;
 import dev.theatricalmod.theatrical.block.test.BlockTestDMX;
@@ -38,4 +40,6 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> IWB = BLOCKS.register("iwb", BlockIWB::new);
     public static final RegistryObject<Block> TEST_DMX = BLOCKS.register("test_dmx", BlockTestDMX::new);
     public static final RegistryObject<Block> DIMMER_RACK = BLOCKS.register("dimmer_rack", BlockDimmerRack::new);
+    public static final RegistryObject<Block> SOCAPEX_DISTRIBUTION = BLOCKS.register("socapex_distribution", BlockSocapexDistribution::new);
+    public static final RegistryObject<Block> BASIC_LIGHTING_DESK = BLOCKS.register("basic_lighting_desk", BlockBasicLightingControl::new);
 }

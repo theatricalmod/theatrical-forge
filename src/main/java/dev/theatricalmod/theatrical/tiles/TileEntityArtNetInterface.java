@@ -1,6 +1,8 @@
 package dev.theatricalmod.theatrical.tiles;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.api.CableType;
+import dev.theatricalmod.theatrical.api.IAcceptsCable;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
@@ -29,7 +31,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class TileEntityArtNetInterface extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
+public class TileEntityArtNetInterface extends TileEntity implements ITickableTileEntity, INamedContainerProvider, IAcceptsCable {
 
     private final IDMXProvider idmxProvider;
 
@@ -166,5 +168,10 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
     @Override
     public Container createMenu(int i, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
         return new ContainerArtNetInterface(i, world, pos);
+    }
+
+    @Override
+    public CableType[] getAcceptedCables(Direction side) {
+        return new CableType[]{CableType.DMX};
     }
 }

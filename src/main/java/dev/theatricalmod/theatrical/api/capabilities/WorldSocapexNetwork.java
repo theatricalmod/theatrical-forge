@@ -17,22 +17,20 @@ import net.minecraftforge.common.util.LazyOptional;
 public class WorldSocapexNetwork implements ICapabilityProvider {
 
     @CapabilityInject(WorldSocapexNetwork.class)
-    public static Capability<WorldSocapexNetwork> CAP;
+    public static Capability<WorldSocapexNetwork> CAP = null;
     private LazyOptional<WorldSocapexNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
 
 //    public static WorldSocapexNetwork getCapability(World world) {
 //        return world.getCapability(CAP).;
 //    }
 
-    public final World world;
     private HashMap<BlockPos, ISocapexProvider> panelList = new HashMap<>();
     private boolean refresh = true;
 
-    public WorldSocapexNetwork(World world) {
-        this.world = world;
+    public WorldSocapexNetwork() {
     }
 
-    public void updateDevices() {
+    public void updateDevices(World world) {
         for (BlockPos blockPos : panelList.keySet()) {
             panelList.get(blockPos).updateDevices(world, blockPos);
         }
@@ -46,7 +44,7 @@ public class WorldSocapexNetwork implements ICapabilityProvider {
         this.refresh = refresh;
     }
 
-    public void tick() {
+    public void tick(World world) {
         if (refresh) {
             panelList.clear();
             for (TileEntity tileEntity : world.loadedTileEntityList) {

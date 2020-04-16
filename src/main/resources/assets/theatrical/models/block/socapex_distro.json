@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "theatrical:block/socapex_distro/out",
+    "front": "theatrical:block/socapex_distro/in",
+    "side": "theatrical:block/socapex_distro/out"
+  }
+}

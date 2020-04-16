@@ -1,8 +1,13 @@
-package dev.theatricalmod.theatrical.block.dimming;
+package dev.theatricalmod.theatrical.block.power;
 
+import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import dev.theatricalmod.theatrical.tiles.TileEntityDimmerRack;
+import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import javax.annotation.Nullable;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -20,7 +25,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class BlockDimmerRack extends HorizontalBlock {
+public class BlockDimmerRack extends HorizontalBlock implements ITOPInfoProvider {
 
     public BlockDimmerRack() {
         super(TheatricalBlocks.BASE_PROPERTIES);
@@ -60,5 +65,19 @@ public class BlockDimmerRack extends HorizontalBlock {
             return ActionResultType.PASS;
         }
         return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
+        TileEntity tileEntity = world.getTileEntity(iProbeHitData.getPos());
+
+        if (tileEntity instanceof TileEntityDimmerRack) {
+            TileEntityDimmerRack pipe = (TileEntityDimmerRack) tileEntity;
+            pipe.getCapability(DMXReceiver.CAP, null).ifPresent(iTheatricalPowerStorage -> {
+                for(int i = 0; i < iTheatricalPowerStorage.getChannelCount(); i++){
+                    iProbeInfo.text("DMX #" + i + ": " + iTheatricalPowerStorage.getChannel(i));
+                }
+            });
+        }
     }
 }

@@ -17,10 +17,6 @@ public interface ISocapexReceiver {
 
     boolean canReceive(int channel);
 
-    String getIdentifier();
-
-    void assignIdentifier(String identifier);
-
     BlockPos getPos();
 
     List<BlockPos> getDevices();

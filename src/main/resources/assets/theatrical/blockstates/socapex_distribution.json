@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "theatrical:block/socapex_distro"
+    },
+    "facing=south": {
+      "model": "theatrical:block/socapex_distro",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "theatrical:block/socapex_distro",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "theatrical:block/socapex_distro",
+      "y": 90
+    },
+    "facing=up": {
+      "model": "theatrical:block/socapex_distro",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "theatrical:block/socapex_distro",
+      "x": 180
+    }
+  }
+}

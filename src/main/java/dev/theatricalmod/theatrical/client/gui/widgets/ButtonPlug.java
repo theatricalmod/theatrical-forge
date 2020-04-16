@@ -28,7 +28,7 @@ public class ButtonPlug extends Button {
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(background);
         RenderSystem.disableDepthTest();
-        blit(x, y, 250, 0, 19, 17, 512, 512);
+        blit(x, y, width, height, 250, 0, 19, 17, 512, 512);
         RenderSystem.pushMatrix();
         RenderSystem.translatef(x + 4, y + 5, 0);
         RenderSystem.scalef(0.5F, 0.5F, 1);

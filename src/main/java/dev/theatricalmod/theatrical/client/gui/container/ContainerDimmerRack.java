@@ -3,13 +3,11 @@ package dev.theatricalmod.theatrical.client.gui.container;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
-import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
-import dev.theatricalmod.theatrical.tiles.TileEntityDimmerRack;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -54,11 +52,7 @@ public class ContainerDimmerRack extends Container {
         return null;
     }
 
-    public String getIdentifier(BlockPos pos) {
-        TileEntity tileEntity = dimmerRack.getWorld().getTileEntity(pos);
-        if (tileEntity != null && tileEntity.getCapability(SocapexReceiver.CAP, null).isPresent()) {
-            return tileEntity.getCapability(SocapexReceiver.CAP, null).orElse(null).getIdentifier();
-        }
-        return "";
+    public String getIdentifier(BlockPos pos){
+        return dimmerRack.getCapability(SocapexProvider.CAP, null).orElse(null).getIdentifier(pos);
     }
 }

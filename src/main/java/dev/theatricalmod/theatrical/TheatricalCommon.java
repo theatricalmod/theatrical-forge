@@ -5,10 +5,11 @@ import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.TileEntityArtNetInterface;
-import dev.theatricalmod.theatrical.tiles.TileEntityDimmerRack;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
-import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.BlockFlags;
@@ -27,13 +28,14 @@ public class TheatricalCommon {
     public void handleProviderDMXUpdate(BlockPos pos, byte[] data){}
 
     public void handleUpdateDMXAddress(Context context, BlockPos pos, int address) {
+        World world = context.getSender().world;
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
-        if (tileEntity instanceof TileEntityIntelligentFixture) {
+        if (tileEntity.getCapability(DMXReceiver.CAP, null).isPresent()) {
             tileEntity.getCapability(DMXReceiver.CAP).ifPresent(idmxReceiver -> {
                 idmxReceiver.setDMXStartPoint(address);
-                context.getSender().connection.sendPacket(tileEntity.getUpdatePacket());
             });
         }
+        world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
     }
 
     public void handleUpdateArtNetInterface(Context context, BlockPos pos, int universe) {
@@ -57,11 +59,15 @@ public class TheatricalCommon {
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityDimmerRack) {
             TileEntityDimmerRack tileEntityDimmerRack = (TileEntityDimmerRack) tileEntity;
-            tileEntityDimmerRack.getCapability(SocapexProvider.CAP, null).ifPresent(iSocapexProvider -> {
+                tileEntityDimmerRack.getCapability(SocapexProvider.CAP, null).ifPresent(iSocapexProvider -> {
                 if (patch.getReceiver() != null) {
                     TileEntity receiver = world.getTileEntity(patch.getReceiver());
                     if (receiver != null) {
-                        receiver.getCapability(SocapexReceiver.CAP, null).ifPresent(iSocapexReceiver -> {
+                        Direction input = null;
+                        if(receiver.getBlockState().has(BlockStateProperties.FACING)){
+                            input = receiver.getBlockState().get(BlockStateProperties.FACING);
+                        }
+                        receiver.getCapability(SocapexReceiver.CAP, input).ifPresent(iSocapexReceiver -> {
                             iSocapexProvider.patch(channel, iSocapexReceiver, patch.getReceiverSocket(), socketNumber);
                         });
                     }

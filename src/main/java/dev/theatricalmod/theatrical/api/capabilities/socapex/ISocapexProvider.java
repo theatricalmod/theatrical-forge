@@ -31,4 +31,6 @@ public interface ISocapexProvider {
     List<ISocapexReceiver> getDevices(World world, BlockPos controller);
 
     int[] getPatchedCables(ISocapexReceiver socapexReceiver);
+
+    String getIdentifier(BlockPos pos);
 }

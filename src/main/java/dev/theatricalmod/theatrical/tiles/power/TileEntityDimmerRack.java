@@ -1,4 +1,4 @@
-package dev.theatricalmod.theatrical.tiles;
+package dev.theatricalmod.theatrical.tiles.power;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
@@ -7,6 +7,8 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerDimmerRack;
+import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
+import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +17,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,9 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileEntityDimmerRack extends TileEntity implements INamedContainerProvider, ITickableTileEntity, IEnergyStorage, IAcceptsCable {
-
-    private int dmxStart = 0;
+public class TileEntityDimmerRack extends TileEntityTheatricalBase implements INamedContainerProvider, ITickableTileEntity, IEnergyStorage, IAcceptsCable{
 
     private DMXReceiver dmxReceiver;
     private SocapexProvider socapexProvider;
@@ -38,7 +37,7 @@ public class TileEntityDimmerRack extends TileEntity implements INamedContainerP
 
     public TileEntityDimmerRack() {
         super(TheatricalTiles.DIMMER_RACK.get());
-        dmxReceiver = new DMXReceiver(6, dmxStart);
+        dmxReceiver = new DMXReceiver(6, 0);
         socapexProvider = new SocapexProvider();
     }
 
@@ -69,24 +68,25 @@ public class TileEntityDimmerRack extends TileEntity implements INamedContainerP
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        dmxStart = compound.getInt("dmxStart");
+    public void readNBT(CompoundNBT compound) {
+        dmxReceiver.setDMXStartPoint(compound.getInt("dmxStart"));
         if (compound.contains("provider")) {
             socapexProvider.deserializeNBT(compound.getCompound("provider"));
         }
-        super.read(compound);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        compound = super.write(compound);
-        compound.putInt("dmxStart", dmxStart);
+    public CompoundNBT getNBT(CompoundNBT compound) {
+        if(compound == null){
+            compound = new CompoundNBT();
+        }
+        compound.putInt("dmxStart", dmxReceiver.getStartPoint());
         compound.put("provider", socapexProvider.serializeNBT());
-        return super.write(compound);
+        return compound;
     }
 
     @Override
-    public CableType[] getAcceptedCables() {
+    public CableType[] getAcceptedCables(Direction side) {
         return new CableType[]{CableType.POWER, CableType.SOCAPEX, CableType.DMX};
     }
 
@@ -172,7 +172,7 @@ public class TileEntityDimmerRack extends TileEntity implements INamedContainerP
     }
 
     public int getDmxStart() {
-        return dmxStart;
+        return dmxReceiver.getStartPoint();
     }
 
 }

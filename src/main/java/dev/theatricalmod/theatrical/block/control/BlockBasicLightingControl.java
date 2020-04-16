@@ -1,24 +1,42 @@
-package dev.theatricalmod.theatrical.block.light;
+package dev.theatricalmod.theatrical.block.control;
+
+import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import dev.theatricalmod.theatrical.fixtures.TheatricalFixtures;
-import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
+import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class BlockMovingLight extends BlockIntelligentFixture {
+public class BlockBasicLightingControl extends DirectionalBlock {
 
-    public BlockMovingLight() {
-        super(TheatricalFixtures.MOVING_LIGHT, TheatricalBlocks.BASE_PROPERTIES.notSolid());
+    private final VoxelShape shape = VoxelShapes.create(0, 0, 0, 16 / 16D, 3 / 16D, 16 / 16D);
+
+    public BlockBasicLightingControl() {
+        super(TheatricalBlocks.BASE_PROPERTIES);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
+        return this.getDefaultState().with(HORIZONTAL_FACING, p_196258_1_.getPlacementHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    protected void fillStateContainer(Builder<Block, BlockState> builder) {
+        builder.add(HORIZONTAL_FACING);
     }
 
     @Override
@@ -29,14 +47,7 @@ public class BlockMovingLight extends BlockIntelligentFixture {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        TileEntityIntelligentFixture tileEntityIntelligentFixture =  new TileEntityIntelligentFixture();
-        tileEntityIntelligentFixture.setFixture(TheatricalFixtures.MOVING_LIGHT);
-        return tileEntityIntelligentFixture;
-    }
-
-    @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+        return new TileEntityBasicLightingControl();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -66,7 +77,7 @@ public class BlockMovingLight extends BlockIntelligentFixture {
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return shape;
     }
 }

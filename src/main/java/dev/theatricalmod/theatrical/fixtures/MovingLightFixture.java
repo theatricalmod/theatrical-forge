@@ -19,8 +19,8 @@ public class MovingLightFixture extends Fixture {
         super(new ResourceLocation(TheatricalMod.MOD_ID, "moving_head"), FixtureType.INTELLIGENT, HangableType.BRACE_BAR,
             new ResourceLocation(TheatricalMod.MOD_ID, "block/moving_light/moving_head_static"), new ResourceLocation(TheatricalMod.MOD_ID, "block/moving_light/moving_head_bar"),
             new ResourceLocation(TheatricalMod.MOD_ID, "block/moving_light/moving_head_tilt"), new ResourceLocation(TheatricalMod.MOD_ID, "block/moving_light/moving_head_pan"),
-            new float[]{0.5F, -.6F, -.5F}, new float[]{0.5F, -.5F, -.5F}, new float[]{0F, -0.8F, -0.35F}, 90, 0.15F, 0F, 50, 5,
-            0, 0, 18, new ChannelsDefinition(), new ResourceLocation("theatrical:block/moving_head_whole"));
+            new float[]{0.5F, .6F, .5F}, new float[]{0.5F, .5F, .5F}, new float[]{0F, -0.8F, -0.35F}, 90, 0.15F, 0F, 50, 5,
+            50, 0, 18, new ChannelsDefinition(), new ResourceLocation("theatrical:block/moving_head_whole"));
         getChannelsDefinition().setChannel(ChannelType.INTENSITY, 1);
         getChannelsDefinition().setChannel(ChannelType.RED, 2);
         getChannelsDefinition().setChannel(ChannelType.GREEN, 3);

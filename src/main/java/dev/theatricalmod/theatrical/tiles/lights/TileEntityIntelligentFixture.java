@@ -10,6 +10,7 @@ import dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture;
 import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,12 +20,18 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
 
 public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, INamedContainerProvider {
 
+    private EnergyStorage energyStorage;
 
     public TileEntityIntelligentFixture() {
         super(TheatricalTiles.MOVING_LIGHT.get());
+        this.energyStorage = new EnergyStorage(2000);
     }
 
     @Override
@@ -80,21 +87,21 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     public int getRed() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.RED)))).orElse(0);
         }
         return 0;
     }
 
     public int getGreen() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.GREEN)))).orElse(0);
         }
         return 0;
     }
 
     public int getBlue() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.BLUE)))).orElse(0);
         }
         return 0;
@@ -102,7 +109,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public int getPan() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F) - 180;
         }
         return prevPan;
@@ -110,7 +117,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public int getTilt() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.TILT))).orElse((byte) prevTilt)) * 180) / 255F) - 90;
         }
         return prevTilt;
@@ -127,7 +134,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public float getIntensity() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
             return convertByte(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.INTENSITY))).orElse((byte) 0));
         }
         return 0;
@@ -144,7 +151,10 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public void tick() {
-        super.tick();
+        if(energyStorage.getEnergyStored() >= getFixture().getEnergyUse()){
+            energyStorage.extractEnergy(getFixture().getEnergyUse(), false);
+            super.tick();
+        }
         prevPan = getPan();
         prevTilt = getTilt();
         prevFocus = getFocus();
@@ -168,5 +178,14 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
         return new ContainerIntelligentFixture(i, getWorld(), getPos());
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if(cap == CapabilityEnergy.ENERGY){
+            return LazyOptional.of(() -> energyStorage).cast();
+        }
+        return super.getCapability(cap, side);
     }
 }

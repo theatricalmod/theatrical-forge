@@ -92,7 +92,10 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public float[] getBeamStartPosition() {
-        return new float[]{0.5F, 0.5F, 0.15F};
+        if(getFixture() == null){
+            return new float[3];
+        }
+        return getFixture().getBeamStartPosition();
     }
 
     @Override
@@ -112,6 +115,10 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
         if (power != lastPower) {
             lastPower = power;
             world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        }
+        if(power > 0){
+            int energyExtracted = Math.min(power, Math.min(this.maxExtract, this.energyCost));
+            power -= energyExtracted;
         }
     }
 
@@ -164,7 +171,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public boolean canExtract() {
-        return this.maxExtract > 0;
+        return false;
     }
 
     @Override
@@ -182,7 +189,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     }
 
     @Override
-    public CableType[] getAcceptedCables() {
+    public CableType[] getAcceptedCables(Direction side) {
         return new CableType[]{CableType.POWER};
     }
 }

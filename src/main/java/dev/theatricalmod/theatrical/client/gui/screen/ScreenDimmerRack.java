@@ -10,7 +10,9 @@ import dev.theatricalmod.theatrical.client.gui.widgets.ButtonPlug;
 import dev.theatricalmod.theatrical.client.gui.widgets.ButtonSocket;
 import dev.theatricalmod.theatrical.network.ChangeDimmerPatchPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
-import dev.theatricalmod.theatrical.tiles.TileEntityDimmerRack;
+import dev.theatricalmod.theatrical.network.UpdateDMXAddressPacket;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -34,6 +36,8 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     private TileEntityDimmerRack tileDimmerRack;
     private List<ISocapexReceiver> receivers;
     private TextFieldWidget dmxStartField;
+    private List<ButtonSocket> sockets;
+    private List<ButtonPlug> plugs;
     private int currentPage = 0;
 
     private int activePlug = -1;
@@ -45,17 +49,26 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         this.xSize = 250;
         this.ySize = 131;
 
+        sockets = new ArrayList<>();
+        plugs = new ArrayList<>();
         receivers = inventoryPlayer.getDevices();
     }
 
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         if (p_keyPressed_1_ == GLFW.GLFW_KEY_E || p_keyPressed_1_ == GLFW.GLFW_KEY_ESCAPE) {
+            this.onClose();
             this.minecraft.player.closeScreen();
+            return true;
         }
         return this.dmxStartField.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxStartField.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        generateButtons();
+    }
 
     @Override
     public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_) {
@@ -63,25 +76,33 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     }
 
     public void generateButtons() {
+        this.buttons.removeAll(sockets);
+        this.buttons.removeAll(plugs);
+        this.children.removeAll(sockets);
+        this.children.removeAll(plugs);
+        this.plugs.clear();
+        this.sockets.clear();
         int width = this.width / 2;
         int height = (this.height - this.ySize) / 2;
         for (int i = 0; i < 6; i++) {
             SocapexPatch[] patch = inventoryPlayer.getPatch(i);
             int x = (width - 95) + 46 * (i < 3 ? i : i - 3);
-            int y = height + (i < 3 ? 70 : 25);
+            int y = height + (i < 3 ? 25 : 70);
             for (int j = 0; j < 2; j++) {
+                ButtonSocket buttonSocket;
                 if (patch == null || j >= patch.length) {
-                    ButtonSocket buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket);
-                    this.addButton(buttonSocket);
+                    buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket);
                 } else {
                     SocapexPatch patch1 = patch[j];
                     if (patch1 != null && patch1.getReceiver() != null) {
-                        String identifier = inventoryPlayer.getIdentifier(patch1.getReceiver());
-                        this.addButton(new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, patch1, identifier, this::handleSocket));
+                        String identifier = inventoryPlayer.getIdentifier(patch1.getReceiver()).toUpperCase().substring(0, 1);
+                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, patch1, identifier, this::handleSocket);
                     } else {
-                        this.addButton(new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket));
+                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket);
                     }
                 }
+                this.addButton(buttonSocket);
+                sockets.add(buttonSocket);
             }
         }
         if (receivers.size() > 0) {
@@ -89,22 +110,23 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
             for (int i = 0; i < channels.length; i++) {
                 int x = width + 45 + (20 * (i < 4 ? i : i - 4));
-                int y = height - (i < 4 ? 65 : 45);
+                int y = height + (i < 4 ? 45 : 65);
                 if (channels[i] != 1) {
                     int finalI = i;
-                    ButtonPlug buttonPlug = new ButtonPlug(x, y, i + 1, iSocapexReceiver.getIdentifier(), activePlug == i, (button) -> {
+                    ButtonPlug buttonPlug = new ButtonPlug(x, y, i + 1, "", activePlug == i, (button) -> {
                         if (button instanceof ButtonPlug) {
                             ButtonPlug plug = (ButtonPlug) button;
-                            if (activePlug == finalI + 1) {
+                            if (activePlug == finalI) {
                                 plug.setActive(false);
                                 activePlug = -1;
                             } else {
                                 plug.setActive(true);
-                                activePlug = finalI + 1;
+                                activePlug = finalI;
                             }
                         }
                     });
                     this.addButton(buttonPlug);
+                    plugs.add(buttonPlug);
                 }
             }
         }
@@ -134,11 +156,29 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             activePlug = -1;
             generateButtons();
         }));
-        this.dmxStartField = new TextFieldWidget(font, width + 43, height - 20, 50, 10, "");
-        this.dmxStartField.setFocused2(true);
+        this.dmxStartField = new TextFieldWidget(this.font, lvt_1_1_ + 172, lvt_2_1_ + 100, 50, 10, "");
         if (tileDimmerRack.getCapability(DMXReceiver.CAP, Direction.SOUTH).isPresent()) {
             this.dmxStartField.setText(Integer.toString(tileDimmerRack.getCapability(DMXReceiver.CAP, Direction.SOUTH).orElse(null).getStartPoint()));
         }
+        this.dmxStartField.setCanLoseFocus(false);
+        this.dmxStartField.changeFocus(true);
+        this.dmxStartField.setTextColor(-1);
+        this.dmxStartField.setDisabledTextColour(-1);
+        this.dmxStartField.setEnableBackgroundDrawing(true);
+        this.dmxStartField.setMaxStringLength(35);
+        this.dmxStartField.setValidator(s -> {
+            if (s.length() == 0) {
+                return true;
+            }
+            try {
+                Integer.parseInt(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+        this.children.add(this.dmxStartField);
+        this.setFocusedDefault(this.dmxStartField);
         generateButtons();
     }
 
@@ -162,6 +202,12 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     }
 
     @Override
+    public void onClose() {
+        super.onClose();
+        TheatricalNetworkHandler.MAIN.sendToServer(new UpdateDMXAddressPacket(this.container.dimmerRack.getPos(), Integer.parseInt(this.dmxStartField.getText())));
+    }
+
+    @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String name = container.dimmerRack.getDisplayName().getString();
         font
@@ -174,17 +220,17 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             font.drawString("" + (i + 1), x, y, 0x000000);
         }
         if (receivers.size() > 0) {
-            String pageName = "Panel " + receivers.get(currentPage).getIdentifier();
+            String pageName = "Panel " + inventoryPlayer.getIdentifier(receivers.get(currentPage).getPos());
             font
-                .drawString(pageName, 170 + font.getStringWidth(
+                .drawString(pageName, 150 + font.getStringWidth(
                     pageName
-                ) / 2, 17, 0x404040);
+                ) / 2, 30, 0x404040);
         }
         if (activePlug != -1) {
             int width = this.width / 2;
-            int height = this.height / 2;
-            int plugX = width + 45 + (20 * (activePlug < 4 ? activePlug : activePlug - 4));
-            int plugY = height - (activePlug < 4 ? 65 : 45);
+            int height = (this.height - this.ySize) / 2;
+            int plugX = width + 35 + (20 * (activePlug < 4 ? activePlug : activePlug - 4));
+            int plugY = height + (activePlug < 4 ? 45 : 65);
             int xDist = plugX - mouseX;
             int yDist = plugY - mouseY;
             float lineWidth = 2;

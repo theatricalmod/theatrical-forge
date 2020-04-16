@@ -6,13 +6,18 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
+import dev.theatricalmod.theatrical.api.capabilities.power.ITheatricalPowerStorage;
+import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
+import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
+import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.artnet.ArtNetManager;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.TheatricalClient;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
+import dev.theatricalmod.theatrical.compat.top.TOPCompat;
 import dev.theatricalmod.theatrical.fixtures.FixtureFresnel;
 import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
@@ -34,6 +39,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -69,6 +75,7 @@ public class TheatricalMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Fixture.class, this::registerFixture);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::shutdown);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imc);
         TheatricalBlocks.BLOCKS.register(eventBus);
         TheatricalTiles.TILES.register(eventBus);
         TheatricalItems.ITEMS.register(eventBus);
@@ -86,9 +93,13 @@ public class TheatricalMod {
     private void worldTickEvent(WorldTickEvent event) {
         if(event.phase == Phase.END){
             event.world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.tick(event.world));
-            event.world.getCapability(WorldSocapexNetwork.CAP).ifPresent(WorldSocapexNetwork::tick);
+            event.world.getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.tick(event.world));
 //            event.world.getCapability(WorldPipePanelNetwork.CAP).ifPresent(WorldPipePanelNetwork::tick);
         }
+    }
+
+    private void imc(final InterModEnqueueEvent enqueueEvent){
+        TOPCompat.register();
     }
 
     private void attachWorldCap(final AttachCapabilitiesEvent t) {
@@ -96,7 +107,7 @@ public class TheatricalMod {
             World w = (World) t.getObject();
             if(w.isRemote) return;
             t.addCapability(WORLD_CAP_ID, new WorldDMXNetwork());
-            t.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork(w));
+            t.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork());
         }
 //        t.addCapability(PIPE_PANEL_NETWORK, new WorldPipePanelNetwork(t.getObject()));
     }
@@ -106,9 +117,11 @@ public class TheatricalMod {
         CapabilityManager.INSTANCE.register(IDMXReceiver.class, new CapabilityStorageProvider<>(), DMXReceiver::new);
         CapabilityManager.INSTANCE.register(WorldDMXNetwork.class, new CapabilityStorageProvider<>(), WorldDMXNetwork::new);
 
-        CapabilityManager.INSTANCE.register(ISocapexReceiver.class, new CapabilityStorageProvider<>(), () ->  null);
-        CapabilityManager.INSTANCE.register(ISocapexProvider.class, new CapabilityStorageProvider<>(), () ->  null);
-        CapabilityManager.INSTANCE.register(WorldSocapexNetwork.class, new CapabilityStorageProvider<>(), () ->  null);
+        CapabilityManager.INSTANCE.register(ISocapexReceiver.class, new CapabilityStorageProvider<>(), SocapexReceiver::new);
+        CapabilityManager.INSTANCE.register(ISocapexProvider.class, new CapabilityStorageProvider<>(), SocapexProvider::new);
+        CapabilityManager.INSTANCE.register(WorldSocapexNetwork.class, new CapabilityStorageProvider<>(), WorldSocapexNetwork::new);
+
+        CapabilityManager.INSTANCE.register(ITheatricalPowerStorage.class, new CapabilityStorageProvider<>(), TheatricalPower::new);
     }
 
 

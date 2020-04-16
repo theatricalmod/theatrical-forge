@@ -15,11 +15,13 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
     public static Capability<ISocapexReceiver> CAP;
 
     private int[] channels;
-    private String identifier;
     private BlockPos pos;
 
     private List<BlockPos> blockPosList = new ArrayList<>();
 
+    public SocapexReceiver() {
+        this.channels = new int[8];
+    }
 
     public SocapexReceiver(BlockPos pos) {
         this.channels = new int[8];
@@ -29,9 +31,6 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbtTagCompound = new CompoundNBT();
-        if (identifier != null) {
-            nbtTagCompound.putString("identifier", identifier);
-        }
         for (int i = 0; i < channels.length; i++) {
             nbtTagCompound.putInt("channel_" + i, channels[i]);
         }
@@ -41,9 +40,6 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        if (nbt.contains("identifier")) {
-            this.identifier = nbt.getString("identifier");
-        }
         int[] channels = new int[8];
         for (int i = 0; i < 8; i++) {
             if (nbt.contains("channel_" + i)) {
@@ -108,15 +104,6 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
         return true;
     }
 
-    @Override
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    @Override
-    public void assignIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
 
     @Override
     public BlockPos getPos() {

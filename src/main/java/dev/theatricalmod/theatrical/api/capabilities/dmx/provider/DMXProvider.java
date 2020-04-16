@@ -55,8 +55,10 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
         BlockState blockState = world.getBlockState(pos);
         if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.DMX) {
             for (Direction direction : Direction.values()) {
-                if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
-                    addToList(scanned, world, pos.offset(direction), direction.getOpposite());
+                if(direction != facing) {
+                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
+                        addToList(scanned, world, pos.offset(direction), direction.getOpposite());
+                    }
                 }
             }
         } else {

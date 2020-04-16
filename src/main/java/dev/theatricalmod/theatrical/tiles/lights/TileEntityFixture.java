@@ -330,7 +330,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     @Override
     public float[] getTiltRotationPosition() {
         if (getFixture() == null) {
-            return new float[]{};
+            return new float[]{0, 0, 0};
         }
         return getFixture().getTiltRotationPosition();
     }
@@ -338,7 +338,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     @Override
     public float[] getPanRotationPosition() {
         if (getFixture() == null) {
-            return new float[]{};
+            return new float[]{0, 0, 0};
         }
         return getFixture().getPanRotationPosition();
     }

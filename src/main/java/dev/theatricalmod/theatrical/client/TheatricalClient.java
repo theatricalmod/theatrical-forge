@@ -11,6 +11,7 @@ import dev.theatricalmod.theatrical.client.gui.screen.ScreenArtNetInterface;
 import dev.theatricalmod.theatrical.client.gui.screen.ScreenDimmerRack;
 import dev.theatricalmod.theatrical.client.gui.screen.ScreenGenericFixture;
 import dev.theatricalmod.theatrical.client.gui.screen.ScreenIntelligentFixture;
+import dev.theatricalmod.theatrical.client.tile.TileEntityRendererBasicLightingDesk;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import java.util.Arrays;
 import net.minecraft.client.Minecraft;
@@ -51,8 +52,10 @@ public class TheatricalClient extends TheatricalCommon {
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.TRUSS.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.GENERIC_LIGHT.get(), cutout);
+        RenderTypeLookup.setRenderLayer(TheatricalBlocks.BASIC_LIGHTING_DESK.get(), cutout);
         ClientRegistry.bindTileEntityRenderer(TheatricalTiles.MOVING_LIGHT.get(), MovingLightRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TheatricalTiles.GENERIC_LIGHT.get(), MovingLightRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.BASIC_LIGHTING_DESK.get(), TileEntityRendererBasicLightingDesk::new);
         ScreenManager.registerFactory(TheatricalContainers.INTELLIGENT_FIXTURE.get(), ScreenIntelligentFixture::new);
         ScreenManager.registerFactory(TheatricalContainers.ARTNET_INTERFACE.get(), ScreenArtNetInterface::new);
         ScreenManager.registerFactory(TheatricalContainers.GENERIC_FIXTURE.get(), ScreenGenericFixture::new);

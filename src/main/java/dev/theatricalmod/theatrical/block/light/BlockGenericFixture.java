@@ -2,10 +2,16 @@ package dev.theatricalmod.theatrical.block.light;
 
 import static dev.theatricalmod.theatrical.block.TheatricalBlocks.BASE_PROPERTIES;
 
+import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.BlockHangable;
+import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
+import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import javax.annotation.Nullable;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -26,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class BlockGenericFixture extends BlockHangable {
+public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvider {
 
     private Fixture fixture;
 
@@ -97,5 +103,17 @@ public class BlockGenericFixture extends BlockHangable {
             return ActionResultType.PASS;
         }
         return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
+        TileEntity tileEntity = world.getTileEntity(iProbeHitData.getPos());
+
+        if (tileEntity instanceof TileEntityGenericFixture) {
+            TileEntityGenericFixture pipe = (TileEntityGenericFixture) tileEntity;
+            pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> {
+                iProbeInfo.text("Power: " + iTheatricalPowerStorage.getEnergyStored());
+            });
+        }
     }
 }

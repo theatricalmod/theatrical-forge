@@ -23,4 +23,11 @@ public class TheatricalRenderType extends RenderType {
             .writeMask(COLOR_DEPTH_WRITE)
             .shadeModel(SHADE_ENABLED)
             .build(false));
+
+    public static final RenderType FADER = makeType("TheatricalFader",
+        DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
+        RenderType.State.getBuilder()
+            .texture(NO_TEXTURE)
+            .shadeModel(SHADE_ENABLED)
+            .build(false));
 }

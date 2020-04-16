@@ -97,7 +97,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         float[] pans = movingLightEntity.getPanRotationPosition();
 //        float[] pans = new float[]{0.5F, 0, 0.41F};
         matrixStack.translate(pans[0], pans[1], pans[2]);
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(movingLightEntity.getPan()));
+        matrixStack.rotate(Vector3f.YP.rotationDegrees((movingLightEntity.prevPan + ((movingLightEntity.getPan()) - movingLightEntity.prevPan) * partialTicks)));
         matrixStack.translate(-pans[0], -pans[1], -pans[2]);
         Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), panBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY);
         float[] tilts = movingLightEntity.getTiltRotationPosition();
