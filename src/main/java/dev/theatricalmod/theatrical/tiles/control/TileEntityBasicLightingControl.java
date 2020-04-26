@@ -10,11 +10,57 @@ import net.minecraft.tileentity.ITickableTileEntity;
 
 public class TileEntityBasicLightingControl extends TileEntityTheatricalBase implements ITickableTileEntity {
 
+    class StoredCue {
+        private byte[] faders;
+        private int fadeInTicks;
+        private int fadeOutTicks;
+
+        public StoredCue(){}
+
+        public StoredCue(byte[] faders, int fadeInTicks, int fadeOutTicks){
+            this.faders = faders;
+            this.fadeInTicks = fadeInTicks;
+            this.fadeOutTicks = fadeOutTicks;
+        }
+
+        public CompoundNBT toNBT(){
+            CompoundNBT compoundNBT = new CompoundNBT();
+            compoundNBT.putByteArray("faders", faders);
+            compoundNBT.putInt("fadeIn", fadeInTicks);
+            compoundNBT.putInt("fadeOut", fadeOutTicks);
+            return compoundNBT;
+        }
+
+        public StoredCue fromNBT(CompoundNBT nbt){
+            this.faders = nbt.getByteArray("faders");
+            this.fadeInTicks = nbt.getInt("fadeIn");
+            this.fadeOutTicks = nbt.getInt("fadeOut");
+            return this;
+        }
+
+
+        public byte[] getFaders() {
+            return faders;
+        }
+
+        public int getFadeInTicks() {
+            return fadeInTicks;
+        }
+
+        public int getFadeOutTicks() {
+            return fadeOutTicks;
+        }
+    }
+
 
     private int ticks = 0;
     private byte[] faders = new byte[12];
     private int currentStep = 0;
-    private List<byte[]> storedSteps = new ArrayList<>();
+    private List<StoredCue> storedSteps = new ArrayList<>();
+
+    private boolean isRunMode = false;
+    private int fadeInTicks = 0;
+    private int fadeOutTicks = 0;
 
     private byte grandMaster = -1;
 
@@ -25,7 +71,6 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
     public float convertByteToInt(byte val) {
         return val & 0xFF;
     }
-
 
     public byte[] getFaders() {
         return faders;
@@ -41,7 +86,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
             CompoundNBT compoundNBT = nbt.getCompound("storedSteps");
             int length = compoundNBT.getInt("length");
             for(int i = 0; i < length; i++){
-                storedSteps.add(compoundNBT.getByteArray("step_" + i));
+                storedSteps.add(new StoredCue().fromNBT(compoundNBT.getCompound("step_" + i)));
             }
         }
         if(nbt.contains("currentStep")){
@@ -50,6 +95,9 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         if(nbt.contains("grandMaster")){
             grandMaster = nbt.getByte("grandMaster");
             updateFaders();
+        }
+        if(nbt.contains("isRunMode")){
+            isRunMode = nbt.getBoolean("isRunMode");
         }
     }
 
@@ -62,12 +110,18 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         CompoundNBT compoundNBT = new CompoundNBT();
         compoundNBT.putInt("length", storedSteps.size());
         for(int i = 0; i < storedSteps.size(); i++){
-            compoundNBT.putByteArray("step_" + i, storedSteps.get(i));
+            compoundNBT.put("step_" + i, storedSteps.get(i).toNBT());
         }
         nbt.put("storedSteps", compoundNBT);
         nbt.putInt("currentStep", currentStep);
         nbt.putByte("grandMaster", grandMaster);
+        nbt.putBoolean("isRunMode", isRunMode);
         return super.getNBT(nbt);
+    }
+
+    public void setFaders(byte[] faders){
+        this.faders = faders;
+        updateFaders();
     }
 
     public void updateFaders(){
@@ -95,5 +149,32 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     public byte getGrandMaster() {
         return grandMaster;
+    }
+
+    public boolean isRunMode() {
+        return false;
+    }
+
+    public void clickButton(){
+        if(isRunMode()){
+            this.recallNextStep();
+        } else {
+            this.storeCurrentFaders();
+        }
+    }
+
+    private void recallNextStep(){
+        if(this.storedSteps.size() < this.currentStep){
+            return;
+        }
+        this.currentStep++;
+        byte[] faders = storedSteps.get(this.currentStep).getFaders();
+        setFaders(faders);
+    }
+
+    private void storeCurrentFaders(){
+        this.currentStep++;
+        StoredCue storedCue = new StoredCue(this.faders, this.fadeInTicks, this.fadeOutTicks);
+        storedSteps.add(storedCue);
     }
 }

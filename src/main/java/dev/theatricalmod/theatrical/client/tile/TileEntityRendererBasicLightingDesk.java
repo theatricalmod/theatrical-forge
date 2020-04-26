@@ -58,12 +58,29 @@ public class TileEntityRendererBasicLightingDesk extends TileEntityRenderer<Tile
             renderFader(matrixStackIn, startX + (faderNumber * 1.2), baseY, -((convertByteToInt(faders[i]) / 255) * 3), iVertexBuilder);
         }
         renderFader(matrixStackIn, 14.5, 5.4, -((convertByteToInt(tileEntityIn.getGrandMaster()) / 255) * 3), iVertexBuilder);
-        FontRenderer fontrenderer = this.renderDispatcher.getFontRenderer();
-        matrixStackIn.translate(10.7 /16D, 3 /16D, 9.3 / 16D);
-        matrixStackIn.scale(0.005F, -0.005F, 0.005F);
-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(90F));
-        fontrenderer.renderString("Step: " + tileEntityIn.getCurrentStep(), 0, 0, 0x000000, false,  matrixStackIn.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
+        renderStep(matrixStackIn, tileEntityIn, iRenderTypeBuffer, combinedLightIn);
+        renderCurrentMode(matrixStackIn, tileEntityIn, iRenderTypeBuffer, combinedLightIn);
         matrixStackIn.pop();
+    }
+
+    public void renderStep(MatrixStack stack, TileEntityBasicLightingControl tileEntityBasicLightingControl, IRenderTypeBuffer iRenderTypeBuffer, int combinedLightIn){
+        stack.push();
+        FontRenderer fontrenderer = this.renderDispatcher.getFontRenderer();
+        stack.translate(10.7 /16D, 3 /16D, 9.3 / 16D);
+        stack.scale(0.005F, -0.005F, 0.005F);
+        stack.rotate(Vector3f.XP.rotationDegrees(90F));
+        fontrenderer.renderString("Step: " + tileEntityBasicLightingControl.getCurrentStep(), 0, 0, 0x000000, false,  stack.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
+        stack.pop();
+    }
+
+    public void renderCurrentMode(MatrixStack stack, TileEntityBasicLightingControl tileEntityBasicLightingControl, IRenderTypeBuffer iRenderTypeBuffer, int combinedLightIn){
+        stack.push();
+        FontRenderer fontrenderer = this.renderDispatcher.getFontRenderer();
+        stack.translate(10.7 /16D, 3 /16D, 8.3 / 16D);
+        stack.scale(0.005F, -0.005F, 0.005F);
+        stack.rotate(Vector3f.XP.rotationDegrees(90F));
+        fontrenderer.renderString(tileEntityBasicLightingControl.isRunMode() ? "Run mode" : "Program mode", 0, 0, 0x000000, false,  stack.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
+        stack.pop();
     }
 
 
