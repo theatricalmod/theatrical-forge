@@ -1,14 +1,26 @@
 package dev.theatricalmod.theatrical.tiles.control;
 
+import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingConsole;
+import dev.theatricalmod.theatrical.client.gui.container.ContainerDimmerRack;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
-public class TileEntityBasicLightingControl extends TileEntityTheatricalBase implements ITickableTileEntity {
+import javax.annotation.Nullable;
+
+public class TileEntityBasicLightingControl extends TileEntityTheatricalBase implements ITickableTileEntity, INamedContainerProvider {
+
 
     class StoredCue {
         private byte[] faders;
@@ -140,6 +152,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
             ticks = 0;
             new Random().nextBytes(faders);
             updateFaders();
+            markDirty();
         }
     }
 
@@ -177,4 +190,16 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         StoredCue storedCue = new StoredCue(this.faders, this.fadeInTicks, this.fadeOutTicks);
         storedSteps.add(storedCue);
     }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new StringTextComponent("Basic Lighting Control");
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int i, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        return new ContainerBasicLightingConsole(i, world, getPos());
+    }
+
 }

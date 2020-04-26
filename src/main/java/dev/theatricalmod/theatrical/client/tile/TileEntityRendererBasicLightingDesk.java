@@ -76,8 +76,8 @@ public class TileEntityRendererBasicLightingDesk extends TileEntityRenderer<Tile
     public void renderCurrentMode(MatrixStack stack, TileEntityBasicLightingControl tileEntityBasicLightingControl, IRenderTypeBuffer iRenderTypeBuffer, int combinedLightIn){
         stack.push();
         FontRenderer fontrenderer = this.renderDispatcher.getFontRenderer();
-        stack.translate(10.7 /16D, 3 /16D, 8.3 / 16D);
-        stack.scale(0.005F, -0.005F, 0.005F);
+        stack.translate(10.4 /16D, 3 /16D, 8.3 / 16D);
+        stack.scale(0.003F, -0.003F, 0.003F);
         stack.rotate(Vector3f.XP.rotationDegrees(90F));
         fontrenderer.renderString(tileEntityBasicLightingControl.isRunMode() ? "Run mode" : "Program mode", 0, 0, 0x000000, false,  stack.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
         stack.pop();

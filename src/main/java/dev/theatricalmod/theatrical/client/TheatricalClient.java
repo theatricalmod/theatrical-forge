@@ -7,10 +7,7 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
-import dev.theatricalmod.theatrical.client.gui.screen.ScreenArtNetInterface;
-import dev.theatricalmod.theatrical.client.gui.screen.ScreenDimmerRack;
-import dev.theatricalmod.theatrical.client.gui.screen.ScreenGenericFixture;
-import dev.theatricalmod.theatrical.client.gui.screen.ScreenIntelligentFixture;
+import dev.theatricalmod.theatrical.client.gui.screen.*;
 import dev.theatricalmod.theatrical.client.tile.TileEntityRendererBasicLightingDesk;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import java.util.Arrays;
@@ -60,6 +57,7 @@ public class TheatricalClient extends TheatricalCommon {
         ScreenManager.registerFactory(TheatricalContainers.ARTNET_INTERFACE.get(), ScreenArtNetInterface::new);
         ScreenManager.registerFactory(TheatricalContainers.GENERIC_FIXTURE.get(), ScreenGenericFixture::new);
         ScreenManager.registerFactory(TheatricalContainers.DIMMER_RACK.get(), ScreenDimmerRack::new);
+        ScreenManager.registerFactory(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), ScreenBasicLightingConsole::new);
 //        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
     }
 
