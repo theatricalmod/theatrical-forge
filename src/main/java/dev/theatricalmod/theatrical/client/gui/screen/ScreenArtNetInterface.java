@@ -18,6 +18,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(TheatricalMod.MOD_ID, "textures/gui/blank.png");
 
     private TextFieldWidget dmxAddress;
+    private TextFieldWidget ipAddress;
 
     public ScreenArtNetInterface(ContainerArtNetInterface container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, title);
@@ -30,15 +31,39 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         if (p_keyPressed_1_ == 256) {
             this.minecraft.player.closeScreen();
         }
-        return this.dmxAddress.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxAddress.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+        if(this.dmxAddress.isFocused()){
+            return this.dmxAddress.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxAddress.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+        } else if(this.ipAddress.isFocused()){
+            return this.ipAddress.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.ipAddress.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+        }
+        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
+    @Override
+    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+        if(this.dmxAddress.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)){
+            this.setFocused(dmxAddress);
+            dmxAddress.setFocused2(true);
+            ipAddress.setFocused2(false);
+        } else if(this.ipAddress.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)) {
+            this.setFocused(ipAddress);
+            ipAddress.setFocused2(true);
+            dmxAddress.setFocused2(false);
+        } else{
+            this.setFocused(null);
+            ipAddress.setFocused2(false);
+            dmxAddress.setFocused2(false);
+        }
+        return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
+    }
 
     @Override
     public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_) {
-        String lvt_4_1_ = this.dmxAddress.getText();
+        String currentDMX = this.dmxAddress.getText();
+        String currentIP = this.ipAddress.getText();
         this.init(p_resize_1_, p_resize_2_, p_resize_3_);
-        this.dmxAddress.setText(lvt_4_1_);
+        this.dmxAddress.setText(currentDMX);
+        this.ipAddress.setText(currentIP);
     }
 
     @Override
@@ -46,7 +71,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         super.init();
         int lvt_1_1_ = (this.width - this.xSize) / 2;
         int lvt_2_1_ = (this.height - this.ySize) / 2;
-        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, "");
+        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 62, lvt_2_1_ + 25, 50, 10, "");
         this.dmxAddress.setText(Integer.toString(container.blockEntity.getUniverse()));
         this.dmxAddress.setCanLoseFocus(false);
         this.dmxAddress.changeFocus(true);
@@ -66,13 +91,21 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
             }
         });
         this.children.add(this.dmxAddress);
-        this.setFocusedDefault(this.dmxAddress);
+        this.ipAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, "");
+        this.ipAddress.setText(container.blockEntity.getIp());
+        this.ipAddress.setCanLoseFocus(false);
+        this.ipAddress.changeFocus(true);
+        this.ipAddress.setTextColor(-1);
+        this.ipAddress.setDisabledTextColour(-1);
+        this.ipAddress.setEnableBackgroundDrawing(true);
+        this.ipAddress.setMaxStringLength(35);
+        this.children.add(this.ipAddress);
         this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, "Save", p_onPress_1_ -> {
             int dmx = Integer.parseInt(this.dmxAddress.getText());
             if (dmx > 512 || dmx < 0) {
                 return;
             }
-            TheatricalNetworkHandler.MAIN.sendToServer(new UpdateArtNetInterfacePacket(container.blockEntity.getPos(), dmx));
+            TheatricalNetworkHandler.MAIN.sendToServer(new UpdateArtNetInterfacePacket(container.blockEntity.getPos(), dmx, ipAddress.getText()));
         }));
     }
 
@@ -91,6 +124,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         super.render(p_render_1_, p_render_2_, p_render_3_);
         RenderSystem.disableBlend();
         this.dmxAddress.render(p_render_1_, p_render_2_, p_render_3_);
+        this.ipAddress.render(p_render_1_, p_render_2_, p_render_3_);
         this.renderHoveredToolTip(p_render_1_, p_render_2_);
     }
 
@@ -99,5 +133,6 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         String name = container.blockEntity.getDisplayName().getString();
         font.drawString(name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
         font.drawString("DMX Universe", xSize / 2 - font.getStringWidth("DMX Universe") / 2, 16, 0x404040);
+        font.drawString("ArtNet IP", xSize / 2 - font.getStringWidth("ArtNet IP") / 2, 40, 0x404040);
     }
 }

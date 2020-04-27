@@ -38,11 +38,12 @@ public class TheatricalCommon {
         world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
     }
 
-    public void handleUpdateArtNetInterface(Context context, BlockPos pos, int universe) {
+    public void handleUpdateArtNetInterface(Context context, BlockPos pos, int universe, String ipAddress) {
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityArtNetInterface) {
             ((TileEntityArtNetInterface) tileEntity).setUniverse(universe);
-            context.getSender().connection.sendPacket(tileEntity.getUpdatePacket());
+            ((TileEntityArtNetInterface) tileEntity).setIp(ipAddress);
+            tileEntity.markDirty();
         }
     }
 
@@ -51,6 +52,7 @@ public class TheatricalCommon {
         if (tileEntity instanceof TileEntityGenericFixture) {
             ((TileEntityGenericFixture) tileEntity).setPan(pan);
             ((TileEntityGenericFixture) tileEntity).setTilt(tilt);
+            tileEntity.markDirty();
         }
     }
 

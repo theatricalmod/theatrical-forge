@@ -36,7 +36,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
     private final IDMXProvider idmxProvider;
 
     private int subnet, universe, ticks = 0;
-    private String ip = "";
+    private String ip = "127.0.0.1";
 
     public TileEntityArtNetInterface() {
         super(TheatricalTiles.ARTNET_INTERFACE.get());
@@ -141,6 +141,10 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
 
     public String getIp() {
         return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     @Override

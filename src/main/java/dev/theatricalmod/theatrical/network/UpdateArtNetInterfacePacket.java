@@ -8,9 +8,10 @@ import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 public class UpdateArtNetInterfacePacket {
 
-    public UpdateArtNetInterfacePacket(BlockPos blockPos, int universe) {
+    public UpdateArtNetInterfacePacket(BlockPos blockPos, int universe, String ip) {
         this.blockPos = blockPos;
         this.universe = universe;
+        this.ipAddress = ip;
     }
 
     public UpdateArtNetInterfacePacket(PacketBuffer buffer) {
@@ -19,10 +20,12 @@ public class UpdateArtNetInterfacePacket {
         int z = buffer.readInt();
         blockPos = new BlockPos(x, y, z);
         universe = buffer.readInt();
+        ipAddress = buffer.readString();
     }
 
     private BlockPos blockPos;
     private int universe;
+    private String ipAddress;
 
     public BlockPos getBlockPos() {
         return blockPos;
@@ -37,10 +40,11 @@ public class UpdateArtNetInterfacePacket {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(universe);
+        buf.writeString(ipAddress);
     }
 
     public void handle(Supplier<Context> context){
-        context.get().enqueueWork(() -> TheatricalMod.proxy.handleUpdateArtNetInterface(context.get(), blockPos, universe));
+        context.get().enqueueWork(() -> TheatricalMod.proxy.handleUpdateArtNetInterface(context.get(), blockPos, universe, ipAddress));
         context.get().setPacketHandled(true);
     }
 
