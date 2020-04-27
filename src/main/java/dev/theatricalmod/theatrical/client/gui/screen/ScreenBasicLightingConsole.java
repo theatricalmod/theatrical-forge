@@ -8,9 +8,11 @@ import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingC
 import dev.theatricalmod.theatrical.client.gui.widgets.ButtonFader;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.network.UpdateArtNetInterfacePacket;
+import dev.theatricalmod.theatrical.network.control.UpdateConsoleFaderPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -43,17 +45,17 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
                 baseY += (i / 6) * 61;
             }
             int faderNumber = i - ((i / 6) * 6);
-            this.addButton(new ButtonFader(lvt_1_1_ + 7 + (faderNumber * 20), baseY, faderNumber, Byte.toUnsignedInt(faders[i])));
+            this.addButton(new ButtonFader(lvt_1_1_ + 7 + (faderNumber * 20), baseY, i, Byte.toUnsignedInt(faders[i]), this::faderDrag));
         }
-        this.addButton(new ButtonFader(lvt_1_1_ + 161, lvt_2_1_ + 7, -1, Byte.toUnsignedInt(container.blockEntity.getGrandMaster())));
+        this.addButton(new ButtonFader(lvt_1_1_ + 161, lvt_2_1_ + 7, -1, Byte.toUnsignedInt(container.blockEntity.getGrandMaster()), this::faderDrag));
     }
 
     @Override
     public boolean mouseDragged(double p_mouseDragged_1_, double p_mouseDragged_3_, int p_mouseDragged_5_, double p_mouseDragged_6_, double p_mouseDragged_8_) {
         this.buttons.forEach(widget -> {
-            if(widget instanceof IDraggable) {
-                if (widget.isMouseOver(p_mouseDragged_1_, p_mouseDragged_3_)) {
-                    ((IDraggable) widget).onDrag(p_mouseDragged_1_, p_mouseDragged_3_);
+            if(widget instanceof ButtonFader) {
+                if (widget.isMouseOver(p_mouseDragged_1_, p_mouseDragged_3_) && ((ButtonFader) widget).isDragging()) {
+                    ((ButtonFader) widget).onDrag.onDrag(widget, p_mouseDragged_1_, p_mouseDragged_3_);
                 }
             }
         });
@@ -65,19 +67,21 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
         super.tick();
         this.buttons.stream().filter(widget -> widget instanceof ButtonFader).forEach(widget -> {
             if(((ButtonFader) widget).getChannel() != -1){
-//                ((ButtonFader) widget).setValue(Byte.toUnsignedInt(container.blockEntity.getFaders()[((ButtonFader) widget).getChannel()]));
+                ((ButtonFader) widget).setValue(Byte.toUnsignedInt(container.blockEntity.getFaders()[((ButtonFader) widget).getChannel()]));
             } else{
                 ((ButtonFader) widget).setValue(Byte.toUnsignedInt(container.blockEntity.getGrandMaster()));
             }
         });
     }
 
-    public void faderClick(Button button){
-
+    public void faderDrag(Widget widget, double mouseX, double mouseY){
+        if(!(widget instanceof ButtonFader)){
+            return;
+        }
+        ButtonFader fader = (ButtonFader) widget;
+        int newVal = fader.calculateNewValue(mouseY);
+        TheatricalNetworkHandler.MAIN.sendToServer(new UpdateConsoleFaderPacket(container.blockEntity.getPos(), fader.getChannel(), newVal));
     }
-
-
-
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {

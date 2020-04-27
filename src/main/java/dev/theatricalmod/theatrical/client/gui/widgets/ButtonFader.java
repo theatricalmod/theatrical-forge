@@ -8,7 +8,7 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 
-public class ButtonFader extends Widget implements IDraggable {
+public class ButtonFader extends Widget{
 
     private static final ResourceLocation background = new ResourceLocation(TheatricalMod.MOD_ID,
         "textures/gui/lighting_console.png");
@@ -18,10 +18,13 @@ public class ButtonFader extends Widget implements IDraggable {
 
     private boolean dragging = false;
 
-    public ButtonFader(int x, int y, int channel, int value) {
+    public IDraggable onDrag;
+
+    public ButtonFader(int x, int y, int channel, int value, IDraggable draggable) {
         super(x, y, 10, 51, "");
         this.channel = channel;
         this.value = value;
+        this.onDrag = draggable;
     }
 
     @Override
@@ -54,10 +57,11 @@ public class ButtonFader extends Widget implements IDraggable {
         this.dragging = false;
     }
 
-    @Override
-    public void onDrag(double mouseX, double mouseY) {
-        if(this.dragging) {
-            this.value = (int) (((this.height - (mouseY - this.y)) / this.height) * 255f);
-        }
+    public int calculateNewValue(double mouseY){
+        return (int) (((this.height - (mouseY - this.y)) / this.height) * 255f);
+    }
+
+    public boolean isDragging(){
+        return this.dragging;
     }
 }

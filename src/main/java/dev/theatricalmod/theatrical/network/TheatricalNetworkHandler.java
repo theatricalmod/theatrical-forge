@@ -1,6 +1,7 @@
 package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.network.control.UpdateConsoleFaderPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -18,6 +19,7 @@ public class TheatricalNetworkHandler {
         MAIN.registerMessage(4, UpdateArtNetInterfacePacket.class, UpdateArtNetInterfacePacket::toBytes, UpdateArtNetInterfacePacket::new, UpdateArtNetInterfacePacket::handle);
         MAIN.registerMessage(5, UpdateFixturePacket.class, UpdateFixturePacket::toBytes, UpdateFixturePacket::new, UpdateFixturePacket::handle);
         MAIN.registerMessage(6, ChangeDimmerPatchPacket.class, ChangeDimmerPatchPacket::toBytes, ChangeDimmerPatchPacket::new, ChangeDimmerPatchPacket::handle);
+        MAIN.registerMessage(7, UpdateConsoleFaderPacket.class, UpdateConsoleFaderPacket::toBytes, UpdateConsoleFaderPacket::new, UpdateConsoleFaderPacket::handle);
     }
 
 }

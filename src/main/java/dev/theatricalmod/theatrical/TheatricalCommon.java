@@ -5,6 +5,7 @@ import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.TileEntityArtNetInterface;
+import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -42,8 +43,7 @@ public class TheatricalCommon {
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityArtNetInterface) {
             ((TileEntityArtNetInterface) tileEntity).setUniverse(universe);
-            ((TileEntityArtNetInterface) tileEntity).setIp(ipAddress);
-            tileEntity.markDirty();
+            context.getSender().connection.sendPacket(tileEntity.getUpdatePacket());
         }
     }
 
@@ -53,6 +53,15 @@ public class TheatricalCommon {
             ((TileEntityGenericFixture) tileEntity).setPan(pan);
             ((TileEntityGenericFixture) tileEntity).setTilt(tilt);
             tileEntity.markDirty();
+        }
+    }
+
+    public void handleConsoleFaderUpdate(Context context, BlockPos pos, int fader, int value) {
+        World world = context.getSender().world;
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityBasicLightingControl) {
+            ((TileEntityBasicLightingControl) tileEntity).setFader(fader, value);
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
         }
     }
 

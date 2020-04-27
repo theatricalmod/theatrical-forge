@@ -1,7 +1,16 @@
 package dev.theatricalmod.theatrical.tiles.control;
 
+import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.api.CableType;
+import dev.theatricalmod.theatrical.api.IAcceptsCable;
+import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
+import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
+import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
+import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingConsole;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerDimmerRack;
+import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
+import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
 import java.util.ArrayList;
@@ -14,13 +23,28 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityBasicLightingControl extends TileEntityTheatricalBase implements ITickableTileEntity, INamedContainerProvider {
+public class TileEntityBasicLightingControl extends TileEntityTheatricalBase implements ITickableTileEntity, INamedContainerProvider, IAcceptsCable {
 
+
+    @Override
+    public CableType[] getAcceptedCables(Direction side) {
+        return new CableType[]{
+                CableType.DMX
+        };
+    }
 
     class StoredCue {
         private byte[] faders;
@@ -67,6 +91,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     private int ticks = 0;
     private byte[] faders = new byte[12];
+    private byte[] actualDMX = new byte[12];
     private int currentStep = 0;
     private List<StoredCue> storedSteps = new ArrayList<>();
 
@@ -76,8 +101,11 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     private byte grandMaster = -1;
 
+    private IDMXProvider idmxProvider;
+
     public TileEntityBasicLightingControl() {
         super(TheatricalTiles.BASIC_LIGHTING_DESK.get());
+        this.idmxProvider = new DMXProvider(new DMXUniverse());
     }
 
     public float convertByteToInt(byte val) {
@@ -106,7 +134,6 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         }
         if(nbt.contains("grandMaster")){
             grandMaster = nbt.getByte("grandMaster");
-            updateFaders();
         }
         if(nbt.contains("isRunMode")){
             isRunMode = nbt.getBoolean("isRunMode");
@@ -133,12 +160,13 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     public void setFaders(byte[] faders){
         this.faders = faders;
-        updateFaders();
     }
 
-    public void updateFaders(){
-        for(int i = 0; i < faders.length; i++){
-            faders[i] = (byte) (convertByteToInt(faders[i]) * (convertByteToInt(grandMaster) / 255F));
+    public void setFader(int fader, int value){
+        if(fader != -1) {
+            this.faders[fader] = (byte) value;
+        } else {
+            this.grandMaster = (byte) value;
         }
     }
 
@@ -148,10 +176,16 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
             return;
         }
         ticks++;
-        if(ticks >= 80){
+        if(ticks >= 1){
             ticks = 0;
-            new Random().nextBytes(faders);
-            updateFaders();
+            byte[] dmx = new byte[512];
+            for(int i = 0; i < faders.length; i++){
+                dmx[i] = (byte) (convertByteToInt(faders[i]) * (convertByteToInt(grandMaster) / 255F));
+            }
+            this.idmxProvider.getUniverse(world).setDmxChannels(dmx);
+            Dimension dimension = world.dimension;
+            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(dimension::getType), new SendDMXProviderPacket(pos, dmx));
+            sendDMXSignal();
             markDirty();
         }
     }
@@ -200,6 +234,35 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
     @Override
     public Container createMenu(int i, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
         return new ContainerBasicLightingConsole(i, world, getPos());
+    }
+
+    @Override
+    public void remove() {
+        if (hasWorld()) {
+            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+        }
+        super.remove();
+    }
+
+    @Override
+    public void setWorldAndPos(World p_226984_1_, BlockPos p_226984_2_) {
+        super.setWorldAndPos(p_226984_1_, p_226984_2_);
+        if (hasWorld()) {
+            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+        }
+    }
+
+    public void sendDMXSignal() {
+        idmxProvider.updateDevices(world, pos);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nonnull Direction direction) {
+        if (cap == DMXProvider.CAP) {
+            return DMXProvider.CAP.orEmpty(cap, LazyOptional.of(() -> idmxProvider));
+        }
+        return super.getCapability(cap, direction);
     }
 
 }

@@ -17,7 +17,6 @@ public class TheatricalRenderType extends RenderType {
             .layer(PROJECTION_LAYERING)
             .texture(NO_TEXTURE)
             .transparency(TRANSLUCENT_TRANSPARENCY)
-            .depthTest(DEPTH_LEQUAL)
             .cull(CULL_ENABLED)
             .lightmap(LIGHTMAP_DISABLED)
             .writeMask(COLOR_DEPTH_WRITE)

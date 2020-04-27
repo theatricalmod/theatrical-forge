@@ -26,11 +26,16 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
 
 public class TheatricalClient extends TheatricalCommon {
 
@@ -41,7 +46,7 @@ public class TheatricalClient extends TheatricalCommon {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::textureStitch);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::modelload);
-//        MinecraftForge.EVENT_BUS.addListener(this::highlightDraw);
+        MinecraftForge.EVENT_BUS.addListener(this::worldRenderLastEvent);
     }
 
     public void setup(FMLClientSetupEvent event){
@@ -59,6 +64,11 @@ public class TheatricalClient extends TheatricalCommon {
         ScreenManager.registerFactory(TheatricalContainers.DIMMER_RACK.get(), ScreenDimmerRack::new);
         ScreenManager.registerFactory(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), ScreenBasicLightingConsole::new);
 //        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
+    }
+
+    @SubscribeEvent
+    public void worldRenderLastEvent(RenderWorldLastEvent event){
+        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(MAIN_BEAM);
     }
 
     public void modelload(ModelRegistryEvent event){
