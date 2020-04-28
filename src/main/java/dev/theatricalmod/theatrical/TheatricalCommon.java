@@ -40,19 +40,22 @@ public class TheatricalCommon {
     }
 
     public void handleUpdateArtNetInterface(Context context, BlockPos pos, int universe, String ipAddress) {
+        World world = context.getSender().world;
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityArtNetInterface) {
             ((TileEntityArtNetInterface) tileEntity).setUniverse(universe);
-            context.getSender().connection.sendPacket(tileEntity.getUpdatePacket());
+            ((TileEntityArtNetInterface) tileEntity).setIp(ipAddress);
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
         }
     }
 
     public void handleUpdateFixture(Context context, BlockPos pos, int pan, int tilt) {
+        World world = context.getSender().world;
         TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityGenericFixture) {
             ((TileEntityGenericFixture) tileEntity).setPan(pan);
             ((TileEntityGenericFixture) tileEntity).setTilt(tilt);
-            tileEntity.markDirty();
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
         }
     }
 
