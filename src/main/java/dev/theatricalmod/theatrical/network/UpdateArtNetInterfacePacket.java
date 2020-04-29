@@ -20,7 +20,7 @@ public class UpdateArtNetInterfacePacket {
         int z = buffer.readInt();
         blockPos = new BlockPos(x, y, z);
         universe = buffer.readInt();
-        ipAddress = buffer.readString();
+        ipAddress = buffer.readString(32767);
     }
 
     private BlockPos blockPos;
