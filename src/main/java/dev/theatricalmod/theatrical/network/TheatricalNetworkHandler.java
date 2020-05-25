@@ -1,6 +1,9 @@
 package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.network.control.ConsoleGoPacket;
+import dev.theatricalmod.theatrical.network.control.MoveStepPacket;
+import dev.theatricalmod.theatrical.network.control.ToggleModePacket;
 import dev.theatricalmod.theatrical.network.control.UpdateConsoleFaderPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -20,6 +23,8 @@ public class TheatricalNetworkHandler {
         MAIN.registerMessage(5, UpdateFixturePacket.class, UpdateFixturePacket::toBytes, UpdateFixturePacket::new, UpdateFixturePacket::handle);
         MAIN.registerMessage(6, ChangeDimmerPatchPacket.class, ChangeDimmerPatchPacket::toBytes, ChangeDimmerPatchPacket::new, ChangeDimmerPatchPacket::handle);
         MAIN.registerMessage(7, UpdateConsoleFaderPacket.class, UpdateConsoleFaderPacket::toBytes, UpdateConsoleFaderPacket::new, UpdateConsoleFaderPacket::handle);
+        MAIN.registerMessage(8, ConsoleGoPacket.class, ConsoleGoPacket::toBytes, ConsoleGoPacket::new, ConsoleGoPacket::handle);
+        MAIN.registerMessage(9, MoveStepPacket.class, MoveStepPacket::toBytes, MoveStepPacket::new, MoveStepPacket::handle);
+        MAIN.registerMessage(10, ToggleModePacket.class, ToggleModePacket::toBytes, ToggleModePacket::new, ToggleModePacket::handle);
     }
-
 }

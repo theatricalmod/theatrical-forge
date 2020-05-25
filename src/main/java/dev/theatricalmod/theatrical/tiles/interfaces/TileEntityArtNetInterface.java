@@ -1,4 +1,4 @@
-package dev.theatricalmod.theatrical.tiles;
+package dev.theatricalmod.theatrical.tiles.interfaces;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
@@ -12,6 +12,8 @@ import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

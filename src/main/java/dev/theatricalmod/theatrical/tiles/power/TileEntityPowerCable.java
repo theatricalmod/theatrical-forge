@@ -170,19 +170,8 @@ public class TileEntityPowerCable extends TileEntity implements ITheatricalPower
             BlockPos newPos = pos.offset(face);
             TileEntity tile = world.getTileEntity(newPos);
             if (tile == null) {
-                if (face != Direction.UP && face != Direction.DOWN) {
-                    tile = world.getTileEntity(newPos.offset(Direction.UP));
-                    if (tile == null) {
-                        tile = world.getTileEntity(newPos.offset(Direction.DOWN));
-                        if (tile == null) {
-                            continue;
-                        }
-                    }
-                }
-            }
-            if (tile == null) {
                 continue;
-            } else if (tile instanceof TileEntityPowerCable) {
+            }else if (tile instanceof TileEntityPowerCable) {
                 TileEntityPowerCable cable = (TileEntityPowerCable) tile;
                 if (power > cable.power && cable.canReceiveFromFace(face.getOpposite())) {
                     acceptors.add((ITheatricalPowerStorage) tile);

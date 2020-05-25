@@ -111,6 +111,10 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         }
     }
 
+    public int getExtraTilt(){
+        return 0;
+    }
+
     public final Vec3d getVectorForRotation(float pitch, float yaw) {
         float f = pitch * ((float) Math.PI / 180F);
         float f1 = -yaw * ((float) Math.PI / 180F);
@@ -129,14 +133,14 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         Direction direction = blockState.get(
             HorizontalBlock.HORIZONTAL_FACING);
         float horizontalAngle = direction.getHorizontalAngle();
-        float lookingAngle = (horizontalAngle + 180) - getPan();
+        float lookingAngle = (horizontalAngle + (isUpsideDown() ? 180 : 0)) - getPan();
         lookingAngle = lookingAngle % 360;
         if (isUpsideDown()) {
             lookingAngle = 360 - lookingAngle;
             lookingAngle = lookingAngle % 360;
         }
 
-        float tilt = getTilt() + 90;
+        float tilt = getTilt() + getExtraTilt();
         if (!isUpsideDown()) {
             tilt = -tilt;
         }

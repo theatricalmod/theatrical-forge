@@ -3,6 +3,7 @@ package dev.theatricalmod.theatrical.tiles.lights;
 import static dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture.FLIPPED;
 
 import dev.theatricalmod.theatrical.api.ChannelType;
+import dev.theatricalmod.theatrical.api.capabilities.TheatricalEnergyStorage;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.api.fixtures.IRGB;
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,11 +29,11 @@ import net.minecraftforge.energy.EnergyStorage;
 
 public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, INamedContainerProvider {
 
-    private EnergyStorage energyStorage;
+    private TheatricalEnergyStorage energyStorage;
 
     public TileEntityIntelligentFixture() {
         super(TheatricalTiles.MOVING_LIGHT.get());
-        this.energyStorage = new EnergyStorage(2000);
+        this.energyStorage = new TheatricalEnergyStorage(2000, 2000);
     }
 
     @Override
@@ -43,8 +45,25 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     @Override
+    public CompoundNBT getNBT(@Nullable CompoundNBT compoundNBT) {
+        if(compoundNBT == null){
+            compoundNBT = new CompoundNBT();
+        }
+        compoundNBT.put("energy", energyStorage.serializeNBT());
+        return super.getNBT(compoundNBT);
+    }
+
+    @Override
+    public void readNBT(CompoundNBT compoundNBT) {
+        super.readNBT(compoundNBT);
+        if(compoundNBT.contains("energy")){
+            this.energyStorage.deserializeNBT(compoundNBT.getCompound("energy"));
+        }
+    }
+
+    @Override
     public float getMaxLightDistance() {
-        return 10;
+        return 50;
     }
 
     @Override
@@ -125,11 +144,10 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public int getFocus() {
-        return 6;
-//        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
-//            return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.FOCUS))).orElse((byte)prevFocus);
-//        }
-//        return prevFocus;
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
+            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.FOCUS))).orElse((byte) prevTilt)) * 50) / 255F);
+        }
+        return prevFocus;
     }
 
     @Override
@@ -146,7 +164,12 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     public int convertByteToInt(byte val) {
-        return val & 0xFF;
+        return Byte.toUnsignedInt(val);
+    }
+
+    @Override
+    public int getExtraTilt() {
+        return isUpsideDown() ? 90 : 90;
     }
 
     @Override

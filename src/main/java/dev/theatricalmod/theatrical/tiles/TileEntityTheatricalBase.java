@@ -16,6 +16,9 @@ public class TileEntityTheatricalBase extends TileEntity {
     public void readNBT(CompoundNBT nbt){}
 
     public CompoundNBT getNBT(CompoundNBT nbt){
+        if(nbt == null){
+            return new CompoundNBT();
+        }
         return nbt;
     }
 

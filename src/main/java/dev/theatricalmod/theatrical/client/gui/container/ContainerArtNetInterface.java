@@ -1,6 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.container;
 
-import dev.theatricalmod.theatrical.tiles.TileEntityArtNetInterface;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.math.BlockPos;

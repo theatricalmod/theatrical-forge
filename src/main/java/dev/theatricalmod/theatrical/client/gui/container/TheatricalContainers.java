@@ -20,4 +20,6 @@ public class TheatricalContainers {
     public static final RegistryObject<ContainerType<ContainerDimmerRack>> DIMMER_RACK = CONTAINERS.register("dimmer_rack_gui", () -> IForgeContainerType.create((windowId, inv, data) -> new ContainerDimmerRack(windowId, TheatricalMod.proxy.getWorld(), data.readBlockPos())));
 
     public static final RegistryObject<ContainerType<ContainerBasicLightingConsole>> BASIC_LIGHTING_CONSOLE = CONTAINERS.register("basic_lighting_console", () -> IForgeContainerType.create((windowId, inv, data) -> new ContainerBasicLightingConsole(windowId, TheatricalMod.proxy.getWorld(), data.readBlockPos())));
+
+    public static final RegistryObject<ContainerType<ContainerDMXRedstoneInterface>> DMX_REDSTONE_INTERFACE = CONTAINERS.register("dmx_redstone_interface", () -> IForgeContainerType.create((windowId, inv, data) -> new ContainerDMXRedstoneInterface(windowId, TheatricalMod.proxy.getWorld(), data.readBlockPos())));
 }

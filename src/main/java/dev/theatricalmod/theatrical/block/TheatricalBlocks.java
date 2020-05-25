@@ -5,6 +5,7 @@ import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.block.cables.BlockCable;
 import dev.theatricalmod.theatrical.block.cables.BlockPowerCable;
 import dev.theatricalmod.theatrical.block.control.BlockBasicLightingControl;
+import dev.theatricalmod.theatrical.block.interfaces.BlockDMXRedstoneInterface;
 import dev.theatricalmod.theatrical.block.power.BlockDimmerRack;
 import dev.theatricalmod.theatrical.block.interfaces.BlockArtNetInterface;
 import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
@@ -42,4 +43,5 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> DIMMER_RACK = BLOCKS.register("dimmer_rack", BlockDimmerRack::new);
     public static final RegistryObject<Block> SOCAPEX_DISTRIBUTION = BLOCKS.register("socapex_distribution", BlockSocapexDistribution::new);
     public static final RegistryObject<Block> BASIC_LIGHTING_DESK = BLOCKS.register("basic_lighting_desk", BlockBasicLightingControl::new);
+    public static final RegistryObject<Block> DMX_REDSTONE_INTERFACE = BLOCKS.register("redstone_interface", BlockDMXRedstoneInterface::new);
 }

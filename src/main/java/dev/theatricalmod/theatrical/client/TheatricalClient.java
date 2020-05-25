@@ -63,6 +63,7 @@ public class TheatricalClient extends TheatricalCommon {
         ScreenManager.registerFactory(TheatricalContainers.GENERIC_FIXTURE.get(), ScreenGenericFixture::new);
         ScreenManager.registerFactory(TheatricalContainers.DIMMER_RACK.get(), ScreenDimmerRack::new);
         ScreenManager.registerFactory(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), ScreenBasicLightingConsole::new);
+        ScreenManager.registerFactory(TheatricalContainers.DMX_REDSTONE_INTERFACE.get(), ScreenDMXRedstoneInterface::new);
 //        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
     }
 

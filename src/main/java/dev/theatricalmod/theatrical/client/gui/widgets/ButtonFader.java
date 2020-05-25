@@ -33,8 +33,8 @@ public class ButtonFader extends Widget{
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(background);
         RenderSystem.disableDepthTest();
-        blit(x, y, width, height, 176, 0, 10, 51, 256, 256);
-        blit(x + 1, (y + (height - 7)) - (int) ((this.value / 255f) * 50), 8, 11, 186, 0, 8, 11, 256, 256);
+        blit(x, y, width, height, 0, 126, 10, 51, 256, 256);
+        blit(x + 1, (y + (height - 7)) - (int) ((this.value / 255f) * 50), 8, 11, 10, 126, 8, 11, 256, 256);
         RenderSystem.enableDepthTest();
     }
 

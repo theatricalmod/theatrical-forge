@@ -8,6 +8,9 @@ import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingC
 import dev.theatricalmod.theatrical.client.gui.widgets.ButtonFader;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.network.UpdateArtNetInterfacePacket;
+import dev.theatricalmod.theatrical.network.control.ConsoleGoPacket;
+import dev.theatricalmod.theatrical.network.control.MoveStepPacket;
+import dev.theatricalmod.theatrical.network.control.ToggleModePacket;
 import dev.theatricalmod.theatrical.network.control.UpdateConsoleFaderPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -22,9 +25,11 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
 
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(TheatricalMod.MOD_ID, "textures/gui/lighting_console.png");
 
+    private TextFieldWidget fadeInTime, fadeOutTime;
+
     public ScreenBasicLightingConsole(ContainerBasicLightingConsole container, PlayerInventory inventory, ITextComponent title) {
         super(container, inventory, title);
-        this.xSize = 176;
+        this.xSize = 244;
         this.ySize = 126;
     }
 
@@ -47,7 +52,44 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
             int faderNumber = i - ((i / 6) * 6);
             this.addButton(new ButtonFader(lvt_1_1_ + 7 + (faderNumber * 20), baseY, i, Byte.toUnsignedInt(faders[i]), this::faderDrag));
         }
-        this.addButton(new ButtonFader(lvt_1_1_ + 161, lvt_2_1_ + 7, -1, Byte.toUnsignedInt(container.blockEntity.getGrandMaster()), this::faderDrag));
+        this.addButton(new ButtonFader(lvt_1_1_ + 184, lvt_2_1_ + 7, -1, Byte.toUnsignedInt(container.blockEntity.getGrandMaster()), this::faderDrag));
+        this.addButton(new Button(lvt_1_1_ + 130, lvt_2_1_ + 20,15, 20, "<-", (button) -> {
+            TheatricalNetworkHandler.MAIN.sendToServer(new MoveStepPacket(container.blockEntity.getPos(), false));
+        }));
+        this.addButton(new Button(lvt_1_1_ + 145, lvt_2_1_ + 20,15, 20, "->", (button) -> {
+            TheatricalNetworkHandler.MAIN.sendToServer(new MoveStepPacket(container.blockEntity.getPos(), true));
+        }));
+        this.addButton(new Button(lvt_1_1_ + 130, lvt_2_1_ + 100,20, 20, "Go", (button) -> {
+            TheatricalNetworkHandler.MAIN.sendToServer(new ConsoleGoPacket(container.blockEntity.getPos(), Integer.parseInt(fadeInTime.getText()), Integer.parseInt(fadeOutTime.getText())));
+        }));
+        this.addButton(new Button(lvt_1_1_ + 155, lvt_2_1_ + 100,30, 20, "Mode", (button) -> {
+            TheatricalNetworkHandler.MAIN.sendToServer(new ToggleModePacket(container.blockEntity.getPos()));
+        }));
+
+        this.fadeInTime = new TextFieldWidget(this.font, lvt_1_1_ + 170, lvt_2_1_ + 60, 20, 10, "0");
+        this.fadeOutTime = new TextFieldWidget(this.font, lvt_1_1_ + 170, lvt_2_1_ + 75, 20, 10, "0");
+        setupTextField(fadeInTime, Integer.toString(container.blockEntity.getFadeInTicks()));
+        setupTextField(fadeOutTime, Integer.toString(container.blockEntity.getFadeOutTicks()));
+    }
+
+    public void setupTextField(TextFieldWidget widget, String value){
+        widget.setText(value);
+        widget.setCanLoseFocus(false);
+        widget.setTextColor(-1);
+        widget.setDisabledTextColour(-1);
+        widget.setEnableBackgroundDrawing(true);
+        widget.setMaxStringLength(11);
+        widget.setValidator(s -> {
+            if (s.length() == 0) {
+                return true;
+            }
+            try {
+                Integer.parseInt(s);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -97,6 +139,8 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
         this.renderBackground();
         super.render(p_render_1_, p_render_2_, p_render_3_);
         RenderSystem.disableBlend();
+        this.fadeInTime.render(p_render_1_, p_render_2_, p_render_3_);
+        this.fadeOutTime.render(p_render_1_, p_render_2_, p_render_3_);
         this.renderHoveredToolTip(p_render_1_, p_render_2_);
     }
 
@@ -106,7 +150,32 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
 //        font.drawString(name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
         RenderSystem.pushMatrix();
         RenderSystem.scalef(0.8f, 0.8f, 0.8f);
-        font.drawString("Step " + container.blockEntity.getCurrentStep(), 165, 5, 0x404040);
+        font.drawString("Step " + container.blockEntity.getCurrentStep(), 165, 15, 0x404040);
+        font.drawString(container.blockEntity.isRunMode() ? "Run Mode"  : "Program Mode", 165, 5, 0x404040);
+        font.drawString("Cues", 265, 5, 0x404040);
+        for(int key : container.blockEntity.getStoredSteps().keySet()){
+            font.drawString("Cue - " + key, 260, 15 + (10 * key), 0x404040);
+        }
+        font.drawString("Fade In", 165, 77, 0x404040);
+        font.drawString("Fade Out", 165, 95, 0x404040);
         RenderSystem.popMatrix();
+    }
+
+    @Override
+    public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
+        if(this.fadeOutTime.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)){
+            this.setFocused(fadeOutTime);
+            fadeOutTime.setFocused2(true);
+            fadeInTime.setFocused2(false);
+        } else if(this.fadeInTime.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)) {
+            this.setFocused(fadeInTime);
+            fadeInTime.setFocused2(true);
+            fadeOutTime.setFocused2(false);
+        } else{
+            this.setFocused(null);
+            fadeInTime.setFocused2(false);
+            fadeOutTime.setFocused2(false);
+        }
+        return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
     }
 }

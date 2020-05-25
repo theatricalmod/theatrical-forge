@@ -1,6 +1,5 @@
 package dev.theatricalmod.theatrical.tiles.control;
 
-import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
@@ -8,14 +7,13 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingConsole;
-import dev.theatricalmod.theatrical.client.gui.container.ContainerDimmerRack;
 import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -74,7 +72,6 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
             return this;
         }
 
-
         public byte[] getFaders() {
             return faders;
         }
@@ -88,16 +85,25 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         }
     }
 
+//    speed = difference between two states / ticks
+//    distance = difference between two states
+//    time = ticks
 
     private int ticks = 0;
     private byte[] faders = new byte[12];
     private byte[] actualDMX = new byte[12];
     private int currentStep = 0;
-    private List<StoredCue> storedSteps = new ArrayList<>();
+    private HashMap<Integer, StoredCue> storedSteps = new HashMap<>();
+    private StoredCue activeCue;
 
     private boolean isRunMode = false;
     private int fadeInTicks = 0;
     private int fadeOutTicks = 0;
+
+    private int fadeInTicksRemaining = 0;
+    private int fadeOutTicksRemaining = 0;
+    private byte[] perTickOut, perTickIn;
+    private boolean isFadingOut = false;
 
     private byte grandMaster = -1;
 
@@ -109,11 +115,11 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
     }
 
     public float convertByteToInt(byte val) {
-        return val & 0xFF;
+        return Byte.toUnsignedInt(val);
     }
 
     public byte[] getFaders() {
-        return faders;
+        return this.faders;
     }
 
     @Override
@@ -122,11 +128,11 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
             faders = nbt.getByteArray("faders");
         }
         if(nbt.contains("storedSteps")){
-            storedSteps = new ArrayList<>();
+            storedSteps = new HashMap<>();
             CompoundNBT compoundNBT = nbt.getCompound("storedSteps");
-            int length = compoundNBT.getInt("length");
-            for(int i = 0; i < length; i++){
-                storedSteps.add(new StoredCue().fromNBT(compoundNBT.getCompound("step_" + i)));
+            for(String key : compoundNBT.keySet()){
+                int stepNumber = Integer.parseInt(key);
+                storedSteps.put(stepNumber, new StoredCue().fromNBT(compoundNBT.getCompound(key)));
             }
         }
         if(nbt.contains("currentStep")){
@@ -138,6 +144,12 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         if(nbt.contains("isRunMode")){
             isRunMode = nbt.getBoolean("isRunMode");
         }
+        if(nbt.contains("fadeInTicks")){
+            fadeInTicks = nbt.getInt("fadeInTicks");
+        }
+        if(nbt.contains("fadeOutTicks")){
+            fadeOutTicks = nbt.getInt("fadeOutTicks");
+        }
     }
 
     @Override
@@ -147,19 +159,20 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         }
         nbt.putByteArray("faders", faders);
         CompoundNBT compoundNBT = new CompoundNBT();
-        compoundNBT.putInt("length", storedSteps.size());
-        for(int i = 0; i < storedSteps.size(); i++){
-            compoundNBT.put("step_" + i, storedSteps.get(i).toNBT());
+        for(int key : storedSteps.keySet()){
+            compoundNBT.put(Integer.toString(key), storedSteps.get(key).toNBT());
         }
         nbt.put("storedSteps", compoundNBT);
         nbt.putInt("currentStep", currentStep);
         nbt.putByte("grandMaster", grandMaster);
         nbt.putBoolean("isRunMode", isRunMode);
+        nbt.putInt("fadeInTicks", fadeInTicks);
+        nbt.putInt("fadeOutTicks", fadeOutTicks);
         return super.getNBT(nbt);
     }
 
     public void setFaders(byte[] faders){
-        this.faders = faders;
+        this.faders = Arrays.copyOf(faders, faders.length);
     }
 
     public void setFader(int fader, int value){
@@ -177,6 +190,19 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         }
         ticks++;
         if(ticks >= 1){
+            if(isFadingOut){
+                if(fadeOutTicksRemaining > 0) {
+                    fadeOutTicksRemaining--;
+                    this.doFadeTickOut();
+                } else {
+                    isFadingOut = false;
+                }
+            } else {
+                if(fadeInTicksRemaining > 0){
+                    fadeInTicksRemaining--;
+                    this.doFadeTickIn();
+                }
+            }
             ticks = 0;
             byte[] dmx = new byte[512];
             for(int i = 0; i < faders.length; i++){
@@ -199,7 +225,11 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
     }
 
     public boolean isRunMode() {
-        return false;
+        return isRunMode;
+    }
+
+    public void toggleMode(){
+        this.isRunMode = !this.isRunMode;
     }
 
     public void clickButton(){
@@ -210,19 +240,104 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         }
     }
 
+    public void moveForward(){
+        if(isRunMode){
+            this.currentStep = this.getNextStep();
+        } else {
+            this.currentStep++;
+            if(this.storedSteps.containsKey(this.currentStep)){
+                byte[] faders = storedSteps.get(this.currentStep).getFaders();
+                setFaders(faders);
+            }
+        }
+    }
+
+    public void moveBack(){
+        if(this.isRunMode){
+            this.currentStep = this.getPreviousStep();
+        } else {
+            if(this.currentStep - 1 < 0){
+                return;
+            }
+            this.currentStep--;
+            if(this.storedSteps.containsKey(this.currentStep)){
+                byte[] faders = storedSteps.get(this.currentStep).getFaders();
+                setFaders(faders);
+            }
+        }
+    }
+
+    public HashMap<Integer, StoredCue> getStoredSteps() {
+        return storedSteps;
+    }
+
+    private void doFadeTickIn(){
+        for(int i = 0; i < faders.length; i++) {
+            this.faders[i] = (byte)(faders[i] - perTickIn[i]);
+        }
+    }
+    private void doFadeTickOut(){
+        for(int i = 0; i < faders.length; i++) {
+            this.faders[i] = (byte)(faders[i] - perTickOut[i]);
+        }
+    }
+
     private void recallNextStep(){
         if(this.storedSteps.size() < this.currentStep){
             return;
         }
-        this.currentStep++;
-        byte[] faders = storedSteps.get(this.currentStep).getFaders();
-        setFaders(faders);
+        StoredCue previousCue = activeCue;
+        if(!this.storedSteps.containsKey(this.currentStep)){
+            return;
+        }
+        StoredCue storedCue = storedSteps.get(this.currentStep);
+        if(previousCue != null) {
+            if (previousCue.fadeOutTicks > 0) {
+                this.isFadingOut = true;
+                this.fadeOutTicksRemaining = previousCue.getFadeOutTicks();
+                this.perTickOut = new byte[12];
+                for (int i = 0; i < faders.length; i++) {
+                    this.perTickOut[i] = (byte)((convertByteToInt(faders[i])) / fadeOutTicksRemaining);
+                }
+            }
+        }
+        if(storedCue.fadeInTicks > 0){
+            this.fadeInTicksRemaining = storedCue.getFadeInTicks();
+            this.perTickIn = new byte[12];
+            for(int i = 0; i < faders.length; i++) {
+                if(isFadingOut){
+                    this.perTickIn[i] = (byte)(-convertByteToInt(storedCue.getFaders()[i]) / fadeInTicksRemaining);
+                } else {
+                    this.perTickIn[i] = (byte)((convertByteToInt(faders[i]) - convertByteToInt(storedCue.getFaders()[i])) / fadeInTicksRemaining);
+                }
+            }
+        } else {
+            byte[] faders = storedCue.getFaders();
+            setFaders(faders);
+        }
+        activeCue = storedCue;
+        this.currentStep = getNextStep();
+        markDirty();
+    }
+
+    private Integer getFirst(){
+        return this.storedSteps.keySet().stream().sorted(Integer::compareTo).findFirst().get();
+    }
+
+    private Integer getNextStep(){
+        Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer > this.currentStep).sorted(Integer::compareTo).findFirst();
+        return nextSteps.orElseGet(this::getFirst);
+    }
+
+    private Integer getPreviousStep(){
+        Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer < this.currentStep).sorted(Integer::compareTo).sorted(Collections.reverseOrder()).findFirst();
+        return nextSteps.orElseGet(() -> this.storedSteps.keySet().stream().sorted(Integer::compareTo).sorted(Collections.reverseOrder()).findFirst().get());
     }
 
     private void storeCurrentFaders(){
+        StoredCue storedCue = new StoredCue(Arrays.copyOf(faders, faders.length), this.fadeInTicks, this.fadeOutTicks);
+        storedSteps.put(this.currentStep, storedCue);
         this.currentStep++;
-        StoredCue storedCue = new StoredCue(this.faders, this.fadeInTicks, this.fadeOutTicks);
-        storedSteps.add(storedCue);
     }
 
     @Override
@@ -265,4 +380,20 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
         return super.getCapability(cap, direction);
     }
 
+
+    public int getFadeInTicks() {
+        return fadeInTicks;
+    }
+
+    public void setFadeInTicks(int fadeInTicks) {
+        this.fadeInTicks = fadeInTicks;
+    }
+
+    public int getFadeOutTicks() {
+        return fadeOutTicks;
+    }
+
+    public void setFadeOutTicks(int fadeOutTicks) {
+        this.fadeOutTicks = fadeOutTicks;
+    }
 }

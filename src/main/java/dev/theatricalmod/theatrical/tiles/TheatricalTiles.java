@@ -4,6 +4,8 @@ package dev.theatricalmod.theatrical.tiles;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXRedstoneInterface;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIlluminator;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
@@ -30,5 +32,6 @@ public class TheatricalTiles {
     public static final RegistryObject<TileEntityType<TileEntitySocapexDistribution>> SOCAPEX_DISTRIBUTION = TILES.register("socapex_distribution", () -> TileEntityType.Builder.create(TileEntitySocapexDistribution::new, TheatricalBlocks.SOCAPEX_DISTRIBUTION.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityCable>> CABLE = TILES.register("cable", () -> TileEntityType.Builder.create(TileEntityCable::new, TheatricalBlocks.SOCAPEX_CABLE.get(), TheatricalBlocks.DMX_CABLE.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityBasicLightingControl>> BASIC_LIGHTING_DESK = TILES.register("basic_lighting_desk", () -> TileEntityType.Builder.create(TileEntityBasicLightingControl::new, TheatricalBlocks.BASIC_LIGHTING_DESK.get()).build(null));
+    public static final RegistryObject<TileEntityType<TileEntityDMXRedstoneInterface>> DMX_REDSTONE_INTERFACE = TILES.register("redstone_interface", () -> TileEntityType.Builder.create(TileEntityDMXRedstoneInterface::new, TheatricalBlocks.DMX_REDSTONE_INTERFACE.get()).build(null));
 
 }

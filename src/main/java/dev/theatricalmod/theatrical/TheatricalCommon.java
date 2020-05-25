@@ -4,7 +4,7 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
-import dev.theatricalmod.theatrical.tiles.TileEntityArtNetInterface;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
@@ -91,5 +91,36 @@ public class TheatricalCommon {
             });
         }
         world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
+    }
+
+    public void handleConsoleGo(Context context, BlockPos pos, int fadeInTicks, int fadeOutTicks){
+        World world = context.getSender().world;
+        TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityBasicLightingControl) {
+            ((TileEntityBasicLightingControl) tileEntity).setFadeInTicks(fadeInTicks);
+            ((TileEntityBasicLightingControl) tileEntity).setFadeOutTicks(fadeOutTicks);
+            ((TileEntityBasicLightingControl) tileEntity).clickButton();
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
+        }
+    }
+    public void handleToggleMode(Context context, BlockPos pos){
+        World world = context.getSender().world;
+        TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityBasicLightingControl) {
+            ((TileEntityBasicLightingControl) tileEntity).toggleMode();
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
+        }
+    }
+    public void handleMoveStep(Context context, BlockPos pos, boolean isForwards){
+        World world = context.getSender().world;
+        TileEntity tileEntity = context.getSender().world.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityBasicLightingControl) {
+            if(isForwards){
+                ((TileEntityBasicLightingControl) tileEntity).moveForward();
+            } else {
+                ((TileEntityBasicLightingControl) tileEntity).moveBack();
+            }
+            world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER);
+        }
     }
 }

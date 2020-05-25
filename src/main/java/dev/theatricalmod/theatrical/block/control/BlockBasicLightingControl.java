@@ -11,11 +11,16 @@ import net.minecraft.block.DirectionalBlock;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -30,6 +35,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class BlockBasicLightingControl extends DirectionalBlock {
 
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+
     private final VoxelShape shape = VoxelShapes.create(0, 0, 0, 16 / 16D, 3 / 16D, 16 / 16D);
 
     public BlockBasicLightingControl() {
@@ -39,12 +46,12 @@ public class BlockBasicLightingControl extends DirectionalBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, p_196258_1_.getPlacementHorizontalFacing().getOpposite());
+        return this.getDefaultState().with(HORIZONTAL_FACING, p_196258_1_.getPlacementHorizontalFacing().getOpposite()).with(POWERED, false);
     }
 
     @Override
     protected void fillStateContainer(Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
+        builder.add(HORIZONTAL_FACING, POWERED);
     }
 
     @Override
@@ -101,5 +108,19 @@ public class BlockBasicLightingControl extends DirectionalBlock {
             return ActionResultType.PASS;
         }
         return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+    }
+
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (!worldIn.isRemote) {
+            boolean flag = worldIn.isBlockPowered(pos);
+            if (flag != state.get(POWERED)) {
+                if(flag){
+                    TileEntityBasicLightingControl tileEntityBasicLightingControl = (TileEntityBasicLightingControl) worldIn.getTileEntity(pos);
+                    tileEntityBasicLightingControl.clickButton();
+                }
+                worldIn.setBlockState(pos, state.with(POWERED, Boolean.valueOf(flag)), 2);
+            }
+
+        }
     }
 }

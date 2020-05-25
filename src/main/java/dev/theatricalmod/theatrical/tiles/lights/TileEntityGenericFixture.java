@@ -62,7 +62,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public float getMaxLightDistance() {
-        return 10;
+        return 20;
     }
 
     @Override

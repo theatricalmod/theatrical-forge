@@ -51,13 +51,14 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
     }
 
 
-    public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, Direction facing){
+    public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, Direction facing, HashSet<BlockPos> scannedCable){
         BlockState blockState = world.getBlockState(pos);
         if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.DMX) {
+            scannedCable.add(pos);
             for (Direction direction : Direction.values()) {
                 if(direction != facing) {
-                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
-                        addToList(scanned, world, pos.offset(direction), direction.getOpposite());
+                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.offset(direction))) {
+                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), scannedCable);
                     }
                 }
             }
@@ -67,7 +68,7 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
                 if (scanned.add(pos)) {
                     for (Direction facing1 : Direction.values()) {
                         if (facing1 != facing) {
-                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite());
+                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite(), scannedCable);
                         }
                     }
                 }
@@ -83,9 +84,11 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
 //                return;
 //            }
             HashSet<BlockPos> receivers = new HashSet<>();
+            HashSet<BlockPos> scannedCable = new HashSet<>();
             for(Direction facing : Direction.values()){
-                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite());
+                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite(), scannedCable);
             }
+            scannedCable.clear();
             devices = new HashSet<>(receivers);
         }
         for (BlockPos receiver : devices) {
