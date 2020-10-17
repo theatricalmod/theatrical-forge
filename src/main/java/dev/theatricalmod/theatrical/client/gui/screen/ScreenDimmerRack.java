@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
@@ -25,6 +26,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -58,7 +61,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         if (p_keyPressed_1_ == GLFW.GLFW_KEY_E || p_keyPressed_1_ == GLFW.GLFW_KEY_ESCAPE) {
             this.onClose();
-            this.minecraft.player.closeScreen();
+            this.getMinecraft().player.closeScreen();
             return true;
         }
         return this.dmxStartField.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxStartField.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
@@ -138,7 +141,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         super.init();
         int lvt_1_1_ = (this.width - this.xSize) / 2;
         int lvt_2_1_ = (this.height - this.ySize) / 2;
-        this.addButton(new Button(lvt_1_1_ + 172, lvt_2_1_ + 5, 15, 20, "<", (button) -> {
+        this.addButton(new Button(lvt_1_1_ + 172, lvt_2_1_ + 5, 15, 20, new StringTextComponent("<"), (button) -> {
             if (currentPage - 1 < 0) {
                 currentPage = receivers.size() - 1;
             } else {
@@ -147,7 +150,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             activePlug = -1;
             generateButtons();
         }));
-        this.addButton(new Button(lvt_1_1_ + 165 + 60, lvt_2_1_ + 5, 15, 20, ">", (button) -> {
+        this.addButton(new Button(lvt_1_1_ + 165 + 60, lvt_2_1_ + 5, 15, 20, new StringTextComponent(">"), (button) -> {
             if (currentPage + 1 > receivers.size() - 1) {
                 currentPage = 0;
             } else {
@@ -156,7 +159,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             activePlug = -1;
             generateButtons();
         }));
-        this.dmxStartField = new TextFieldWidget(this.font, lvt_1_1_ + 172, lvt_2_1_ + 100, 50, 10, "");
+        this.dmxStartField = new TextFieldWidget(this.font, lvt_1_1_ + 172, lvt_2_1_ + 100, 50, 10, new StringTextComponent(""));
         if (tileDimmerRack.getCapability(DMXReceiver.CAP, Direction.SOUTH).isPresent()) {
             this.dmxStartField.setText(Integer.toString(tileDimmerRack.getCapability(DMXReceiver.CAP, Direction.SOUTH).orElse(null).getStartPoint()));
         }
@@ -182,24 +185,24 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         generateButtons();
     }
 
-
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+        this.getMinecraft().getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
         int lvt_4_1_ = this.guiLeft;
         int lvt_5_1_ = (this.height - this.ySize) / 2;
-        this.blit(lvt_4_1_, lvt_5_1_, 0, 0, xSize, ySize, 512, 512);
+        this.blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, xSize, ySize, 512, 512);
     }
 
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        this.renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
+    public void render(MatrixStack ms, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
+        this.renderBackground(ms);
+        super.render(ms, p_230430_2_, p_230430_3_, p_230430_4_);
         RenderSystem.disableBlend();
-        this.dmxStartField.render(p_render_1_, p_render_2_, p_render_3_);
-        this.renderHoveredToolTip(p_render_1_, p_render_2_);
+        this.dmxStartField.render(ms, p_230430_2_, p_230430_3_, p_230430_4_);
+        this.renderHoveredTooltip(ms,  p_230430_2_, p_230430_3_);
     }
+
 
     @Override
     public void onClose() {
@@ -208,31 +211,29 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         String name = container.dimmerRack.getDisplayName().getString();
-        font
-            .drawString(name, 176 / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
-        font
-            .drawString("Plugs", 180 + font.getStringWidth("Plugs") / 2, 6, 0x404040);
+        font.drawString(matrixStack, name, 176 / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
+        font.drawString(matrixStack, "Plugs", 180 + font.getStringWidth("Plugs") / 2, 6, 0x404040);
         for (int i = 0; i < 6; i++) {
-            int x = 33 + 46 * (i < 3 ? i : i - 3);
-            int y = (i < 3 ? 15 : 62);
-            font.drawString("" + (i + 1), x, y, 0x000000);
+            int x1 = 33 + 46 * (i < 3 ? i : i - 3);
+            int y1 = (i < 3 ? 15 : 62);
+            font.drawString(matrixStack, "" + (i + 1), x1, y1, 0x000000);
         }
         if (receivers.size() > 0) {
             String pageName = "Panel " + inventoryPlayer.getIdentifier(receivers.get(currentPage).getPos());
             font
-                .drawString(pageName, 150 + font.getStringWidth(
-                    pageName
-                ) / 2, 30, 0x404040);
+                    .drawString(matrixStack, pageName, 150 + font.getStringWidth(
+                            pageName
+                    ) / 2, 30, 0x404040);
         }
         if (activePlug != -1) {
             int width = this.width / 2;
             int height = (this.height - this.ySize) / 2;
             int plugX = width + 35 + (20 * (activePlug < 4 ? activePlug : activePlug - 4));
             int plugY = height + (activePlug < 4 ? 45 : 65);
-            int xDist = plugX - mouseX;
-            int yDist = plugY - mouseY;
+            int xDist = plugX - x;
+            int yDist = plugY - y;
             float lineWidth = 2;
             if (Minecraft.getInstance().currentScreen != null) {
                 long distanceSq = xDist * xDist + yDist * yDist;
@@ -253,7 +254,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             bufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             bufferBuilder.pos(plugX - guiLeft, plugY - guiTop, 0).color(red, green, blue, 255).endVertex();
-            bufferBuilder.pos(mouseX - guiLeft, mouseY - guiTop, 0).color(red, green, blue, 255).endVertex();
+            bufferBuilder.pos(x - guiLeft, y - guiTop, 0).color(red, green, blue, 255).endVertex();
             tessellator.draw();
             RenderSystem.enableTexture();
             RenderSystem.enableCull();

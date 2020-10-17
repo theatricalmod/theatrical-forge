@@ -35,7 +35,7 @@ public class BlockArtNetInterface extends Block {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState p_225533_1_, World world, BlockPos pos, PlayerEntity ent, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
@@ -45,6 +45,7 @@ public class BlockArtNetInterface extends Block {
             }
             return ActionResultType.PASS;
         }
-        return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+        return super.onBlockActivated(p_225533_1_, world, pos, ent, p_225533_5_, p_225533_6_);
     }
+
 }

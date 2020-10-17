@@ -5,12 +5,15 @@ import dev.theatricalmod.theatrical.api.IAcceptsCable;
 import dev.theatricalmod.theatrical.api.capabilities.power.ITheatricalPowerStorage;
 import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
+import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerGenericFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
+import net.minecraft.block.DirectionalBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -31,6 +34,8 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     private int capacity = 255;
     private int maxReceive = 255;
     private int maxExtract = 255;
+
+    private Entity trackingEntity;
 
     public TileEntityGenericFixture() {
         super(TheatricalTiles.GENERIC_LIGHT.get());
@@ -98,6 +103,14 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
         return getFixture().getBeamStartPosition();
     }
 
+    public void setTrackingEntity(Entity trackingEntity) {
+        this.trackingEntity = trackingEntity;
+    }
+
+    public Entity getTrackingEntity() {
+        return trackingEntity;
+    }
+
     @Override
     public float getIntensity() {
         return lastPower;
@@ -111,6 +124,25 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
         prevFocus = getFocus();
         if (world.isRemote) {
             return;
+        }
+        if(trackingEntity != null){
+            double distance = Math.sqrt(trackingEntity.getDistanceSq(getPos().getX(), trackingEntity.getPosY(), getPos().getZ()));
+            double height = getPos().getY() - trackingEntity.getPosYEye();
+            double someCalc = height / distance;
+            setTilt(-(int) Math.toDegrees(Math.atan(someCalc)));
+            Direction facing = getBlockState().get(BlockHangable.FACING);
+            double h = distance;
+            double x = getPos().getX() - trackingEntity.getPosX();
+            double z = getPos().getZ() - trackingEntity.getPosZ();
+            double calc = Math.atan2(x, z);
+            int pan = (int) Math.toDegrees(calc);
+            pan = pan - (int) facing.getHorizontalAngle();
+            if(pan < -180){
+                pan += 360;
+            } else if(pan > 180){
+                pan -= 360;
+            }
+            setPan(pan);
         }
         if (power != lastPower) {
             lastPower = power;

@@ -1,6 +1,8 @@
 package dev.theatricalmod.theatrical.tiles;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -23,9 +25,15 @@ public class TileEntityTheatricalBase extends TileEntity {
     }
 
     @Override
-    public void read(CompoundNBT compound) {
+    public void deserializeNBT(CompoundNBT compound) {
         readNBT(compound);
-        super.read(compound);
+        super.deserializeNBT(compound);
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        readNBT(nbt);
+        super.read(state, nbt);
     }
 
     @Override
@@ -45,8 +53,8 @@ public class TileEntityTheatricalBase extends TileEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(BlockState blockState, CompoundNBT tag) {
+        super.handleUpdateTag(blockState, tag);
         readNBT(tag);
     }
 

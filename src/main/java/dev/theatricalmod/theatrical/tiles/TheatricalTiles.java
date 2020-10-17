@@ -20,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class TheatricalTiles {
 
 
-    public static final DeferredRegister<TileEntityType<?>> TILES = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, TheatricalMod.MOD_ID);
+    public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, TheatricalMod.MOD_ID);
 
     public static final RegistryObject<TileEntityType<TileEntityIntelligentFixture>> MOVING_LIGHT = TILES.register("moving_light", () -> TileEntityType.Builder.create(TileEntityIntelligentFixture::new, TheatricalBlocks.MOVING_LIGHT.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityPowerCable>> POWER_CABLE = TILES.register("power_cable", () -> TileEntityType.Builder.create(TileEntityPowerCable::new, TheatricalBlocks.POWER_CABLE.get()).build(null));

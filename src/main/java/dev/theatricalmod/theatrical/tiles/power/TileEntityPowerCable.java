@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -47,9 +49,9 @@ public class TileEntityPowerCable extends TileEntity implements ITheatricalPower
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
-        readNBT(compound);
+    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
+        super.deserializeNBT(state, nbt);
+        readNBT(nbt);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class TileEntityPowerCable extends TileEntity implements ITheatricalPower
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
         readNBT(tag);
     }
 

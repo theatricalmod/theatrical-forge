@@ -2,6 +2,8 @@ package dev.theatricalmod.theatrical.tiles.lights;
 
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import javax.annotation.Nullable;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -37,11 +39,10 @@ public class TileEntityIlluminator extends TileEntity implements ITickableTileEn
         controller = new BlockPos(x, y, z);
     }
 
-
     @Override
-    public void read(CompoundNBT compound) {
-        readNBT(compound);
-        super.read(compound);
+    public void deserializeNBT(CompoundNBT nbt) {
+        readNBT(nbt);
+        super.deserializeNBT(nbt);
     }
 
     @Override
@@ -63,8 +64,8 @@ public class TileEntityIlluminator extends TileEntity implements ITickableTileEn
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        super.handleUpdateTag(state, tag);
         readNBT(tag);
     }
 

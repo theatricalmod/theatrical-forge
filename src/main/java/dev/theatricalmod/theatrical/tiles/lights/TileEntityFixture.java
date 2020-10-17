@@ -32,7 +32,7 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.LightType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
@@ -115,14 +115,14 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         return 0;
     }
 
-    public final Vec3d getVectorForRotation(float pitch, float yaw) {
+    public final Vector3d getVectorForRotation(float pitch, float yaw) {
         float f = pitch * ((float) Math.PI / 180F);
         float f1 = -yaw * ((float) Math.PI / 180F);
         float f2 = MathHelper.cos(f1);
         float f3 = MathHelper.sin(f1);
         float f4 = MathHelper.cos(f);
         float f5 = MathHelper.sin(f);
-        return new Vec3d((double) (f3 * f4), (double) (-f5), (double) (f2 * f4));
+        return new Vector3d((double) (f3 * f4), (double) (-f5), (double) (f2 * f4));
     }
 
     public double doRayTrace() {
@@ -149,10 +149,10 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
 //            lookingAngle = -lookingAngle;
 //        }
 
-        Vec3d look = getVectorForRotation(tilt, lookingAngle);
+        Vector3d look = getVectorForRotation(tilt, lookingAngle);
         double distance = getMaxLightDistance();
-        Vec3d startVec = look.scale(0.9F).add(pos.getX() + 0.5, pos.getY() + 0.51, pos.getZ() + 0.5);
-        Vec3d endVec = look.scale(distance).add(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        Vector3d startVec = look.scale(0.9F).add(pos.getX() + 0.5, pos.getY() + 0.51, pos.getZ() + 0.5);
+        Vector3d endVec = look.scale(distance).add(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
         world.addParticle(RedstoneParticleData.REDSTONE_DUST, endVec.x, endVec.y, endVec.z, 0, 0, 0);
         if (fakePlayer == null) {
             fakePlayer = new FakePlayer((ServerWorld) world, new GameProfile(UUID.randomUUID(), "light-faker"));
@@ -173,7 +173,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
             .getBlockState(lightPos).getBlock() instanceof BlockIlluminator)) {
             lightPos = lightPos.offset(result.getFace(), 1);
         }
-        distance = new Vec3d(lightPos).distanceTo(new Vec3d(pos));
+        distance = new Vector3d(lightPos.getX(), lightPos.getY(), lightPos.getZ()).distanceTo(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
         if (lightPos.equals(lightBlock)) {
             if (world.getBlockState(lightBlock).getBlock() instanceof AirBlock) {
                 if (this.emitsLight()) {
@@ -211,7 +211,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
                 TileEntityIlluminator illuminator = (TileEntityIlluminator) tileEntity;
                 illuminator.setController(pos);
                 if (lightBlock != null) {
-                    world.getLightFor(LightType.BLOCK, lightBlock);
+                    world.getLightValue(lightBlock);
                 }
 //                if (world.isRemote) {
 //                    TheatricalPacketHandler.INSTANCE
@@ -263,9 +263,9 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        readNBT(compound);
-        super.read(compound);
+    public void deserializeNBT(CompoundNBT nbt) {
+        super.deserializeNBT(nbt);
+        readNBT(nbt);
     }
 
     @Override
@@ -285,14 +285,20 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        super.handleUpdateTag(tag);
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        super.handleUpdateTag(state, tag);
         readNBT(tag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         readNBT(pkt.getNbtCompound());
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
+        readNBT(nbt);
     }
 
     @Override

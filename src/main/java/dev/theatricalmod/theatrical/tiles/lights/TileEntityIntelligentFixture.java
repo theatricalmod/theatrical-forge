@@ -174,6 +174,9 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public void tick() {
+        if(getFixture() == null){
+            return;
+        }
         if(energyStorage.getEnergyStored() >= getFixture().getEnergyUse()){
             energyStorage.extractEnergy(getFixture().getEnergyUse(), false);
             super.tick();

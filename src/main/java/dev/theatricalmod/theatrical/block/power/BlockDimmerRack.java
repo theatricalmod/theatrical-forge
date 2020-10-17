@@ -21,6 +21,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -75,7 +76,7 @@ public class BlockDimmerRack extends HorizontalBlock implements ITOPInfoProvider
             TileEntityDimmerRack pipe = (TileEntityDimmerRack) tileEntity;
             pipe.getCapability(DMXReceiver.CAP, null).ifPresent(iTheatricalPowerStorage -> {
                 for(int i = 0; i < iTheatricalPowerStorage.getChannelCount(); i++){
-                    iProbeInfo.text("DMX #" + i + ": " + iTheatricalPowerStorage.getChannel(i));
+                    iProbeInfo.text(new StringTextComponent("DMX #" + i + ": " + iTheatricalPowerStorage.getChannel(i)));
                 }
             });
         }

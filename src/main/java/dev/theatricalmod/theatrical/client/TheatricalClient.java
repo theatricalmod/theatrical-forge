@@ -14,6 +14,7 @@ import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
@@ -23,7 +24,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -69,7 +70,9 @@ public class TheatricalClient extends TheatricalCommon {
 
     @SubscribeEvent
     public void worldRenderLastEvent(RenderWorldLastEvent event){
-        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(MAIN_BEAM);
+//        Minecraft.getInstance().getBufferBuilders().getBlockBufferBuilders().get(MAIN_BEAM).finishDrawing();
+//        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(MAIN_BEAM);
+//       Minecraft.getInstance().getBufferBuilders().getBlockBufferBuilders().get()
     }
 
     public void modelload(ModelRegistryEvent event){
@@ -90,9 +93,9 @@ public class TheatricalClient extends TheatricalCommon {
     {
         World world = player.world;
 
-        Vec3d look = player.getLookVec();
-        Vec3d startPos = getVec3d(player).add(0, player.getEyeHeight(), 0);
-        Vec3d endPos = startPos.add(look.mul(range, range, range));
+        Vector3d look = player.getLookVec();
+        Vector3d startPos = getVec3d(player).add(0, player.getEyeHeight(), 0);
+        Vector3d endPos = startPos.add(look.mul(range, range, range));
         RayTraceContext context = new RayTraceContext(startPos, endPos, RayTraceContext.BlockMode.OUTLINE, fluidMode, player);
         return world.rayTraceBlocks(context);
     }
@@ -103,7 +106,7 @@ public class TheatricalClient extends TheatricalCommon {
         return Minecraft.getInstance().world;
     }
 
-    public static Vec3d getVec3d(Entity entity)
+    public static Vector3d getVec3d(Entity entity)
     {
         return entity.getPositionVec();
     }

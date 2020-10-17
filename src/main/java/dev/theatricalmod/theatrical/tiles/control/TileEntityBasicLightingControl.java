@@ -26,7 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -209,8 +208,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
                 dmx[i] = (byte) (convertByteToInt(faders[i]) * (convertByteToInt(grandMaster) / 255F));
             }
             this.idmxProvider.getUniverse(world).setDmxChannels(dmx);
-            Dimension dimension = world.dimension;
-            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(dimension::getType), new SendDMXProviderPacket(pos, dmx));
+            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, dmx));
             sendDMXSignal();
             markDirty();
         }

@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client.tile;
 
+import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -13,14 +14,13 @@ public class TheatricalRenderType extends RenderType {
 
     public static final RenderType MAIN_BEAM = makeType("TheatricalLightBeam",
         DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
-        RenderType.State.getBuilder()
-            .layer(PROJECTION_LAYERING)
+        RenderType.State.getBuilder().layer(RenderState.POLYGON_OFFSET_LAYERING)
             .texture(NO_TEXTURE)
             .transparency(TRANSLUCENT_TRANSPARENCY)
-            .cull(CULL_ENABLED)
-            .lightmap(LIGHTMAP_DISABLED)
-            .writeMask(COLOR_DEPTH_WRITE)
-            .shadeModel(SHADE_ENABLED)
+            .cull(RenderState.CULL_ENABLED)
+            .lightmap(RenderState.LIGHTMAP_DISABLED)
+            .writeMask(WriteMaskState.COLOR_WRITE)
+            .shadeModel(RenderState.SHADE_ENABLED)
             .build(false));
 
     public static final RenderType FADER = makeType("TheatricalFader",

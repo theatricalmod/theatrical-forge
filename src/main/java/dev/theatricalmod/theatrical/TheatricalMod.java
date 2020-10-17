@@ -55,7 +55,7 @@ public class TheatricalMod {
     public static ItemGroup theatricalItemGroup = new ItemGroup("theatrical") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(Items.PUMPKIN);
+            return new ItemStack(TheatricalItems.DIMMER_RACK.get());
         }
     };
 
@@ -72,10 +72,10 @@ public class TheatricalMod {
         proxy = DistExecutor.runForDist(() -> () -> new TheatricalClient(), () -> () -> new TheatricalCommon());
         Fixture.createRegistry();
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Fixture.class, this::registerFixture);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::shutdown);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imc);
+        eventBus.addListener(this::setup);
+        eventBus.addGenericListener(Fixture.class, this::registerFixture);
+//        eventBus.addListener(this::shutdown);
+        eventBus.addListener(this::imc);
         TheatricalBlocks.BLOCKS.register(eventBus);
         TheatricalTiles.TILES.register(eventBus);
         TheatricalItems.ITEMS.register(eventBus);
@@ -102,9 +102,9 @@ public class TheatricalMod {
         TOPCompat.register();
     }
 
-    private void attachWorldCap(final AttachCapabilitiesEvent t) {
-        if(t.getObject() instanceof World){
-            World w = (World) t.getObject();
+    private void attachWorldCap(final AttachCapabilitiesEvent<World> t) {
+        if(t.getObject() != null){
+            World w = t.getObject();
             if(w.isRemote) return;
             t.addCapability(WORLD_CAP_ID, new WorldDMXNetwork());
             t.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork());
@@ -129,8 +129,9 @@ public class TheatricalMod {
     {
         LOGGER.info("Initialising Theatrical ");
         registerCapabilities();
-        MinecraftForge.EVENT_BUS.addListener(this::attachWorldCap);
+        MinecraftForge.EVENT_BUS.addGenericListener(World.class, this::attachWorldCap);
         MinecraftForge.EVENT_BUS.addListener(this::worldTickEvent);
+        MinecraftForge.EVENT_BUS.addListener(this::shutdown);
     }
 
     public void shutdown(FMLServerStoppedEvent serverStoppedEvent){

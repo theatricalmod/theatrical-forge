@@ -5,8 +5,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.RotatedPillarBlock;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -28,18 +28,13 @@ public class BlockTruss extends RotatedPillarBlock implements IWaterLoggable {
     }
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-
-    @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        IFluidState iFluidState = context.getWorld().getFluidState(context.getPos());
+        FluidState iFluidState = context.getWorld().getFluidState(context.getPos());
         return getDefaultState().with(AXIS, context.getFace().getAxis()).with(BlockStateProperties.WATERLOGGED, iFluidState.getFluid() == Fluids.WATER);
     }
 
     @Override
-    public IFluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 

@@ -10,5 +10,8 @@
   "block.theatrical.socapex_distribution": "Socapex Distro",
   "block.theatrical.generic_light": "Generic Light",
   "block.theatrical.socapex_cable": "Socapex Cable",
-  "block.theatrical.power_cable": "Power Cable"
+  "block.theatrical.power_cable": "Power Cable",
+  "block.theatrical.basic_lighting_desk": "Basic Lighting Desk",
+  "block.theatrical.redstone_interface": "DMX Redstone interface",
+  "item.theatrical.positioner": "Remote Light Positioner"
 }

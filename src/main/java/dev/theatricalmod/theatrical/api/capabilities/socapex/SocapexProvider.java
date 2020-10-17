@@ -204,7 +204,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     @Override
     public String getIdentifier(BlockPos pos) {
-        return devices.containsValue(pos) ? devices.entrySet().stream().filter(directionBlockPosEntry -> directionBlockPosEntry.getValue().equals(pos)).findFirst().get().getKey().getName() : "";
+        return devices.containsValue(pos) ? devices.entrySet().stream().filter(directionBlockPosEntry -> directionBlockPosEntry.getValue().equals(pos)).findFirst().get().getKey().getString() : "";
     }
 
     @Override

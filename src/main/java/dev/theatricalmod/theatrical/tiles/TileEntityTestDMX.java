@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -38,8 +37,7 @@ public class TileEntityTestDMX extends TileEntity implements ITickableTileEntity
         if (ticks >= 20) {
             byte[] data = generateRandomDMX();
             this.idmxProvider.getUniverse(world).setDmxChannels(data);
-            Dimension dimension = world.dimension;
-            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(dimension::getType), new SendDMXProviderPacket(pos, data));
+            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, data));
             sendDMXSignal();
             ticks = 0;
         }
@@ -80,4 +78,5 @@ public class TileEntityTestDMX extends TileEntity implements ITickableTileEntity
             world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
         }
     }
+
 }

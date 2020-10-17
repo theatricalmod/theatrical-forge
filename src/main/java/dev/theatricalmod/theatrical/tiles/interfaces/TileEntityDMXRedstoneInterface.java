@@ -1,18 +1,11 @@
 package dev.theatricalmod.theatrical.tiles.interfaces;
 
-import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
-import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
-import dev.theatricalmod.theatrical.client.gui.container.ContainerArtNetInterface;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerDMXRedstoneInterface;
-import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
-import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,19 +13,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -105,7 +93,7 @@ public class TileEntityDMXRedstoneInterface extends TileEntityTheatricalBase imp
         if (ticks >= 10) {
             if(getRedstoneSignal() != prevSignal){
                 prevSignal = getRedstoneSignal();
-                world.notifyNeighbors(pos, world.getBlockState(pos).getBlock());
+                world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock());
             }
             ticks = 0;
         }

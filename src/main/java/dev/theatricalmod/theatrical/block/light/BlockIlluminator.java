@@ -38,11 +38,6 @@ public class BlockIlluminator extends Block {
 
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-
-    @Override
     public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
         return true;
     }
@@ -53,7 +48,7 @@ public class BlockIlluminator extends Block {
     }
 
     @Override
-    public int getLightValue(BlockState state) {
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         return state.get(lightValue);
     }
 

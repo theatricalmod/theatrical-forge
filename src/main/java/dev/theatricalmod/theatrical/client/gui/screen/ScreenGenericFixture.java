@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerGenericFixture;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.widget.Slider;
 import net.minecraftforge.fml.client.gui.widget.Slider.ISlider;
 
@@ -26,34 +28,32 @@ public class ScreenGenericFixture extends ContainerScreen<ContainerGenericFixtur
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
-        int lvt_4_1_ = this.guiLeft;
-        int lvt_5_1_ = (this.height - this.ySize) / 2;
-        this.blit(lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
-    }
-
-    @Override
     protected void init() {
         super.init();
         int lvt_1_1_ = (this.width - this.xSize) / 2;
         int lvt_2_1_ = (this.height - this.ySize) / 2;
         this.tilt = container.blockEntity.getTilt();
         this.pan = container.blockEntity.getPan();
-        this.tiltSlider = this.addButton(new Slider(lvt_1_1_ + 13, lvt_2_1_ + 35, 150, 20, "", "", -180, 180, tilt, false, true, (button) -> {
+        this.tiltSlider = this.addButton(new Slider(lvt_1_1_ + 13, lvt_2_1_ + 35, 150, 20, new StringTextComponent(""), new StringTextComponent(""), -180, 180, tilt, false, true, (button) -> {
         }, this));
-        this.panSlider = this.addButton(new Slider(lvt_1_1_ + 13, lvt_2_1_ + 65, 150, 20, "", "", -180, 180, pan, false, true, (button) -> {
+        this.panSlider = this.addButton(new Slider(lvt_1_1_ + 13, lvt_2_1_ + 65, 150, 20, new StringTextComponent(""), new StringTextComponent(""), -180, 180, pan, false, true, (button) -> {
         }, this));
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
-        String name = container.blockEntity.getDisplayName().getString();
-        font.drawString(name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
-//        font.drawString("DMX Universe", xSize / 2 - font.getStringWidth("DMX Universe") / 2, 16, 0x404040);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+        int lvt_4_1_ = this.guiLeft;
+        int lvt_5_1_ = (this.height - this.ySize) / 2;
+        this.blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        String name = container.blockEntity.getDisplayName().getString();
+        font.drawString(matrixStack, name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
+    }
     @Override
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
         this.tiltSlider.dragging = false;

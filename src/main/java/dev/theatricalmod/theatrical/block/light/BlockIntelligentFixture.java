@@ -77,10 +77,6 @@ public class BlockIntelligentFixture extends BlockHangable {
         return false;
     }
 
-    @Override
-    public boolean isTransparent(BlockState state) {
-        return true;
-    }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {

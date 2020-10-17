@@ -85,19 +85,15 @@ public class BlockBasicLightingControl extends DirectionalBlock {
     public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type) {
         return false;
     }
-
-    @Override
-    public boolean isTransparent(BlockState state) {
-        return true;
-    }
-
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;
     }
 
+
+
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState p_225533_1_, World world, BlockPos pos, PlayerEntity ent, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
@@ -107,7 +103,7 @@ public class BlockBasicLightingControl extends DirectionalBlock {
             }
             return ActionResultType.PASS;
         }
-        return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+        return super.onBlockActivated(p_225533_1_, world, pos, ent, p_225533_5_, p_225533_6_);
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {

@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -27,8 +28,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -54,8 +55,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
         if (ticks >= 2) {
             byte[] data = TheatricalMod.getArtNetManager().getClient(ip).readDmxData(this.subnet, this.universe);
             this.idmxProvider.getUniverse(world).setDmxChannels(data);
-            Dimension dimension = world.dimension;
-            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(dimension::getType), new SendDMXProviderPacket(pos, data));
+            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, data));
             sendDMXSignal();
             ticks = 0;
         }
@@ -78,9 +78,9 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
     }
 
     @Override
-    public void read(CompoundNBT compound) {
+    public void deserializeNBT(CompoundNBT compound) {
         readNBT(compound);
-        super.read(compound);
+        super.deserializeNBT(compound);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
         readNBT(tag);
     }
 
@@ -160,10 +160,11 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
     @Override
     public void setWorldAndPos(World p_226984_1_, BlockPos p_226984_2_) {
         super.setWorldAndPos(p_226984_1_, p_226984_2_);
-        if (hasWorld()) {
+        if(hasWorld()){
             world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
         }
     }
+
 
     @Override
     public ITextComponent getDisplayName() {

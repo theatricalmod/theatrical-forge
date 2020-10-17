@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerArtNetInterface;
@@ -12,6 +13,8 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 
 public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterface> {
 
@@ -29,7 +32,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
     @Override
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
         if (p_keyPressed_1_ == 256) {
-            this.minecraft.player.closeScreen();
+            this.getMinecraft().player.closeScreen();
         }
         if(this.dmxAddress.isFocused()){
             return this.dmxAddress.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxAddress.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
@@ -42,15 +45,12 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
     @Override
     public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
         if(this.dmxAddress.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)){
-            this.setFocused(dmxAddress);
             dmxAddress.setFocused2(true);
             ipAddress.setFocused2(false);
         } else if(this.ipAddress.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)) {
-            this.setFocused(ipAddress);
             ipAddress.setFocused2(true);
             dmxAddress.setFocused2(false);
         } else{
-            this.setFocused(null);
             ipAddress.setFocused2(false);
             dmxAddress.setFocused2(false);
         }
@@ -71,7 +71,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         super.init();
         int lvt_1_1_ = (this.width - this.xSize) / 2;
         int lvt_2_1_ = (this.height - this.ySize) / 2;
-        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 62, lvt_2_1_ + 25, 50, 10, "");
+        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 62, lvt_2_1_ + 25, 50, 10, new StringTextComponent(""));
         this.dmxAddress.setText(Integer.toString(container.blockEntity.getUniverse()));
         this.dmxAddress.setCanLoseFocus(false);
         this.dmxAddress.changeFocus(true);
@@ -91,7 +91,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
             }
         });
         this.children.add(this.dmxAddress);
-        this.ipAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, "");
+        this.ipAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, new StringTextComponent(""));
         this.ipAddress.setText(container.blockEntity.getIp());
         this.ipAddress.setCanLoseFocus(false);
         this.ipAddress.changeFocus(true);
@@ -100,7 +100,7 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         this.ipAddress.setEnableBackgroundDrawing(true);
         this.ipAddress.setMaxStringLength(35);
         this.children.add(this.ipAddress);
-        this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, "Save", p_onPress_1_ -> {
+        this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, new StringTextComponent("Save"), p_onPress_1_ -> {
             int dmx = Integer.parseInt(this.dmxAddress.getText());
             if (dmx > 512 || dmx < 0) {
                 return;
@@ -109,30 +109,31 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         }));
     }
 
+
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+        this.getMinecraft().getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
         int lvt_4_1_ = this.guiLeft;
         int lvt_5_1_ = (this.height - this.ySize) / 2;
-        this.blit(lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
+        this.blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        this.renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
+    public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
+        this.renderBackground(p_230430_1_);
+        super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
         RenderSystem.disableBlend();
-        this.dmxAddress.render(p_render_1_, p_render_2_, p_render_3_);
-        this.ipAddress.render(p_render_1_, p_render_2_, p_render_3_);
-        this.renderHoveredToolTip(p_render_1_, p_render_2_);
+        this.dmxAddress.render(p_230430_1_,p_230430_2_, p_230430_3_,p_230430_4_);
+        this.ipAddress.render(p_230430_1_,p_230430_2_, p_230430_3_,p_230430_4_);
+        renderHoveredTooltip(p_230430_1_, p_230430_2_, p_230430_2_);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         String name = container.blockEntity.getDisplayName().getString();
-        font.drawString(name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
-        font.drawString("DMX Universe", xSize / 2 - font.getStringWidth("DMX Universe") / 2, 16, 0x404040);
-        font.drawString("ArtNet IP", xSize / 2 - font.getStringWidth("ArtNet IP") / 2, 40, 0x404040);
+        font.drawString(matrixStack, name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
+        font.drawString(matrixStack, "DMX Universe", xSize / 2 - font.getStringWidth("DMX Universe") / 2, 16, 0x404040);
+        font.drawString(matrixStack, "ArtNet IP", xSize / 2 - font.getStringWidth("ArtNet IP") / 2, 40, 0x404040);
     }
 }

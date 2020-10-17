@@ -6,14 +6,14 @@ import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class TileEntityRendererBasicLightingDesk extends TileEntityRenderer<TileEntityBasicLightingControl> {
 
@@ -69,7 +69,7 @@ public class TileEntityRendererBasicLightingDesk extends TileEntityRenderer<Tile
         stack.translate(10.7 /16D, 3 /16D, 9.3 / 16D);
         stack.scale(0.005F, -0.005F, 0.005F);
         stack.rotate(Vector3f.XP.rotationDegrees(90F));
-        fontrenderer.renderString("Step: " + tileEntityBasicLightingControl.getCurrentStep(), 0, 0, 0x000000, false,  stack.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
+        fontrenderer.drawString(stack,"Step: " + tileEntityBasicLightingControl.getCurrentStep(), 0, 0, 0x000000);
         stack.pop();
     }
 
@@ -79,7 +79,7 @@ public class TileEntityRendererBasicLightingDesk extends TileEntityRenderer<Tile
         stack.translate(10.4 /16D, 3 /16D, 8.3 / 16D);
         stack.scale(0.003F, -0.003F, 0.003F);
         stack.rotate(Vector3f.XP.rotationDegrees(90F));
-        fontrenderer.renderString(tileEntityBasicLightingControl.isRunMode() ? "Run mode" : "Program mode", 0, 0, 0x000000, false,  stack.getLast().getMatrix(), iRenderTypeBuffer, false, 0, combinedLightIn);
+        fontrenderer.drawString(stack, tileEntityBasicLightingControl.isRunMode() ? "Run mode" : "Program mode", 0, 0, 0x000000);
         stack.pop();
     }
 

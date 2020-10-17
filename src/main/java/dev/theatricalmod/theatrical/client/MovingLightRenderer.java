@@ -15,14 +15,15 @@ import java.util.Random;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.model.data.EmptyModelData;
 
 public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
 
@@ -90,7 +91,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         if (movingLightEntity.getHangType() == HangableType.BRACE_BAR && isHanging) {
             matrixStack.translate(0, 0.19, 0);
         }
-        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), staticBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY);
+        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), staticBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         if (movingLightEntity.getHangType() == HangableType.BRACE_BAR && isHanging) {
             matrixStack.translate(0, 0.19, 0);
         }
@@ -99,13 +100,13 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         matrixStack.translate(pans[0], pans[1], pans[2]);
         matrixStack.rotate(Vector3f.YP.rotationDegrees((movingLightEntity.prevPan + ((movingLightEntity.getPan()) - movingLightEntity.prevPan) * partialTicks)));
         matrixStack.translate(-pans[0], -pans[1], -pans[2]);
-        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), panBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY);
+        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), panBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         float[] tilts = movingLightEntity.getTiltRotationPosition();
 //        float[] tilts = new float[]{0.5F, 0.3F, 0.39F};
         matrixStack.translate(tilts[0], tilts[1], tilts[2]);
         matrixStack.rotate(Vector3f.XP.rotationDegrees((movingLightEntity.prevTilt + ((movingLightEntity.getTilt()) - movingLightEntity.prevTilt) * partialTicks)));
         matrixStack.translate(-tilts[0], -tilts[1], -tilts[2]);
-        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), tiltBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY);
+        Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(movingLightEntity.getWorld(), tiltBakedModel, movingLightEntity.getBlockState(), movingLightEntity.getPos(), matrixStack, iVertexBuilder, false, new Random(), 0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
     }
 
 

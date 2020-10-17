@@ -61,11 +61,6 @@ public class BlockMovingLight extends BlockIntelligentFixture {
     }
 
     @Override
-    public boolean isTransparent(BlockState state) {
-        return true;
-    }
-
-    @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 
     }

@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class ScreenIntelligentFixture extends ContainerScreen<ContainerIntelligentFixture> {
 
@@ -47,7 +49,7 @@ public class ScreenIntelligentFixture extends ContainerScreen<ContainerIntellige
         super.init();
         int lvt_1_1_ = (this.width - this.xSize) / 2;
         int lvt_2_1_ = (this.height - this.ySize) / 2;
-        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, "");
+        this.dmxAddress = new TextFieldWidget(this.font, lvt_1_1_ + 40, lvt_2_1_ + 50, 100, 20, new StringTextComponent(""));
         container.blockEntity.getCapability(DMXReceiver.CAP).ifPresent(idmxReceiver -> this.dmxAddress.setText(Integer.toString(idmxReceiver.getStartPoint())));
         this.dmxAddress.setCanLoseFocus(false);
         this.dmxAddress.changeFocus(true);
@@ -68,7 +70,7 @@ public class ScreenIntelligentFixture extends ContainerScreen<ContainerIntellige
         });
         this.children.add(this.dmxAddress);
         this.setFocusedDefault(this.dmxAddress);
-        this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, "Save", p_onPress_1_ -> {
+        this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, new StringTextComponent("Save"), p_onPress_1_ -> {
             int dmx = Integer.parseInt(this.dmxAddress.getText());
             if (dmx > 512 || dmx < 0) {
                 return;
@@ -78,27 +80,27 @@ public class ScreenIntelligentFixture extends ContainerScreen<ContainerIntellige
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
         int lvt_4_1_ = this.guiLeft;
         int lvt_5_1_ = (this.height - this.ySize) / 2;
-        this.blit(lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
+        this.blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        this.renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
+    public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
+        this.renderBackground(p_230430_1_);
+        super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
         RenderSystem.disableBlend();
-        this.dmxAddress.render(p_render_1_, p_render_2_, p_render_3_);
-        this.renderHoveredToolTip(p_render_1_, p_render_2_);
+        this.dmxAddress.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+        this.renderHoveredTooltip(p_230430_1_, p_230430_2_, p_230430_3_);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         String name = container.blockEntity.getDisplayName().getString();
-        font.drawString(name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
-        font.drawString("DMX Start Address", xSize / 2 - font.getStringWidth("DMX Start Address") / 2, 16, 0x404040);
+        font.drawString(matrixStack, name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
+        font.drawString(matrixStack, "DMX Start Address", xSize / 2 - font.getStringWidth("DMX Start Address") / 2, 16, 0x404040);
     }
 }

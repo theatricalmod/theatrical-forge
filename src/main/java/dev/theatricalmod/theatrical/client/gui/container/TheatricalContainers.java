@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class TheatricalContainers {
 
-    public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, TheatricalMod.MOD_ID);
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, TheatricalMod.MOD_ID);
 
     public static final RegistryObject<ContainerType<ContainerIntelligentFixture>> INTELLIGENT_FIXTURE = CONTAINERS.register("intelligent_gui", () -> IForgeContainerType.create((windowId, inv, data) -> new ContainerIntelligentFixture(windowId, TheatricalMod.proxy.getWorld(), data.readBlockPos())));
 

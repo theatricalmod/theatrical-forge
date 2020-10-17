@@ -6,6 +6,7 @@ import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
+import dev.theatricalmod.theatrical.items.ItemPositioner;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import javax.annotation.Nullable;
@@ -19,6 +20,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -26,6 +29,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -81,24 +85,29 @@ public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvid
     }
 
     @Override
-    public boolean isTransparent(BlockState state) {
-        return true;
-    }
-
-
-    @Override
     protected void fillStateContainer(Builder<Block, BlockState> builder) {
         super.fillStateContainer(builder);
     }
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
-        if (!world.isRemote) {
+        if (!world.isRemote && hand == Hand.MAIN_HAND) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
-                NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-            } else {
-
+                if(ent.getHeldItem(hand).getItem() instanceof ItemPositioner){
+                    ItemStack heldItem = ent.getHeldItem(hand);
+                   TileEntityGenericFixture tileEntityGenericFixture = (TileEntityGenericFixture) tileEntity;
+                   if(tileEntityGenericFixture.getTrackingEntity() != null){
+                        tileEntityGenericFixture.setTrackingEntity(null);
+                        heldItem.removeChildTag("light");
+                   } else {
+                        tileEntityGenericFixture.setTrackingEntity(ent);
+                        heldItem.getOrCreateChildTag("light").merge(NBTUtil.writeBlockPos(tileEntityGenericFixture.getPos()));
+                   }
+                    return ActionResultType.SUCCESS;
+                } else {
+                    NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
+                }
             }
             return ActionResultType.PASS;
         }
@@ -112,7 +121,7 @@ public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvid
         if (tileEntity instanceof TileEntityGenericFixture) {
             TileEntityGenericFixture pipe = (TileEntityGenericFixture) tileEntity;
             pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> {
-                iProbeInfo.text("Power: " + iTheatricalPowerStorage.getEnergyStored());
+                iProbeInfo.text(new StringTextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored()));
             });
         }
     }

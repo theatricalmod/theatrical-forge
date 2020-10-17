@@ -58,4 +58,9 @@ public enum CableType implements IStringSerializable {
                 return null;
         }
     }
+
+    @Override
+    public String getString() {
+        return name;
+    }
 }

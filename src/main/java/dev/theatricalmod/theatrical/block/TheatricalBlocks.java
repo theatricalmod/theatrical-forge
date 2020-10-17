@@ -16,8 +16,8 @@ import dev.theatricalmod.theatrical.block.rigging.BlockIWB;
 import dev.theatricalmod.theatrical.block.rigging.BlockTruss;
 import dev.theatricalmod.theatrical.block.test.BlockTestDMX;
 import dev.theatricalmod.theatrical.fixtures.TheatricalFixtures;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Block.Properties;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraftforge.fml.RegistryObject;
@@ -26,9 +26,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class TheatricalBlocks {
 
-    public static final Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY);
+    public static final AbstractBlock.Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY);
 
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, TheatricalMod.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TheatricalMod.MOD_ID);
 
     public static final RegistryObject<Block> TRUSS = BLOCKS.register("truss", BlockTruss::new);
     public static final RegistryObject<Block> MOVING_LIGHT = BLOCKS.register("moving_light", BlockMovingLight::new);

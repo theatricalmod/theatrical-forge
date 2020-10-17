@@ -11,6 +11,7 @@ import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -38,7 +39,7 @@ public class BlockPowerCable extends BlockCable implements ITOPInfoProvider {
         if (tileEntity instanceof TileEntityPowerCable) {
             TileEntityPowerCable pipe = (TileEntityPowerCable) tileEntity;
             pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> {
-                iProbeInfo.text("Power: " + iTheatricalPowerStorage.getEnergyStored());
+                iProbeInfo.text(new StringTextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored()));
             });
         }
     }
