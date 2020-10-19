@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "RDR",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "D": {
+      "item": "theatrical:dmx_cable"
+    }
+  },
+  "result": {
+    "item": "theatrical:redstone_interface"
+  }
+}

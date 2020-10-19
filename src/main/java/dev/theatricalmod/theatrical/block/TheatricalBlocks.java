@@ -26,7 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class TheatricalBlocks {
 
-    public static final AbstractBlock.Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY);
+    public static final AbstractBlock.Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY).setRequiresTool();
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TheatricalMod.MOD_ID);
 

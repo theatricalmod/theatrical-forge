@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IRI",
+    "RCR",
+    "IRI"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "C": {
+      "item": "theatrical:cog"
+    }
+  },
+  "result": {
+    "item": "theatrical:motor"
+  }
+}

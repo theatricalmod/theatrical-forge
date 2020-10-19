@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.block.rigging;
 
+import dev.theatricalmod.theatrical.api.ISupport;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -17,13 +18,15 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 
-public class BlockTruss extends RotatedPillarBlock implements IWaterLoggable {
+public class BlockTruss extends RotatedPillarBlock implements IWaterLoggable, ISupport {
 
     private static final VoxelShape SHAPE = Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
 
     public BlockTruss() {
-        super(TheatricalBlocks.BASE_PROPERTIES);
+        super(TheatricalBlocks.BASE_PROPERTIES.notSolid());
         setDefaultState(getStateContainer().getBaseState().with(AXIS, Axis.X).with(BlockStateProperties.WATERLOGGED, false));
     }
 
@@ -56,4 +59,13 @@ public class BlockTruss extends RotatedPillarBlock implements IWaterLoggable {
         return SHAPE;
     }
 
+    @Override
+    public Direction getBlockPlacementDirection(IWorldReader world, BlockPos pos, Direction facing) {
+        return facing.getOpposite();
+    }
+
+    @Override
+    public float[] getLightTransforms(World world, BlockPos pos, Direction facing) {
+        return new float[]{0, 0F, 0};
+    }
 }

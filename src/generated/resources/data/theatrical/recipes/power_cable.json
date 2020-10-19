@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WWW",
+    "IRI",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:blue_wool"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "result": {
+    "item": "theatrical:power_cable"
+  }
+}

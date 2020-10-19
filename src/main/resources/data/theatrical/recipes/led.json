@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:nuggets/gold"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "result": {
+    "item": "theatrical:led"
+  }
+}

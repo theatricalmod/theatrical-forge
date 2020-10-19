@@ -9,7 +9,7 @@ displayName="Theatrical" #mandatory
 updateJSONURL="https://imabad.dev/" #optional
 displayURL="http://example.com/" #optional
 logoFile="examplemod.png" #optional
-credits="Yee" #optional
+credits="Manmaed" #optional
 authors="Rushmead" #optional
 description='''
 '''

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SRS",
+    "SBS",
+    "SIS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:stone"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "theatrical:positioner"
+  }
+}

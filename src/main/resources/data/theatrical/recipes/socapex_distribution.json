@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "IWI",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "W": {
+      "item": "theatrical:socapex_cable"
+    }
+  },
+  "result": {
+    "item": "theatrical:socapex_distribution"
+  }
+}

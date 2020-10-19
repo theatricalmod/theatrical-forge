@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "I I",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "item": "theatrical:truss"
+  }
+}

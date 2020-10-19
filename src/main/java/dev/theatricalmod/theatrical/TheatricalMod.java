@@ -77,8 +77,8 @@ public class TheatricalMod {
 //        eventBus.addListener(this::shutdown);
         eventBus.addListener(this::imc);
         TheatricalBlocks.BLOCKS.register(eventBus);
-        TheatricalTiles.TILES.register(eventBus);
         TheatricalItems.ITEMS.register(eventBus);
+        TheatricalTiles.TILES.register(eventBus);
         TheatricalContainers.CONTAINERS.register(eventBus);
         proxy.init();
         TheatricalNetworkHandler.init();

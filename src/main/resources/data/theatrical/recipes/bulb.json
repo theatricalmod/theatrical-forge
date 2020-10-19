@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GDG",
+    "IRI"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "D": {
+      "tag": "forge:dusts/glowstone"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "theatrical:bulb"
+  }
+}

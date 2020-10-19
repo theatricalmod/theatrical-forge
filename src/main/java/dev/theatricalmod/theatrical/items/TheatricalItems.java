@@ -14,6 +14,9 @@ public class TheatricalItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TheatricalMod.MOD_ID);
 
+    /**
+     * Blocks
+     */
     public static final RegistryObject<Item> TRUSS = ITEMS.register("truss", () -> new BlockItem(TheatricalBlocks.TRUSS.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> ARTNET_INTERFACE = ITEMS.register("artnet_interface", () -> new BlockItem(TheatricalBlocks.ARTNET_INTERFACE.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> DMX_CABLE = ITEMS.register("dmx_cable", () -> new BlockItem(TheatricalBlocks.DMX_CABLE.get(), BASE_PROPERTIES));
@@ -27,6 +30,17 @@ public class TheatricalItems {
     public static final RegistryObject<Item> SOCAPEX_DISTRIBUTION = ITEMS.register("socapex_distribution", () -> new BlockItem(TheatricalBlocks.SOCAPEX_DISTRIBUTION.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> BASIC_LIGHTING_DESK = ITEMS.register("basic_lighting_desk", () -> new BlockItem(TheatricalBlocks.BASIC_LIGHTING_DESK.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> DMX_REDSTONE_INTERFACE = ITEMS.register("redstone_interface", () -> new BlockItem(TheatricalBlocks.DMX_REDSTONE_INTERFACE.get(), BASE_PROPERTIES));
+
+    /**
+     * Useful items
+     */
     public static final RegistryObject<Item> POSITIONER = ITEMS.register("positioner", () -> new ItemPositioner(BASE_PROPERTIES));
 
+    /**
+     * Recipe ingredients
+     */
+    public static final RegistryObject<Item> BULB = ITEMS.register("bulb", () -> new Item(BASE_PROPERTIES));
+    public static final RegistryObject<Item> COG = ITEMS.register("cog", () -> new Item(BASE_PROPERTIES));
+    public static final RegistryObject<Item> MOTOR = ITEMS.register("motor", () -> new Item(BASE_PROPERTIES));
+    public static final RegistryObject<Item> LED = ITEMS.register("led", () -> new Item(BASE_PROPERTIES));
 }

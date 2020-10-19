@@ -125,8 +125,6 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     shade files("libs/artnet4j-0.6.1.jar")
-    runtimeOnly fg.deobf(curse.resolve('rftools-power', '3049316'))
-    runtimeOnly fg.deobf(curse.resolve('rftools-base', '3049313'))
     runtimeOnly fg.deobf(curse.resolve('mcjtylib', '3049310'))
 //    compile fg.deobf(files("libs/simplytech-I-HOpe-it-works.jar"))
     implementation fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.4-beta-7")
@@ -173,4 +171,8 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+task copyData(type: Copy) {
+    from project.file("src/generated/resources/")
+    into project.file('src/main/resources/')
 }
