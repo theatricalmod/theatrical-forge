@@ -21,9 +21,9 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.wynprice.cursemaven'
 
-version = '0.2'
+version = '0.3'
 group = 'dev.imabad.theatrical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'Theatrical'
+archivesBaseName = 'Theatrical-1.16.3-'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 repositories {
