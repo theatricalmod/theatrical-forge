@@ -10,6 +10,8 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -71,6 +73,11 @@ public class BlockIWB extends HorizontalBlock implements ISupport {
                     return ActionResultType.FAIL;
                 }
                 worldIn.setBlockState(down, block.getDefaultState().with(BlockHangable.FACING, player.getHorizontalFacing()));
+                if(player.getHeldItem(handIn).getCount() > 1) {
+                    player.getHeldItem(handIn).setCount(player.getHeldItem(handIn).getCount() - 1);
+                } else {
+                    player.setHeldItem(handIn, new ItemStack(Items.AIR));
+                }
                 return ActionResultType.CONSUME;
             }
         }
