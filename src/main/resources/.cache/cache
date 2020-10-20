@@ -1,3 +1,4 @@
+461ad1f3dc6b9b5c6b50603fc9873079aee12a62 data/forge/tags/items/gears/iron.json
 138db86f97a411250323679e8b12d28e1cfe4006 data/theatrical/advancements/recipes/theatrical/basic_lighting_desk.json
 d6f0e0f977ddc45ca5bb0d6c3bf8cd36f4537dec data/theatrical/advancements/recipes/theatrical/bulb.json
 98a5c7a58ff2723c6130530b362f03219197fa6b data/theatrical/advancements/recipes/theatrical/cog.json
@@ -5,7 +6,7 @@ b6852111fb31c063c8e75cde477f7b0f406be19e data/theatrical/advancements/recipes/th
 9a1608ae1b7921731fd761b40b96e098502bac17 data/theatrical/advancements/recipes/theatrical/dmx_cable.json
 606078051bdcbc87b3d9ee288efe3f1b75490f64 data/theatrical/advancements/recipes/theatrical/generic_light.json
 71205a9010a62ffc3f2ce94764d07dfdc1bea555 data/theatrical/advancements/recipes/theatrical/led.json
-e06d5a407e3b8663a3d1ac98a68a218aa76c878a data/theatrical/advancements/recipes/theatrical/motor.json
+98471fc03aac3621c553e1b9a11fd668862576c2 data/theatrical/advancements/recipes/theatrical/motor.json
 66edafd8108803fe61f46ebeb098e7e5da0239d9 data/theatrical/advancements/recipes/theatrical/moving_light.json
 997e8eee3e25629e393bff46e87140578fa69c9d data/theatrical/advancements/recipes/theatrical/positioner.json
 796c8ffd15815d8d69616ea8024994c17d2b6edb data/theatrical/advancements/recipes/theatrical/power_cable.json
@@ -33,7 +34,7 @@ e947f8c063a659e805e99e5918dd349b5f50e219 data/theatrical/loot_tables/blocks/test
 595c364ce473da8d89e6a92f0bddb9d4cc6c07c2 data/theatrical/recipes/dmx_cable.json
 8d660f8ffd455a0d65b548e530481c2eeec13814 data/theatrical/recipes/generic_light.json
 139838bd90ad8badb41706bfe160efd48ca719ed data/theatrical/recipes/led.json
-a5e18103caa029c85f546f0e2db68107ea809d0d data/theatrical/recipes/motor.json
+80c248ffe22c3931062a7bf2a627b84bba1a9a28 data/theatrical/recipes/motor.json
 02d304d55af0351713508febec322f599b89fb67 data/theatrical/recipes/moving_light.json
 bd1b8f65f311d71ed6201bf81752847e6dffba60 data/theatrical/recipes/positioner.json
 8c559ab6e55668bd477cd81236471750428a003c data/theatrical/recipes/power_cable.json

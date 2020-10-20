@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "theatrical:cog"
+            "tag": "forge:gears/iron"
           }
         ]
       }

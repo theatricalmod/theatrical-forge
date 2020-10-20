@@ -13,7 +13,7 @@
       "tag": "forge:dusts/redstone"
     },
     "C": {
-      "item": "theatrical:cog"
+      "tag": "forge:gears/iron"
     }
   },
   "result": {

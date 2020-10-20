@@ -16,6 +16,8 @@ import net.minecraft.loot.ValidationTracker;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -37,6 +39,32 @@ public class TheatricalDataGen {
         if(event.includeServer()){
             gen.addProvider(new TheatricalRecipes(gen));
             gen.addProvider(new TheatricalLootTables(gen));
+            BlockTagProvider blockTagProvider = new BlockTagProvider(event.getGenerator());
+            gen.addProvider(new ItemTagProvider(event.getGenerator(), blockTagProvider, event.getExistingFileHelper()));
+        }
+    }
+
+    public static class ItemTagProvider extends ItemTagsProvider {
+
+        public ItemTagProvider(DataGenerator generatorIn, BlockTagsProvider blockTagProvider, ExistingFileHelper existingFileHelper) {
+            super(generatorIn, blockTagProvider, TheatricalMod.MOD_ID, existingFileHelper);
+        }
+
+        @Override
+        protected void registerTags() {
+            this.getOrCreateBuilder(ItemTags.makeWrapperTag("forge:gears/iron")).add(TheatricalItems.COG.get());
+        }
+    }
+
+    public static class BlockTagProvider extends BlockTagsProvider {
+
+        public BlockTagProvider(DataGenerator generatorIn) {
+            super(generatorIn);
+        }
+
+        @Override
+        protected void registerTags() {
+
         }
     }
 
@@ -48,6 +76,7 @@ public class TheatricalDataGen {
         public final ITag<Item> GOLD_NUGGET = ItemTags.makeWrapperTag("forge:nuggets/gold");
         public final ITag<Item> GLASS = ItemTags.makeWrapperTag("forge:glass");
         public final ITag<Item> STONE = ItemTags.makeWrapperTag("forge:stone");
+        public final ITag<Item> GEAR = ItemTags.makeWrapperTag("forge:gears/iron");
 
         public TheatricalRecipes(DataGenerator generatorIn) {
             super(generatorIn);
@@ -89,13 +118,13 @@ public class TheatricalDataGen {
                     .key('I', IRON_INGOT)
                     .build(consumer);
             ShapedRecipeBuilder.shapedRecipe(TheatricalItems.MOTOR.get())
-                    .addCriterion("has_item", hasItem(TheatricalItems.COG.get()))
+                    .addCriterion("has_item", hasItem(GEAR))
                     .patternLine("IRI")
                     .patternLine("RCR")
                     .patternLine("IRI")
                     .key('I', IRON_INGOT)
                     .key('R', REDSTONE_DUST)
-                    .key('C', TheatricalItems.COG.get())
+                    .key('C', GEAR)
                     .build(consumer);
             ShapedRecipeBuilder.shapedRecipe(TheatricalItems.LED.get())
                     .addCriterion("has_item", hasItem(REDSTONE_DUST))
