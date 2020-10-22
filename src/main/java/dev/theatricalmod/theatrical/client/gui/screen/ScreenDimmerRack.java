@@ -27,7 +27,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -221,7 +220,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             font.drawString(matrixStack, "" + (i + 1), x1, y1, 0x000000);
         }
         if (receivers.size() > 0) {
-            String pageName = "Panel " + inventoryPlayer.getIdentifier(receivers.get(currentPage).getPos());
+            String pageName = "Panel " + inventoryPlayer.getIdentifier(receivers.get(currentPage).getReceiverPos());
             font
                     .drawString(matrixStack, pageName, 150 + font.getStringWidth(
                             pageName
@@ -273,7 +272,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
                 }
             } else {
                 if (!socket.isPatched()) {
-                    SocapexPatch patch1 = new SocapexPatch(receivers.get(currentPage).getPos(), activePlug);
+                    SocapexPatch patch1 = new SocapexPatch(receivers.get(currentPage).getReceiverPos(), activePlug);
                     TheatricalNetworkHandler.MAIN.sendToServer(new ChangeDimmerPatchPacket(tileDimmerRack.getPos(), channel, socketNumber, patch1));
                     activePlug = -1;
                     generateButtons();

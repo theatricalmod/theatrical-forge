@@ -144,7 +144,7 @@ public class TheatricalDataGen {
                     .key('B', IRON_BLOCK)
                     .key('D', TheatricalItems.DMX_CABLE.get())
                     .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DMX_CABLE.get())
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DMX_CABLE.get(), 6)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("WWW")
                     .patternLine("IRI")
@@ -153,7 +153,7 @@ public class TheatricalDataGen {
                     .key('I', IRON_INGOT)
                     .key('R', REDSTONE_DUST)
                     .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POWER_CABLE.get())
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POWER_CABLE.get(), 6)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("WWW")
                     .patternLine("IRI")
@@ -162,7 +162,7 @@ public class TheatricalDataGen {
                     .key('I', IRON_INGOT)
                     .key('R', REDSTONE_DUST)
                     .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.SOCAPEX_CABLE.get())
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.SOCAPEX_CABLE.get(), 6)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("WWW")
                     .patternLine("IRI")

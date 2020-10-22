@@ -130,4 +130,9 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
             }
         }
     }
+
+    @Override
+    public BlockPos getReceiverPos() {
+        return super.getPos();
+    }
 }

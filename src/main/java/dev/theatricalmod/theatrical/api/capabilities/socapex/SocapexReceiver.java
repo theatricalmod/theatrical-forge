@@ -106,7 +106,7 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
 
 
     @Override
-    public BlockPos getPos() {
+    public BlockPos getReceiverPos() {
         return pos;
     }
 

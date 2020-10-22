@@ -133,7 +133,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     @Override
     public void patch(int dmxChannel, ISocapexReceiver receiver, int receiverSocket, int patchSocket) {
-        if (!devices.containsValue(receiver.getPos())) {
+        if (!devices.containsValue(receiver.getReceiverPos())) {
             return;
         }
         SocapexPatch[] patches;
@@ -142,7 +142,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
         } else {
             patches = new SocapexPatch[2];
         }
-        patches[patchSocket - 1] = new SocapexPatch(receiver.getPos(), receiverSocket);
+        patches[patchSocket - 1] = new SocapexPatch(receiver.getReceiverPos(), receiverSocket);
         patch.put(dmxChannel, patches);
     }
 
@@ -150,7 +150,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
     public boolean hasPatch(ISocapexReceiver receiver) {
         for (SocapexPatch[] patches : patch.values()) {
             for (SocapexPatch socapexPatch : patches) {
-                if (socapexPatch != null && receiver.getPos().equals(socapexPatch.getReceiver())) {
+                if (socapexPatch != null && receiver.getReceiverPos().equals(socapexPatch.getReceiver())) {
                     return true;
                 }
             }
@@ -173,7 +173,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
                 SocapexPatch[] patches = patch.get(i);
                 if (patches != null && receiver != null) {
                     for (SocapexPatch socapexPatch : patches) {
-                        if (socapexPatch != null && receiver.getPos().equals(socapexPatch.getReceiver())) {
+                        if (socapexPatch != null && receiver.getReceiverPos().equals(socapexPatch.getReceiver())) {
                             channels[socapexPatch.getReceiverSocket()] = this.channels[i];
                         }
                     }
@@ -192,7 +192,7 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
                 SocapexPatch[] patches = patch.get(i);
                 if (patches != null && socapexReceiver != null) {
                     for (SocapexPatch socapexPatch : patches) {
-                        if (socapexPatch != null && socapexReceiver.getPos().equals(socapexPatch.getReceiver())) {
+                        if (socapexPatch != null && socapexReceiver.getReceiverPos().equals(socapexPatch.getReceiver())) {
                             channels[socapexPatch.getReceiverSocket()] = 1;
                         }
                     }
