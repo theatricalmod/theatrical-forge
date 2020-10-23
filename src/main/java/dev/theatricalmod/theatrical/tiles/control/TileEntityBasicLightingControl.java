@@ -319,17 +319,25 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
     }
 
     private Integer getFirst(){
-        return this.storedSteps.keySet().stream().sorted(Integer::compareTo).findFirst().get();
+        return this.storedSteps.keySet().stream().min(Integer::compareTo).get();
     }
 
     private Integer getNextStep(){
-        Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer > this.currentStep).sorted(Integer::compareTo).findFirst();
-        return nextSteps.orElseGet(this::getFirst);
+        if(this.storedSteps.size() > 0) {
+            Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer > this.currentStep).min(Integer::compareTo);
+            return nextSteps.orElseGet(this::getFirst);
+        } else {
+            return currentStep;
+        }
     }
 
     private Integer getPreviousStep(){
-        Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer < this.currentStep).sorted(Integer::compareTo).sorted(Collections.reverseOrder()).findFirst();
-        return nextSteps.orElseGet(() -> this.storedSteps.keySet().stream().sorted(Integer::compareTo).sorted(Collections.reverseOrder()).findFirst().get());
+        if(this.storedSteps.size() > 0) {
+            Optional<Integer> nextSteps = this.storedSteps.keySet().stream().filter(integer -> integer < this.currentStep).sorted(Integer::compareTo).max(Comparator.naturalOrder());
+            return nextSteps.orElseGet(() -> this.storedSteps.keySet().stream().sorted(Integer::compareTo).max(Comparator.naturalOrder()).get());
+        } else {
+            return currentStep;
+        }
     }
 
     private void storeCurrentFaders(){
