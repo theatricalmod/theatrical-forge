@@ -8,6 +8,7 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerArtNetInterface;
+import dev.theatricalmod.theatrical.network.SendArtNetToServerPacket;
 import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import javax.annotation.Nonnull;
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -34,31 +36,48 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.UUID;
+
 public class TileEntityArtNetInterface extends TileEntity implements ITickableTileEntity, INamedContainerProvider, IAcceptsCable {
 
     private final IDMXProvider idmxProvider;
 
     private int subnet, universe, ticks = 0;
     private String ip = "127.0.0.1";
+    private UUID player;
 
     public TileEntityArtNetInterface() {
         super(TheatricalTiles.ARTNET_INTERFACE.get());
         this.idmxProvider = new DMXProvider(new DMXUniverse());
     }
 
+    public void setPlayer(UUID player) {
+        this.player = player;
+    }
+
+    public UUID getPlayer() {
+        return player;
+    }
+
     @Override
     public void tick() {
-        if (world.isRemote) {
+        if (!world.isRemote) {
             return;
         }
-        ticks++;
-        if (ticks >= 2) {
-            byte[] data = TheatricalMod.getArtNetManager().getClient(ip).readDmxData(this.subnet, this.universe);
-            this.idmxProvider.getUniverse(world).setDmxChannels(data);
-            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, data));
-            sendDMXSignal();
-            ticks = 0;
+        if(player.equals(UUID.fromString(Minecraft.getInstance().getSession().getPlayerID()))){
+            ticks++;
+            if (ticks >= 2) {
+                byte[] data = TheatricalMod.getArtNetManager().getClient(ip).readDmxData(this.subnet, this.universe);
+                TheatricalNetworkHandler.MAIN.sendToServer(new SendArtNetToServerPacket(pos, data));
+                ticks = 0;
+            }
         }
+    }
+
+    public void update(byte[] data){
+        this.idmxProvider.getUniverse(world).setDmxChannels(data);
+        TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, data));
+        sendDMXSignal();
     }
 
     public CompoundNBT getNBT(@Nullable CompoundNBT nbtTagCompound) {
@@ -68,6 +87,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
         nbtTagCompound.putInt("subnet", this.subnet);
         nbtTagCompound.putInt("universe", this.universe);
         nbtTagCompound.putString("ip", this.ip);
+        nbtTagCompound.putString("owner", this.player.toString());
         return nbtTagCompound;
     }
 
@@ -75,6 +95,9 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
         subnet = nbtTagCompound.getInt("subnet");
         universe = nbtTagCompound.getInt("universe");
         ip = nbtTagCompound.getString("ip");
+        if(nbtTagCompound.contains("owner")) {
+            this.player = UUID.fromString(nbtTagCompound.getString("owner"));
+        }
     }
 
     @Override

@@ -26,5 +26,6 @@ public class TheatricalNetworkHandler {
         MAIN.registerMessage(8, ConsoleGoPacket.class, ConsoleGoPacket::toBytes, ConsoleGoPacket::new, ConsoleGoPacket::handle);
         MAIN.registerMessage(9, MoveStepPacket.class, MoveStepPacket::toBytes, MoveStepPacket::new, MoveStepPacket::handle);
         MAIN.registerMessage(10, ToggleModePacket.class, ToggleModePacket::toBytes, ToggleModePacket::new, ToggleModePacket::handle);
+        MAIN.registerMessage(11, SendArtNetToServerPacket.class, SendArtNetToServerPacket::toBytes, SendArtNetToServerPacket::new, SendArtNetToServerPacket::handle);
     }
 }

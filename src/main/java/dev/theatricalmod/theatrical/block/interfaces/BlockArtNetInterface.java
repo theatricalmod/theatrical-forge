@@ -5,9 +5,11 @@ import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -32,6 +34,14 @@ public class BlockArtNetInterface extends Block {
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new TileEntityArtNetInterface();
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        if(worldIn.getTileEntity(pos) instanceof TileEntityArtNetInterface){
+            ((TileEntityArtNetInterface)worldIn.getTileEntity(pos)).setPlayer(placer.getUniqueID());
+        }
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
     @Override
