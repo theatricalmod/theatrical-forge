@@ -17,6 +17,7 @@
     }
   },
   "result": {
-    "item": "theatrical:dmx_cable"
+    "item": "theatrical:dmx_cable",
+    "count": 6
   }
 }

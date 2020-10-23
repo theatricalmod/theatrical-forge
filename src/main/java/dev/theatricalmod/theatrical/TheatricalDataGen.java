@@ -216,6 +216,24 @@ public class TheatricalDataGen {
                     .key('B', Items.STONE_BUTTON)
                     .key('I', IRON_INGOT)
                     .build(consumer);
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.IWB.get())
+                    .addCriterion("has_item", hasItem(REDSTONE_DUST))
+                    .patternLine("III")
+                    .patternLine("DPD")
+                    .patternLine("III")
+                    .key('P', TheatricalItems.POWER_CABLE.get())
+                    .key('D', TheatricalItems.DMX_CABLE.get())
+                    .key('I', IRON_INGOT)
+                    .build(consumer);
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.ARTNET_INTERFACE.get())
+                    .addCriterion("has_item", hasItem(REDSTONE_DUST))
+                    .patternLine("III")
+                    .patternLine("DRD")
+                    .patternLine("III")
+                    .key('R', REDSTONE_DUST)
+                    .key('D', TheatricalItems.DMX_CABLE.get())
+                    .key('I', IRON_INGOT)
+                    .build(consumer);
         }
     }
 

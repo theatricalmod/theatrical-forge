@@ -164,15 +164,16 @@ public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLi
         RenderSystem.popMatrix();
     }
 
-
     @Override
     public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
         if(this.fadeOutTime.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)){
             fadeOutTime.setFocused2(true);
             fadeInTime.setFocused2(false);
+            return true;
         } else if(this.fadeInTime.isMouseOver(p_mouseClicked_1_, p_mouseClicked_3_)) {
             fadeInTime.setFocused2(true);
             fadeOutTime.setFocused2(false);
+            return true;
         } else{
             fadeInTime.setFocused2(false);
             fadeOutTime.setFocused2(false);

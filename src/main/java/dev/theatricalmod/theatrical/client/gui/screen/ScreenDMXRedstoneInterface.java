@@ -104,4 +104,12 @@ public class ScreenDMXRedstoneInterface extends ContainerScreen<ContainerDMXReds
         font.drawString(matrixStack, name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
         font.drawString(matrixStack, "DMX Start Address", xSize / 2 - font.getStringWidth("DMX Start Address") / 2, 16, 0x404040);
     }
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(this.dmxAddress.isMouseOver(mouseX, mouseY)){
+            dmxAddress.setFocused2(true);
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
 }
