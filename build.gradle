@@ -21,7 +21,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.wynprice.cursemaven'
 
-version = '0.5'
+version = '0.6'
 group = 'dev.imabad.theatrical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'Theatrical-1.16.3'
 
