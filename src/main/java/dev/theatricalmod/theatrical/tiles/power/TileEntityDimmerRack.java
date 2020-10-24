@@ -117,7 +117,7 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
         int totalPower = 0;
         int[] powerChannels = new int[6];
         for (int i = 0; i < 6; i++) {
-            int val = dmxReceiver.getChannel(i) & 0xFF;
+            int val = dmxReceiver.getChannel(dmxReceiver.getStartPoint() + i) & 0xFF;
             totalPower += val;
             powerChannels[i] = val;
         }

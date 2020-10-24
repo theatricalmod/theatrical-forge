@@ -93,14 +93,14 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             for (int j = 0; j < 2; j++) {
                 ButtonSocket buttonSocket;
                 if (patch == null || j >= patch.length) {
-                    buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket);
+                    buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), i, j == 1, this::handleSocket);
                 } else {
                     SocapexPatch patch1 = patch[j];
                     if (patch1 != null && patch1.getReceiver() != null) {
                         String identifier = inventoryPlayer.getIdentifier(patch1.getReceiver()).toUpperCase().substring(0, 1);
-                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, patch1, identifier, this::handleSocket);
+                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), i, j == 1, patch1, identifier, this::handleSocket);
                     } else {
-                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j), tileDimmerRack.getDmxStart() + i, j == 1, this::handleSocket);
+                        buttonSocket = new ButtonSocket(inventoryPlayer, x, y + (20 * j),  i, j == 1, this::handleSocket);
                     }
                 }
                 this.addButton(buttonSocket);
