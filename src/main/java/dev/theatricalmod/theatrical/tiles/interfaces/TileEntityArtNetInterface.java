@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.tiles.interfaces;
 
+import com.mojang.util.UUIDTypeAdapter;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
@@ -65,7 +66,7 @@ public class TileEntityArtNetInterface extends TileEntityTheatricalBase implemen
         if (!world.isRemote) {
             return;
         }
-        if(player.equals(UUID.fromString(Minecraft.getInstance().getSession().getPlayerID()))){
+        if(player.equals(UUIDTypeAdapter.fromString(Minecraft.getInstance().getSession().getPlayerID()))){
             ticks++;
             if (ticks >= 2) {
                 byte[] data = TheatricalMod.getArtNetManager().getClient(ip).readDmxData(this.subnet, this.universe);
