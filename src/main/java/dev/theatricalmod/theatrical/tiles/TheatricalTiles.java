@@ -10,6 +10,7 @@ import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIlluminator;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntitySocapexDistribution;
 import net.minecraft.tileentity.TileEntityType;
@@ -23,6 +24,7 @@ public class TheatricalTiles {
     public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, TheatricalMod.MOD_ID);
 
     public static final RegistryObject<TileEntityType<TileEntityIntelligentFixture>> MOVING_LIGHT = TILES.register("moving_light", () -> TileEntityType.Builder.create(TileEntityIntelligentFixture::new, TheatricalBlocks.MOVING_LIGHT.get()).build(null));
+    public static final RegistryObject<TileEntityType<TileEntityDimmedPowerCable>> DIMMED_POWER_CABLE = TILES.register("dimmed_power_cable", () -> TileEntityType.Builder.create(TileEntityDimmedPowerCable::new, TheatricalBlocks.DIMMED_POWER_CABLE.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityPowerCable>> POWER_CABLE = TILES.register("power_cable", () -> TileEntityType.Builder.create(TileEntityPowerCable::new, TheatricalBlocks.POWER_CABLE.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityIlluminator>> ILLUMINATOR = TILES.register("illuminator", () -> TileEntityType.Builder.create(TileEntityIlluminator::new, TheatricalBlocks.ILLUMINATOR.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityArtNetInterface>> ARTNET_INTERFACE = TILES.register("artnet_interface", () -> TileEntityType.Builder.create(TileEntityArtNetInterface::new, TheatricalBlocks.ARTNET_INTERFACE.get()).build(null));

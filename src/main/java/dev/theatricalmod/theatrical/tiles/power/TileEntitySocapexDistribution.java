@@ -37,7 +37,7 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
         if(side == getFacing()){
             return new CableType[]{CableType.SOCAPEX};
         } else {
-            return new CableType[]{CableType.POWER};
+            return new CableType[]{CableType.DIMMED_POWER};
         }
     }
 

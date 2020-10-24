@@ -111,8 +111,8 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             ISocapexReceiver iSocapexReceiver = receivers.get(currentPage);
             int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
             for (int i = 0; i < channels.length; i++) {
-                int x = width + 45 + (20 * (i < 4 ? i : i - 4));
-                int y = height + (i < 4 ? 45 : 65);
+                int x = width + 45 + (20 * (i < 3 ? i : i - 3));
+                int y = height + (i < 3 ? 45 : 65);
                 if (channels[i] != 1) {
                     int finalI = i;
                     ButtonPlug buttonPlug = new ButtonPlug(x, y, i + 1, "", activePlug == i, (button) -> {

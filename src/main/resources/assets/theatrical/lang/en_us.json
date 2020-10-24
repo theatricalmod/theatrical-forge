@@ -10,12 +10,13 @@
   "block.theatrical.socapex_distribution": "Socapex Distro",
   "block.theatrical.generic_light": "Generic Light",
   "block.theatrical.socapex_cable": "Socapex Cable",
-  "block.theatrical.power_cable": "Power Cable",
+  "block.theatrical.dimmed_power_cable": "Dimmed-Power Cable",
   "block.theatrical.basic_lighting_desk": "Basic Lighting Desk",
   "block.theatrical.redstone_interface": "DMX Redstone interface",
   "item.theatrical.positioner": "Remote Light Positioner",
   "item.theatrical.cog": "Mechanical Cog",
   "item.theatrical.led": "LED",
   "item.theatrical.motor": "Electrical Motor",
-  "item.theatrical.bulb": "Tungsten bulb"
+  "item.theatrical.bulb": "Tungsten bulb",
+  "item.theatrical.wrench": "Wrench"
 }

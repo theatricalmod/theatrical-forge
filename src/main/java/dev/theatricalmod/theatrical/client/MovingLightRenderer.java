@@ -36,7 +36,6 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         return true;
     }
 
-
     @Override
     public void render(TileEntityFixture movingLightEntity, float v, MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int i, int i1) {
         matrixStack.push();
@@ -60,6 +59,8 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
 //        RenderSystem.shadeModel(GL11.GL_FLAT);
         matrixStack.pop();
     }
+
+
 
     public void renderLight(TileEntityFixture movingLightEntity, MatrixStack matrixStack, IVertexBuilder iVertexBuilder, Direction facing, float partialTicks, boolean isFlipped, BlockState blockState, boolean isHanging) {
         IBakedModel panBakedModel = Minecraft.getInstance().getModelManager().getModel(movingLightEntity.getPanModel());

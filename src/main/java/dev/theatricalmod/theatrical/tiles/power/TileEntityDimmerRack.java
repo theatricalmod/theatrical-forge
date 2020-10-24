@@ -87,7 +87,7 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
 
     @Override
     public CableType[] getAcceptedCables(Direction side) {
-        return new CableType[]{CableType.POWER, CableType.SOCAPEX, CableType.DMX};
+        return new CableType[]{CableType.DIMMED_POWER, CableType.SOCAPEX, CableType.DMX};
     }
 
     @Override

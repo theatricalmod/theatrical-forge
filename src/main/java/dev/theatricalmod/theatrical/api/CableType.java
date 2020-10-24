@@ -10,7 +10,8 @@ public enum CableType implements IStringSerializable {
 
     NONE(-1, null, "none"),
     DMX(0, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/cable"), "dmx"),
-    POWER(1, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/power"), "power"),
+    DIMMED_POWER(1, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/power"), "power"),
+    POWER(3, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/dimmed_power"), "dimmed_power"),
     SOCAPEX(2, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/socapex"), "socapex"),
     BUNDLED(99, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/bundled"), "bundled");
 

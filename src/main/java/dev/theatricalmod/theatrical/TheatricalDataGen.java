@@ -16,7 +16,6 @@ import net.minecraft.loot.ValidationTracker;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -153,7 +152,7 @@ public class TheatricalDataGen {
                     .key('I', IRON_INGOT)
                     .key('R', REDSTONE_DUST)
                     .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POWER_CABLE.get(), 6)
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DIMMED_POWER_CABLE.get(), 6)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("WWW")
                     .patternLine("IRI")
@@ -221,7 +220,7 @@ public class TheatricalDataGen {
                     .patternLine("III")
                     .patternLine("DPD")
                     .patternLine("III")
-                    .key('P', TheatricalItems.POWER_CABLE.get())
+                    .key('P', TheatricalItems.DIMMED_POWER_CABLE.get())
                     .key('D', TheatricalItems.DMX_CABLE.get())
                     .key('I', IRON_INGOT)
                     .build(consumer);

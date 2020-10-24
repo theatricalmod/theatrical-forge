@@ -3,6 +3,7 @@ package dev.theatricalmod.theatrical.block;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.block.cables.BlockCable;
+import dev.theatricalmod.theatrical.block.cables.BlockDimmedPowerCable;
 import dev.theatricalmod.theatrical.block.cables.BlockPowerCable;
 import dev.theatricalmod.theatrical.block.control.BlockBasicLightingControl;
 import dev.theatricalmod.theatrical.block.interfaces.BlockDMXRedstoneInterface;
@@ -35,6 +36,7 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> GENERIC_LIGHT = BLOCKS.register("generic_light", () -> new BlockGenericFixture(TheatricalFixtures.FRESNSEL));
     public static final RegistryObject<Block> DMX_CABLE = BLOCKS.register("dmx_cable", () -> new BlockCable(CableType.DMX));
     public static final RegistryObject<Block> SOCAPEX_CABLE = BLOCKS.register("socapex_cable", () -> new BlockCable(CableType.SOCAPEX));
+    public static final RegistryObject<Block> DIMMED_POWER_CABLE = BLOCKS.register("dimmed_power_cable", BlockDimmedPowerCable::new);
     public static final RegistryObject<Block> POWER_CABLE = BLOCKS.register("power_cable", BlockPowerCable::new);
     public static final RegistryObject<Block> ILLUMINATOR = BLOCKS.register("illuminator", BlockIlluminator::new);
     public static final RegistryObject<Block> ARTNET_INTERFACE = BLOCKS.register("artnet_interface", BlockArtNetInterface::new);

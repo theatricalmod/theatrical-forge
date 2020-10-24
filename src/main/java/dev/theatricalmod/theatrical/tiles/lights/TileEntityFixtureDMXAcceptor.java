@@ -66,7 +66,7 @@ public abstract class TileEntityFixtureDMXAcceptor extends TileEntityFixture imp
 
     @Override
     public CableType[] getAcceptedCables(Direction side) {
-        return new CableType[]{CableType.DMX, CableType.POWER};
+        return new CableType[]{CableType.DMX, CableType.DIMMED_POWER};
     }
 
     public IDMXReceiver getIdmxReceiver() {

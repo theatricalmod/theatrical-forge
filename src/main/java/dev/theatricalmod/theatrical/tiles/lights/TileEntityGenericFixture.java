@@ -12,7 +12,6 @@ import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
-import net.minecraft.block.DirectionalBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -222,6 +221,6 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public CableType[] getAcceptedCables(Direction side) {
-        return new CableType[]{CableType.POWER};
+        return new CableType[]{CableType.DIMMED_POWER};
     }
 }
