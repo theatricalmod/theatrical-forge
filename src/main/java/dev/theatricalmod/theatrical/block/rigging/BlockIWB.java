@@ -73,10 +73,12 @@ public class BlockIWB extends HorizontalBlock implements ISupport {
                     return ActionResultType.FAIL;
                 }
                 worldIn.setBlockState(down, block.getDefaultState().with(BlockHangable.FACING, player.getHorizontalFacing()));
-                if(player.getHeldItem(handIn).getCount() > 1) {
-                    player.getHeldItem(handIn).setCount(player.getHeldItem(handIn).getCount() - 1);
-                } else {
-                    player.setHeldItem(handIn, new ItemStack(Items.AIR));
+                if(!player.isCreative()) {
+                    if (player.getHeldItem(handIn).getCount() > 1) {
+                        player.getHeldItem(handIn).setCount(player.getHeldItem(handIn).getCount() - 1);
+                    } else {
+                        player.setHeldItem(handIn, new ItemStack(Items.AIR));
+                    }
                 }
                 return ActionResultType.CONSUME;
             }
