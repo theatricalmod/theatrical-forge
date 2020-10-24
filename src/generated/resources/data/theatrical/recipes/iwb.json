@@ -7,7 +7,7 @@
   ],
   "key": {
     "P": {
-      "item": "theatrical:power_cable"
+      "item": "theatrical:dimmed_power_cable"
     },
     "D": {
       "item": "theatrical:dmx_cable"
@@ -17,6 +17,7 @@
     }
   },
   "result": {
-    "item": "theatrical:iwb"
+    "item": "theatrical:iwb",
+    "count": 6
   }
 }

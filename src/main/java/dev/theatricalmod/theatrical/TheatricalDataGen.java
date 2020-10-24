@@ -83,7 +83,7 @@ public class TheatricalDataGen {
 
         @Override
         protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.TRUSS.get())
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.TRUSS.get(), 4)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("III")
                     .patternLine("I I")
@@ -152,6 +152,15 @@ public class TheatricalDataGen {
                     .key('I', IRON_INGOT)
                     .key('R', REDSTONE_DUST)
                     .build(consumer);
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POWER_CABLE.get(), 6)
+                    .addCriterion("has_item", hasItem(IRON_INGOT))
+                    .patternLine("WWW")
+                    .patternLine("IRI")
+                    .patternLine("WWW")
+                    .key('W', Items.CYAN_WOOL)
+                    .key('I', IRON_INGOT)
+                    .key('R', REDSTONE_DUST)
+                    .build(consumer);
             ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DIMMED_POWER_CABLE.get(), 6)
                     .addCriterion("has_item", hasItem(IRON_INGOT))
                     .patternLine("WWW")
@@ -215,7 +224,7 @@ public class TheatricalDataGen {
                     .key('B', Items.STONE_BUTTON)
                     .key('I', IRON_INGOT)
                     .build(consumer);
-            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.IWB.get())
+            ShapedRecipeBuilder.shapedRecipe(TheatricalItems.IWB.get(), 6)
                     .addCriterion("has_item", hasItem(REDSTONE_DUST))
                     .patternLine("III")
                     .patternLine("DPD")

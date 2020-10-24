@@ -7,7 +7,7 @@
   ],
   "key": {
     "W": {
-      "item": "minecraft:cyan_wool"
+      "item": "minecraft:blue_wool"
     },
     "I": {
       "tag": "forge:ingots/iron"
@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "theatrical:power_cable",
+    "item": "theatrical:dimmed_power_cable",
     "count": 6
   }
 }
