@@ -72,7 +72,11 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
             matrixStack.translate(0, 0.05, 0);
         }
         matrixStack.translate(0.5F, 0, .5F);
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(facing.getHorizontalAngle()));
+        if(facing.getAxis() == Direction.Axis.Z) {
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(facing.getOpposite().getHorizontalAngle()));
+        } else  {
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(facing.getHorizontalAngle()));
+        }
         matrixStack.translate(-0.5F, 0, -.5F);
         if (movingLightEntity.getHangType() == HangableType.BRACE_BAR && isHanging) {
             if (movingLightEntity.getWorld().getBlockState(movingLightEntity.getPos().offset(Direction.UP)).getBlock() instanceof ISupport) {

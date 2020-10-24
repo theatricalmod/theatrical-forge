@@ -129,7 +129,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public int getPan() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
-            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F) - 180;
+            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F);
         }
         return prevPan;
     }

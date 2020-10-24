@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
+import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,7 +39,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.UUID;
 
-public class TileEntityArtNetInterface extends TileEntity implements ITickableTileEntity, INamedContainerProvider, IAcceptsCable {
+public class TileEntityArtNetInterface extends TileEntityTheatricalBase implements ITickableTileEntity, INamedContainerProvider, IAcceptsCable {
 
     private final IDMXProvider idmxProvider;
 
@@ -80,6 +81,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
         sendDMXSignal();
     }
 
+    @Override
     public CompoundNBT getNBT(@Nullable CompoundNBT nbtTagCompound) {
         if (nbtTagCompound == null) {
             nbtTagCompound = new CompoundNBT();
@@ -91,6 +93,7 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
         return nbtTagCompound;
     }
 
+    @Override
     public void readNBT(CompoundNBT nbtTagCompound) {
         subnet = nbtTagCompound.getInt("subnet");
         universe = nbtTagCompound.getInt("universe");
@@ -99,40 +102,6 @@ public class TileEntityArtNetInterface extends TileEntity implements ITickableTi
             this.player = UUID.fromString(nbtTagCompound.getString("owner"));
         }
     }
-
-    @Override
-    public void deserializeNBT(CompoundNBT compound) {
-        readNBT(compound);
-        super.deserializeNBT(compound);
-    }
-
-    @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        compound = getNBT(compound);
-        return super.write(compound);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        readNBT(pkt.getNbtCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        readNBT(tag);
-    }
-
-    @Nullable
-    @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(pos, 0, getNBT(null));
-    }
-
-    @Override
-    public CompoundNBT getUpdateTag() {
-        return getNBT(null);
-    }
-
 
     @Nonnull
     @Override

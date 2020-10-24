@@ -133,11 +133,12 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         Direction direction = blockState.get(
             HorizontalBlock.HORIZONTAL_FACING);
         float horizontalAngle = direction.getHorizontalAngle();
-        float lookingAngle = (horizontalAngle + (isUpsideDown() ? 180 : 0)) - getPan();
+        float lookingAngle = horizontalAngle;
+        lookingAngle = (isUpsideDown() ? lookingAngle + getPan() : lookingAngle - getPan());
         lookingAngle = lookingAngle % 360;
         if (isUpsideDown()) {
-            lookingAngle = 360 - lookingAngle;
-            lookingAngle = lookingAngle % 360;
+//            lookingAngle = 360 - lookingAngle;
+//            lookingAngle = lookingAngle % 360;
         }
 
         float tilt = getTilt() + getExtraTilt();
@@ -148,7 +149,6 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
 //        if(isUpsideDown()){
 //            lookingAngle = -lookingAngle;
 //        }
-
         Vector3d look = getVectorForRotation(tilt, lookingAngle);
         double distance = getMaxLightDistance();
         Vector3d startVec = look.scale(0.9F).add(pos.getX() + 0.5, pos.getY() + 0.51, pos.getZ() + 0.5);
