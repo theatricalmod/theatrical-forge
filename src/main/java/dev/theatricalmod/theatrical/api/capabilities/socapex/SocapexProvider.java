@@ -118,16 +118,25 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     @Override
     public boolean canReceive(int channel) {
+        if(channel >= channels.length){
+            return false;
+        }
         return channels[channel] < 255;
     }
 
     @Override
     public boolean canExtract(int channel) {
+        if(channel >= channels.length){
+            return false;
+        }
         return channels[channel] > 0;
     }
 
     @Override
     public SocapexPatch[] getPatch(int channel) {
+        if(channel >= channels.length){
+            return null;
+        }
         return patch.get(channel);
     }
 
