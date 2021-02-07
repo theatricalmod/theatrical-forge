@@ -66,6 +66,9 @@ public class TheatricalCommon {
         if (tileEntity instanceof TileEntityArtNetInterface) {
             ((TileEntityArtNetInterface) tileEntity).setUniverse(universe);
             ((TileEntityArtNetInterface) tileEntity).setIp(ipAddress);
+            if(((TileEntityArtNetInterface) tileEntity).getPlayer() == null){
+                ((TileEntityArtNetInterface) tileEntity).setPlayer(context.getSender().getUniqueID());
+            }
             world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER, 512);
         }
     }

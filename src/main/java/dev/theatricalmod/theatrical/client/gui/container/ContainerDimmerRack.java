@@ -3,6 +3,7 @@ package dev.theatricalmod.theatrical.client.gui.container;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
+import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -38,7 +39,7 @@ public class ContainerDimmerRack extends Container {
     }
 
     public int[] getChannelsForReceiver(ISocapexReceiver iSocapexReceiver) {
-        if (dimmerRack.getCapability(SocapexProvider.CAP, null).isPresent()) {
+        if (dimmerRack.getCapability(SocapexReceiver.CAP, null).isPresent()) {
             return dimmerRack.getCapability(SocapexProvider.CAP, null).orElse(null).getPatchedCables(iSocapexReceiver);
         }
         return null;

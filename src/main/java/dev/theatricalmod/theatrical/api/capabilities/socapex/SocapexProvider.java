@@ -195,11 +195,14 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     @Override
     public int[] getPatchedCables(ISocapexReceiver socapexReceiver) {
-        int[] channels = new int[8];
+        if(socapexReceiver == null){
+            return new int[0];
+        }
+        int[] channels = new int[socapexReceiver.getTotalChannels()];
         for (Integer i : patch.keySet()) {
             if (patch.containsKey(i)) {
                 SocapexPatch[] patches = patch.get(i);
-                if (patches != null && socapexReceiver != null) {
+                if (patches != null) {
                     for (SocapexPatch socapexPatch : patches) {
                         if (socapexPatch != null && socapexReceiver.getReceiverPos().equals(socapexPatch.getReceiver())) {
                             channels[socapexPatch.getReceiverSocket()] = 1;

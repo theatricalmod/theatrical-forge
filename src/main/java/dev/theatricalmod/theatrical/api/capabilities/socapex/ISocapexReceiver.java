@@ -20,4 +20,6 @@ public interface ISocapexReceiver {
     BlockPos getReceiverPos();
 
     List<BlockPos> getDevices();
+
+    int getTotalChannels();
 }

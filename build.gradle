@@ -126,6 +126,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     shade files("libs/artnet4j-0.6.1.jar")
     runtimeOnly fg.deobf(curse.resolve('mcjtylib', '3049310'))
+    runtimeOnly fg.deobf(curse.resolve('powah', '3098477'))
+    runtimeOnly fg.deobf(curse.resolve('lollipop', '3084134'))
 //    compile fg.deobf(files("libs/simplytech-I-HOpe-it-works.jar"))
     implementation fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.4-beta-7")
 }

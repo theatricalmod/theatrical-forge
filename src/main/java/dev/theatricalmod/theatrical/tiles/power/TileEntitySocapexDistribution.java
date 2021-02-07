@@ -107,6 +107,11 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
     }
 
     @Override
+    public int getTotalChannels() {
+        return 5;
+    }
+
+    @Override
     public void tick() {
         if(world.isRemote){
             return;

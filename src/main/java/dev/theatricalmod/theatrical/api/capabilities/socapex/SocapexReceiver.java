@@ -118,4 +118,9 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
     public List<BlockPos> getDevices() {
         return blockPosList;
     }
+
+    @Override
+    public int getTotalChannels() {
+        return 0;
+    }
 }

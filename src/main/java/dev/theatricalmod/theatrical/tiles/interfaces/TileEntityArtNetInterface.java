@@ -66,7 +66,7 @@ public class TileEntityArtNetInterface extends TileEntityTheatricalBase implemen
         if (!world.isRemote) {
             return;
         }
-        if(player.equals(UUIDTypeAdapter.fromString(Minecraft.getInstance().getSession().getPlayerID()))){
+        if(player != null && player.equals(UUIDTypeAdapter.fromString(Minecraft.getInstance().getSession().getPlayerID()))){
             ticks++;
             if (ticks >= 2) {
                 byte[] data = TheatricalMod.getArtNetManager().getClient(ip).readDmxData(this.subnet, this.universe);

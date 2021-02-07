@@ -38,7 +38,7 @@ public class BlockArtNetInterface extends Block {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if(worldIn.getTileEntity(pos) instanceof TileEntityArtNetInterface){
+        if(worldIn.getTileEntity(pos) instanceof TileEntityArtNetInterface && placer != null){
             ((TileEntityArtNetInterface)worldIn.getTileEntity(pos)).setPlayer(placer.getUniqueID());
         }
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
