@@ -52,6 +52,7 @@ public class TheatricalDataGen {
         @Override
         protected void registerTags() {
             this.getOrCreateBuilder(ItemTags.makeWrapperTag("forge:gears/iron")).add(TheatricalItems.COG.get());
+            this.getOrCreateBuilder(ItemTags.makeWrapperTag("forge:wrenches")).add(TheatricalItems.WRENCH.get());
         }
     }
 
