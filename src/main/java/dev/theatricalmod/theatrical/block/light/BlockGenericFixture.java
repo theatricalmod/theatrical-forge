@@ -5,6 +5,7 @@ import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
+import dev.theatricalmod.theatrical.entity.FallingLightEntity;
 import dev.theatricalmod.theatrical.items.ItemPositioner;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
@@ -14,6 +15,7 @@ import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -22,17 +24,21 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvider {
 
@@ -58,6 +64,16 @@ public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvid
 
     public Fixture getFixture() {
         return fixture;
+    }
+
+    @Override
+    public BlockState updatePostPlacement(BlockState state, Direction from, BlockState fromState, IWorld world, BlockPos pos, BlockPos fromPos) {
+        if (world instanceof World && !isValidPosition(state, world, pos)) {
+            FallingLightEntity fallingblockentity = new FallingLightEntity((World) world, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, world.getBlockState(pos));
+            world.addEntity(fallingblockentity);
+            //N.B. Block removal is handled in the first tick of the entity because...reasons (vanilla does it)
+        }
+        return super.updatePostPlacement(state, from, fromState, world, pos, fromPos);
     }
 
     @OnlyIn(Dist.CLIENT)

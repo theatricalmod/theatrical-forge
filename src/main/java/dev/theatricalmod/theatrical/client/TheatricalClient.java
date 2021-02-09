@@ -53,6 +53,7 @@ public class TheatricalClient extends TheatricalCommon {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
+        RenderingRegistry.registerEntityRenderingHandler(TheatricalEntities.FALLING_LIGHT.get(), FallingLightRenderer::new);
         RenderType cutout = RenderType.getCutout();
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.TRUSS.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT.get(), cutout);
@@ -68,7 +69,6 @@ public class TheatricalClient extends TheatricalCommon {
         ScreenManager.registerFactory(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), ScreenBasicLightingConsole::new);
         ScreenManager.registerFactory(TheatricalContainers.DMX_REDSTONE_INTERFACE.get(), ScreenDMXRedstoneInterface::new);
 //        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
-        RenderingRegistry.registerEntityRenderingHandler(TheatricalEntities.FALLING_LIGHT.get(), FallingLightRenderer::new);
     }
 
     @SubscribeEvent

@@ -1,7 +1,8 @@
-package dev.theatricalmod.theatrical;
+package dev.theatricalmod.theatrical.data;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
+import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
 import net.minecraft.block.Block;
