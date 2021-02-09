@@ -43,7 +43,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         BlockState blockState = movingLightEntity.getBlockState();
         boolean isFlipped = false;
         if (movingLightEntity.getBlockState().getBlock() instanceof BlockIntelligentFixture) {
-            isFlipped = blockState.get(BlockIntelligentFixture.FLIPPED);
+            isFlipped = blockState.get(BlockIntelligentFixture.HANGING);
         }
         boolean isHanging = ((BlockHangable) blockState.getBlock()).isHanging(movingLightEntity.getWorld(), movingLightEntity.getPos());
         renderLight(movingLightEntity, matrixStack, iVertexBuilder, movingLightEntity.getBlockState().get(BlockMovingLight.FACING), v, isFlipped, movingLightEntity.getBlockState(), isHanging);

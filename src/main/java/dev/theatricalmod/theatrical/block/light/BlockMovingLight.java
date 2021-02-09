@@ -18,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BlockMovingLight extends BlockIntelligentFixture {
 
     public BlockMovingLight() {
-        super(TheatricalFixtures.MOVING_LIGHT, TheatricalBlocks.BASE_PROPERTIES.notSolid());
+        super(TheatricalFixtures.MOVING_LIGHT, TheatricalBlocks.LIGHT_PROPERTIES);
     }
 
     @Override

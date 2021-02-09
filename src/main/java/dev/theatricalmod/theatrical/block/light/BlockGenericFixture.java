@@ -1,22 +1,19 @@
 package dev.theatricalmod.theatrical.block.light;
 
-import static dev.theatricalmod.theatrical.block.TheatricalBlocks.BASE_PROPERTIES;
-
 import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.BlockHangable;
+import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
 import dev.theatricalmod.theatrical.items.ItemPositioner;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
-import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -25,7 +22,6 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -36,12 +32,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nullable;
+
 public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvider {
 
-    private Fixture fixture;
+    private final Fixture fixture;
 
     public BlockGenericFixture(Fixture fixture) {
-        super(BASE_PROPERTIES.notSolid(), new Direction[]{Direction.UP});
+        super(TheatricalBlocks.LIGHT_PROPERTIES);
         this.fixture = fixture;
     }
 
@@ -58,30 +56,15 @@ public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvid
         return tileEntityFixture;
     }
 
-    @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
-    }
-
     @OnlyIn(Dist.CLIENT)
+    @Override
     public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return 1.0F;
     }
 
+    @Override
     public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
         return true;
-    }
-
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-
-    public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type) {
-        return false;
     }
 
     @Override

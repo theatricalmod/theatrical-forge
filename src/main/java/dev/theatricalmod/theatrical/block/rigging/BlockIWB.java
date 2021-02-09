@@ -36,11 +36,6 @@ public class BlockIWB extends HorizontalBlock implements ISupport {
         super(TheatricalBlocks.BASE_PROPERTIES);
     }
 
-    @Override
-    public Direction getBlockPlacementDirection(IWorldReader world, BlockPos pos, Direction facing) {
-        return facing.getOpposite();
-    }
-
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {

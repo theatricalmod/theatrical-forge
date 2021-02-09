@@ -16,6 +16,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -30,11 +31,11 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class BlockIntelligentFixture extends BlockHangable {
 
-    public static final BooleanProperty FLIPPED = BooleanProperty.create("flipped");
-    private Fixture fixture;
+    public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
+    private final Fixture fixture;
 
     public BlockIntelligentFixture(Fixture fixture, Properties builder) {
-        super(builder, new Direction[]{Direction.UP, Direction.DOWN});
+        super(builder);
         this.fixture = fixture;
     }
 
@@ -80,18 +81,18 @@ public class BlockIntelligentFixture extends BlockHangable {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return super.getStateForPlacement(context).with(FLIPPED, context.getFace() == Direction.DOWN || isHanging(context.getWorld(), context.getPos()));
+        return super.getStateForPlacement(context).with(HANGING, context.getFace() == Direction.DOWN || isHanging(context.getWorld(), context.getPos()));
     }
 
     @Override
     protected void fillStateContainer(Builder<Block, BlockState> builder) {
         super.fillStateContainer(builder);
-        builder.add(FLIPPED);
+        builder.add(HANGING);
     }
 
     @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if(state.get(FLIPPED) && !isHanging(worldIn, pos)){
+        if(state.get(HANGING) && !isHanging(worldIn, pos)){
             super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
         } else if (!isHanging(worldIn, pos) && worldIn.getBlockState(pos.offset(Direction.DOWN)).isAir(worldIn, pos)) {
             if(!worldIn.isRemote) {
@@ -109,8 +110,6 @@ public class BlockIntelligentFixture extends BlockHangable {
             TileEntity tileEntity = world.getTileEntity(pos);
             if(tileEntity instanceof INamedContainerProvider){
                 NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-            } else {
-
             }
             return ActionResultType.PASS;
         }
