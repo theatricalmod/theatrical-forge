@@ -56,6 +56,10 @@ public class BlockGenericFixture extends BlockHangable implements ITOPInfoProvid
         return tileEntityFixture;
     }
 
+    public Fixture getFixture() {
+        return fixture;
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {

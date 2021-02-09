@@ -16,6 +16,7 @@ import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -34,12 +35,12 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
 
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(TheatricalMod.MOD_ID, "textures/gui/dimmer_rack.png");
 
-    private ContainerDimmerRack inventoryPlayer;
-    private TileEntityDimmerRack tileDimmerRack;
-    private List<ISocapexReceiver> receivers;
+    private final ContainerDimmerRack inventoryPlayer;
+    private final TileEntityDimmerRack tileDimmerRack;
+    private final List<ISocapexReceiver> receivers;
     private TextFieldWidget dmxStartField;
-    private List<ButtonSocket> sockets;
-    private List<ButtonPlug> plugs;
+    private final List<ButtonSocket> sockets;
+    private final List<ButtonPlug> plugs;
     private int currentPage = 0;
 
     private int activePlug = -1;
@@ -190,7 +191,7 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         this.getMinecraft().getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
         int lvt_4_1_ = this.guiLeft;
         int lvt_5_1_ = (this.height - this.ySize) / 2;
-        this.blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, xSize, ySize, 512, 512);
+        blit(matrixStack, lvt_4_1_, lvt_5_1_, 0, 0, xSize, ySize, 512, 512);
     }
 
     @Override

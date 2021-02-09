@@ -120,28 +120,27 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         int g = (color >> 8) & 0xFF;
         int b = color & 0xFF;
         int a = (int) (alpha * 255);
-        float width =  beamSize;
         Matrix4f m = stack.getLast().getMatrix();
         float endMultiplier = beamSize * tileEntityFixture.getFocus();
-        builder.pos(m, width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, width, width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, width, -width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, beamSize, beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
 
-        builder.pos(m, -width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, -width, -width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -width, width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, -beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, -beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, -beamSize, beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, -beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
 
-        builder.pos(m, -width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, -width, width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, width, width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, width * endMultiplier, width * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, -beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, -beamSize, beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, beamSize, beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
 
-        builder.pos(m, width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, width, -width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -width, -width, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -width * endMultiplier, -width * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        builder.pos(m, beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, -beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
+        builder.pos(m, -beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
     }
 
 }

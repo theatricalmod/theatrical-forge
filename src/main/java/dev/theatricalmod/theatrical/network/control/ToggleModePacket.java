@@ -19,7 +19,7 @@ public class ToggleModePacket {
             blockPos = new BlockPos(x, y, z);
         }
 
-        private BlockPos blockPos;
+        private final BlockPos blockPos;
 
         public BlockPos getBlockPos() {
             return blockPos;

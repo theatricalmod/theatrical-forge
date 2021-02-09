@@ -15,12 +15,12 @@ public class ButtonFader extends Widget{
     private static final ResourceLocation background = new ResourceLocation(TheatricalMod.MOD_ID,
         "textures/gui/lighting_console.png");
 
-    private int channel;
+    private final int channel;
     private int value;
 
     private boolean dragging = false;
 
-    public IDraggable onDrag;
+    public final IDraggable onDrag;
 
     public ButtonFader(int x, int y, int channel, int value, IDraggable draggable) {
         super(x, y, 10, 51, new StringTextComponent(""));

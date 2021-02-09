@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class TheatricalItems {
 
-    private static Item.Properties BASE_PROPERTIES = new Item.Properties().group(TheatricalMod.theatricalItemGroup);
+    private static final Item.Properties BASE_PROPERTIES = new Item.Properties().group(TheatricalMod.theatricalItemGroup);
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TheatricalMod.MOD_ID);
 

@@ -18,6 +18,7 @@ import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.TheatricalClient;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
 import dev.theatricalmod.theatrical.compat.top.TOPCompat;
+import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.fixtures.FixtureFresnel;
 import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
@@ -50,9 +51,9 @@ public class TheatricalMod {
 
     public static final String MOD_ID = "theatrical";
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
-    public static ItemGroup theatricalItemGroup = new ItemGroup("theatrical") {
+    public static final ItemGroup theatricalItemGroup = new ItemGroup("theatrical") {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(TheatricalItems.DIMMER_RACK.get());
@@ -74,11 +75,11 @@ public class TheatricalMod {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
         eventBus.addGenericListener(Fixture.class, this::registerFixture);
-//        eventBus.addListener(this::shutdown);
         eventBus.addListener(this::imc);
         TheatricalBlocks.BLOCKS.register(eventBus);
         TheatricalItems.ITEMS.register(eventBus);
         TheatricalTiles.TILES.register(eventBus);
+        TheatricalEntities.ENTITIES.register(eventBus);
         TheatricalContainers.CONTAINERS.register(eventBus);
         proxy.init();
         TheatricalNetworkHandler.init();
@@ -125,8 +126,7 @@ public class TheatricalMod {
     }
 
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
+    private void setup(final FMLCommonSetupEvent event) {
         LOGGER.info("Initialising Theatrical ");
         registerCapabilities();
         MinecraftForge.EVENT_BUS.addGenericListener(World.class, this::attachWorldCap);

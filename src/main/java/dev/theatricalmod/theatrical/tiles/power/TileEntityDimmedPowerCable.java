@@ -31,11 +31,11 @@ public class TileEntityDimmedPowerCable extends TileEntity implements ITheatrica
     }
 
     public int power = 0;
-    private int transferRate = 6000;
+    private final int transferRate = 6000;
 
     private int ticksSinceLastSend = 0;
 
-    private ArrayList<Direction> sendingFace = new ArrayList<Direction>();
+    private final ArrayList<Direction> sendingFace = new ArrayList<Direction>();
 
 
     public CompoundNBT writeNBT(CompoundNBT nbtTagCompound) {

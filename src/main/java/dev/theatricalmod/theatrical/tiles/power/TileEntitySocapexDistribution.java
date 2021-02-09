@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class TileEntitySocapexDistribution extends TileEntity implements IAcceptsCable, ISocapexReceiver, ITickableTileEntity {
 
-    private int[] channels;
+    private final int[] channels;
 
     public TileEntitySocapexDistribution() {
         super(TheatricalTiles.SOCAPEX_DISTRIBUTION.get());
@@ -95,10 +95,7 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
         if(channel == getFacing().getIndex()){
             return false;
         }
-        if(channel > this.channels.length - 1){
-            return false;
-        }
-        return true;
+        return channel <= this.channels.length - 1;
     }
 
     @Override
@@ -113,25 +110,24 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
 
     @Override
     public void tick() {
-        if(world.isRemote){
-            return;
-        }
-        for(Direction direction: Direction.values()){
-            if(direction == getFacing()){
-                continue;
-            }
-            TileEntity tileEntity = world.getTileEntity(pos.offset(direction));
-            if(tileEntity != null){
-                LazyOptional<ITheatricalPowerStorage> capability = tileEntity.getCapability(TheatricalPower.CAP, direction.getOpposite());
-                capability.ifPresent(iTheatricalPowerStorage -> {
-                    if(iTheatricalPowerStorage.getEnergyStored() > getEnergyStored(direction.getIndex())){
-                        return;
-                    }
-                    if(iTheatricalPowerStorage.receiveEnergy(255, true) > 0){
-                        int amount = iTheatricalPowerStorage.receiveEnergy(getEnergyStored(direction.getIndex()), false);
-                        channels[direction.getIndex()] = channels[direction.getIndex()] - amount;
-                    }
-                });
+        if(!world.isRemote) {
+            for (Direction direction : Direction.values()) {
+                if (direction == getFacing()) {
+                    continue;
+                }
+                TileEntity tileEntity = world.getTileEntity(pos.offset(direction));
+                if (tileEntity != null) {
+                    LazyOptional<ITheatricalPowerStorage> capability = tileEntity.getCapability(TheatricalPower.CAP, direction.getOpposite());
+                    capability.ifPresent(iTheatricalPowerStorage -> {
+                        if (iTheatricalPowerStorage.getEnergyStored() > getEnergyStored(direction.getIndex())) {
+                            return;
+                        }
+                        if (iTheatricalPowerStorage.receiveEnergy(255, true) > 0) {
+                            int amount = iTheatricalPowerStorage.receiveEnergy(getEnergyStored(direction.getIndex()), false);
+                            channels[direction.getIndex()] = channels[direction.getIndex()] - amount;
+                        }
+                    });
+                }
             }
         }
     }

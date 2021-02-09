@@ -28,7 +28,7 @@ public class SendArtNetToServerPacket {
     }
 
     private World world;
-    private BlockPos blockPos;
+    private final BlockPos blockPos;
     private byte[] data;
 
     public BlockPos getBlockPos() {

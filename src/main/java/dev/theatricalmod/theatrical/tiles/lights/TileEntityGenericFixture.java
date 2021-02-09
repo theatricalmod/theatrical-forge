@@ -30,9 +30,8 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     public int energyUsage, energyCost;
 
     private int power;
-    private int capacity = 255;
-    private int maxReceive = 255;
-    private int maxExtract = 255;
+    private final int maxReceive = 255;
+    private final int maxExtract = 255;
 
     private Entity trackingEntity;
 
@@ -118,38 +117,36 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     @Override
     public void tick() {
         super.tick();
-        prevPan = getPan();
-        prevTilt = getTilt();
-        prevFocus = getFocus();
-        if (world.isRemote) {
-            return;
-        }
-        if(trackingEntity != null){
-            double distance = Math.sqrt(trackingEntity.getDistanceSq(getPos().getX(), trackingEntity.getPosY(), getPos().getZ()));
-            double height = getPos().getY() - trackingEntity.getPosYEye();
-            double someCalc = height / distance;
-            setTilt(-(int) Math.toDegrees(Math.atan(someCalc)));
-            Direction facing = getBlockState().get(BlockHangable.FACING);
-            double h = distance;
-            double x = getPos().getX() - trackingEntity.getPosX();
-            double z = getPos().getZ() - trackingEntity.getPosZ();
-            double calc = Math.atan2(x, z);
-            int pan = (int) Math.toDegrees(calc);
-            pan = pan - (int) facing.getHorizontalAngle();
-            if(pan < -180){
-                pan += 360;
-            } else if(pan > 180){
-                pan -= 360;
+        if (world != null && !world.isRemote) {
+            prevPan = getPan();
+            prevTilt = getTilt();
+            prevFocus = getFocus();
+            if (trackingEntity != null) {
+                double distance = Math.sqrt(trackingEntity.getDistanceSq(getPos().getX(), trackingEntity.getPosY(), getPos().getZ()));
+                double height = getPos().getY() - trackingEntity.getPosYEye();
+                double someCalc = height / distance;
+                setTilt(-(int) Math.toDegrees(Math.atan(someCalc)));
+                Direction facing = getBlockState().get(BlockHangable.FACING);
+                double x = getPos().getX() - trackingEntity.getPosX();
+                double z = getPos().getZ() - trackingEntity.getPosZ();
+                double calc = Math.atan2(x, z);
+                int pan = (int) Math.toDegrees(calc);
+                pan = pan - (int) facing.getHorizontalAngle();
+                if (pan < -180) {
+                    pan += 360;
+                } else if (pan > 180) {
+                    pan -= 360;
+                }
+                setPan(pan);
             }
-            setPan(pan);
-        }
-        if (power != lastPower) {
-            lastPower = power;
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
-        }
-        if(power > 0){
-            int energyExtracted = Math.min(power, Math.min(this.maxExtract, this.energyCost));
-            power -= energyExtracted;
+            if (power != lastPower) {
+                lastPower = power;
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+            }
+            if (power > 0) {
+                int energyExtracted = Math.min(power, Math.min(this.maxExtract, this.energyCost));
+                power -= energyExtracted;
+            }
         }
     }
 
@@ -197,7 +194,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public int getMaxEnergyStored() {
-        return capacity;
+        return 255;
     }
 
     @Override
@@ -207,7 +204,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public boolean canReceive() {
-        return this.maxReceive > 0;
+        return true;
     }
 
     @Nonnull

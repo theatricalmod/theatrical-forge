@@ -18,7 +18,7 @@ import net.minecraft.world.IBlockReader;
 
 public class BlockIlluminator extends Block {
 
-    public static IntegerProperty lightValue = IntegerProperty.create("light", 0, 15);
+    public static final IntegerProperty lightValue = IntegerProperty.create("light", 0, 15);
 
     public BlockIlluminator() {
         super(TheatricalBlocks.BASE_PROPERTIES.notSolid());
@@ -35,7 +35,6 @@ public class BlockIlluminator extends Block {
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new TileEntityIlluminator();
     }
-
 
     @Override
     public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {

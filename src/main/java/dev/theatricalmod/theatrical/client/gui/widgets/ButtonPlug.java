@@ -13,8 +13,8 @@ public class ButtonPlug extends Button {
     private static final ResourceLocation background = new ResourceLocation(TheatricalMod.MOD_ID,
         "textures/gui/dimmer_rack.png");
 
-    private int plugNumber;
-    private String identifier;
+    private final int plugNumber;
+    private final String identifier;
     private boolean active;
 
     public ButtonPlug(int x, int y, int plugNumber, String identifier, boolean active, Button.IPressable onPress) {

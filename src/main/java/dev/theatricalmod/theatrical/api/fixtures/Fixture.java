@@ -26,26 +26,26 @@ public class Fixture extends ForgeRegistryEntry<Fixture> {
         return REGISTRY;
     }
 
-    private ResourceLocation name;
-    private FixtureType fixtureType;
-    private HangableType hangableType;
-    private ResourceLocation staticModelLocation;
-    private ResourceLocation hookedModelLocation;
-    private ResourceLocation tiltModelLocation;
-    private ResourceLocation panModelLocation;
-    private ResourceLocation[] textures;
-    private float[] tiltRotationPosition;
-    private float[] panRotationPosition;
-    private float[] beamStartPosition;
-    private float defaultRotation;
-    private float beamWidth;
-    private float rayTraceRotation;
-    private float maxLightDistance;
-    private int maxEnergy;
-    private int energyUse;
-    private int energyUseTimer;
-    private int channelCount;
-    private ChannelsDefinition channelsDefinition;
+    private final ResourceLocation name;
+    private final FixtureType fixtureType;
+    private final HangableType hangableType;
+    private final ResourceLocation staticModelLocation;
+    private final ResourceLocation hookedModelLocation;
+    private final ResourceLocation tiltModelLocation;
+    private final ResourceLocation panModelLocation;
+    private final ResourceLocation[] textures;
+    private final float[] tiltRotationPosition;
+    private final float[] panRotationPosition;
+    private final float[] beamStartPosition;
+    private final float defaultRotation;
+    private final float beamWidth;
+    private final float rayTraceRotation;
+    private final float maxLightDistance;
+    private final int maxEnergy;
+    private final int energyUse;
+    private final int energyUseTimer;
+    private final int channelCount;
+    private final ChannelsDefinition channelsDefinition;
 
     private IBakedModel staticModel;
     private IBakedModel hookedModel;

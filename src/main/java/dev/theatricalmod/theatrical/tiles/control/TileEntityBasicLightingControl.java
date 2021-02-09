@@ -91,7 +91,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     private int ticks = 0;
     private byte[] faders = new byte[12];
-    private byte[] actualDMX = new byte[12];
+    private final byte[] actualDMX = new byte[12];
     private int currentStep = 0;
     private HashMap<Integer, StoredCue> storedSteps = new HashMap<>();
     private StoredCue activeCue;
@@ -107,7 +107,7 @@ public class TileEntityBasicLightingControl extends TileEntityTheatricalBase imp
 
     private byte grandMaster = -1;
 
-    private IDMXProvider idmxProvider;
+    private final IDMXProvider idmxProvider;
 
     public TileEntityBasicLightingControl() {
         super(TheatricalTiles.BASIC_LIGHTING_DESK.get());

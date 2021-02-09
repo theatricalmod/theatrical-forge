@@ -23,8 +23,9 @@ public class UpdateFixturePacket {
         pan = buffer.readInt();
     }
 
-    private BlockPos blockPos;
-    private int tilt, pan;
+    private final BlockPos blockPos;
+    private final int tilt;
+    private final int pan;
 
     public BlockPos getBlockPos() {
         return blockPos;
