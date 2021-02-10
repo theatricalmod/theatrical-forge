@@ -91,7 +91,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'theatrical', '--all', '--output', file('src/generated/resources/')
 
             mods {
                 theatrical {
