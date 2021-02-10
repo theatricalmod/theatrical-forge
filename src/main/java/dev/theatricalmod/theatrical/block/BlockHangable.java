@@ -37,7 +37,6 @@ public class BlockHangable extends HorizontalBlock {
         this.setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(BROKEN, false));
     }
 
-    //TODO - I guess the loot table copy_state just...doesn't do anything?
     @Override
     public void onBlockHarvested(World world, BlockPos blockPos, BlockState state, PlayerEntity playerIn) {
         if (!world.isRemote && playerIn.isCreative() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {

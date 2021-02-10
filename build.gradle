@@ -20,6 +20,8 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.wynprice.cursemaven'
+apply plugin: 'java'
+apply plugin: 'idea'
 
 version = '0.6.2'
 group = 'dev.imabad.theatrical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -32,6 +34,21 @@ repositories {
     maven { // TOP
         name 'tterrag maven'
         url "http://maven.tterrag.com/"
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            //Add the generated resources
+            srcDirs += "$rootDir/src/generated/resources"
+            //But exclude the cache of the generated data from what gets built
+            exclude '.cache'
+        }
     }
 }
 
@@ -52,52 +69,23 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
+            source sourceSets.main
             property 'forge.logging.console.level', 'debug'
-
-            mods {
-                theatrical {
-                    source sourceSets.main
-                }
-            }
         }
 
         server {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
+            source sourceSets.main
             property 'forge.logging.console.level', 'debug'
-
-            mods {
-                theatrical {
-                    source sourceSets.main
-                }
-            }
         }
 
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
+            source sourceSets.main
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'theatrical', '--all', '--output', file('src/generated/resources/')
-
-            mods {
-                theatrical {
-                    source sourceSets.main
-                }
-            }
         }
     }
 }
@@ -172,8 +160,4 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
-}
-task copyData(type: Copy) {
-    from project.file("src/generated/resources/")
-    into project.file('src/main/resources/')
 }
