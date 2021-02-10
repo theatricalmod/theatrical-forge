@@ -49,7 +49,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         renderLight(movingLightEntity, matrixStack, iVertexBuilder, movingLightEntity.getBlockState().get(BlockMovingLight.FACING), v, isFlipped, movingLightEntity.getBlockState(), isHanging);
         if(movingLightEntity.getIntensity() > 0) {
             IVertexBuilder iVertexBuilder1 = iRenderTypeBuffer.getBuffer(MAIN_BEAM);
-    //        RenderSystem.shadeModel(GL11.GL_SMOOTH);
+            //        RenderSystem.shadeModel(GL11.GL_SMOOTH);
             matrixStack.translate(0.5, 0.5, 0.5);
             matrixStack.rotate(Vector3f.XP.rotationDegrees(movingLightEntity.getDefaultRotation()));
             matrixStack.translate(-0.5, -0.5, -0.5);

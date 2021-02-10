@@ -59,7 +59,6 @@ public class FallingLightEntity extends FallingBlockEntity {
         if (!this.world.isRemote) {
             currentPos = this.getPosition();
             if (this.isOnGround()) {
-                LOGGER.warn("2");
                 BlockState blockstate = this.world.getBlockState(currentPos);
                 this.remove();
                 if (blockstate.isReplaceable(new DirectionalPlaceContext(this.world, currentPos, Direction.DOWN, ItemStack.EMPTY, Direction.UP))) {

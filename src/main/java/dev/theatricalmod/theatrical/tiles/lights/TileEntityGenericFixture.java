@@ -79,11 +79,6 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     }
 
     @Override
-    public boolean emitsLight() {
-        return true;
-    }
-
-    @Override
     public boolean isUpsideDown() {
         return false;
     }

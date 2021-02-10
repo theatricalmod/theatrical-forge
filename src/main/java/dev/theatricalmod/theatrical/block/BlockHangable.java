@@ -6,9 +6,12 @@ import dev.theatricalmod.theatrical.items.ItemWrench;
 import net.minecraft.block.*;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -16,6 +19,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -31,6 +35,21 @@ public class BlockHangable extends HorizontalBlock {
     protected BlockHangable(Properties builder) {
         super(builder);
         this.setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(BROKEN, false));
+    }
+
+    //TODO - I guess the loot table copy_state just...doesn't do anything?
+    @Override
+    public void onBlockHarvested(World world, BlockPos blockPos, BlockState state, PlayerEntity playerIn) {
+        if (!world.isRemote && playerIn.isCreative() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {
+            ItemStack stack = new ItemStack(this);
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putBoolean("broken", state.get(BlockHangable.BROKEN));
+            stack.setTagInfo("BlockStateTag", nbt);
+            ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
+            itemEntity.setDefaultPickupDelay();
+            world.addEntity(itemEntity);
+        }
+        super.onBlockHarvested(world, blockPos, state, playerIn);
     }
 
     @Override

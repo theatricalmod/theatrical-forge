@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "theatrical:generic_light"
+    },
+    {
+      "item": "theatrical:bulb"
+    }
+  ],
+  "result": {
+    "item": "theatrical:generic_light"
+  }
+}
