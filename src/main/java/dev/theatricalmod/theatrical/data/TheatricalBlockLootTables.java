@@ -2,7 +2,6 @@ package dev.theatricalmod.theatrical.data;
 
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.loot.ConstantRange;
@@ -10,7 +9,6 @@ import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.functions.CopyBlockState;
-import net.minecraft.util.IItemProvider;
 import net.minecraftforge.fml.RegistryObject;
 
 import javax.annotation.Nonnull;
@@ -19,16 +17,16 @@ import java.util.stream.Collectors;
 class TheatricalBlockLootTables extends BlockLootTables {
     @Override
     protected void addTables() {
-        TheatricalBlocks.BLOCKS.getEntries().forEach(blockRegistryObject -> {
-            switch (blockRegistryObject.getId().getPath()) {
-                case "illuminator":
-                    break;
+        this.getKnownBlocks().forEach(block -> {
+            switch (block.getRegistryName().getPath()) {
                 case "generic_light":
                     this.registerLootTable(TheatricalBlocks.GENERIC_LIGHT.get(), droppingWithBroken(TheatricalBlocks.GENERIC_LIGHT.get()));
+                    break;
                 case "moving_light":
                     this.registerLootTable(TheatricalBlocks.MOVING_LIGHT.get(), droppingWithBroken(TheatricalBlocks.MOVING_LIGHT.get()));
+                    break;
                 default:
-                    registerDropSelfLootTable(blockRegistryObject.get());
+                    registerDropSelfLootTable(block);
             }
         });
     }

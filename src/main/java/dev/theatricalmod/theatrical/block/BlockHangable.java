@@ -2,30 +2,34 @@ package dev.theatricalmod.theatrical.block;
 
 import dev.theatricalmod.theatrical.api.ISupport;
 import dev.theatricalmod.theatrical.entity.FallingLightEntity;
-import dev.theatricalmod.theatrical.items.ItemWrench;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class BlockHangable extends HorizontalBlock {
 
@@ -37,13 +41,23 @@ public class BlockHangable extends HorizontalBlock {
         this.setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(BROKEN, false));
     }
 
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable IBlockReader p_190948_2_, List<ITextComponent> tooltips, ITooltipFlag advanced) {
+        if(stack.hasTag() && stack.getTag().contains("BlockStateTag") && Boolean.parseBoolean(stack.getTag().getCompound("BlockStateTag").getString("broken"))) {
+            tooltips.add(new StringTextComponent(TextFormatting.RED + "Broken!"));
+        }
+    }
+
     @Override
     public void onBlockHarvested(World world, BlockPos blockPos, BlockState state, PlayerEntity playerIn) {
         if (!world.isRemote && playerIn.isCreative() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {
             ItemStack stack = new ItemStack(this);
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putBoolean("broken", state.get(BlockHangable.BROKEN));
-            stack.setTagInfo("BlockStateTag", nbt);
+            if(state.get(BlockHangable.BROKEN)) {
+                nbt.putString("broken", String.valueOf(state.get(BlockHangable.BROKEN)));
+                stack.setTagInfo("BlockStateTag", nbt);
+            }
             ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
             itemEntity.setDefaultPickupDelay();
             world.addEntity(itemEntity);
@@ -58,7 +72,7 @@ public class BlockHangable extends HorizontalBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
+        return super.getStateForPlacement(context).with(FACING, context.getPlacementHorizontalFacing());
     }
 
     @Override
