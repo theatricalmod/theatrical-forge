@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
@@ -21,15 +22,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 public class BlockHangable extends HorizontalBlock {
 
@@ -86,11 +86,18 @@ public class BlockHangable extends HorizontalBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if(!state.isValidPosition(worldIn, pos)) {
-            worldIn.addEntity(new FallingLightEntity(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, state.with(BROKEN, true)));
+    public BlockState updatePostPlacement(BlockState state, Direction from, BlockState fromState, IWorld world, BlockPos pos, BlockPos fromPos) {
+        world.getPendingBlockTicks().scheduleTick(pos, this, 3);
+        return super.updatePostPlacement(state, from, fromState, world, pos, fromPos);
+    }
+
+    @Override
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
+        if (!state.get(BROKEN) && !isValidPosition(state, worldIn, pos)) {
+            FallingLightEntity fallingblockentity = new FallingLightEntity(worldIn, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, worldIn.getBlockState(pos));
+            worldIn.addEntity(fallingblockentity);
+            //N.B. Block removal is handled in the first tick of the entity because...reasons (vanilla does it)
         }
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
     }
 
     @Override

@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -53,7 +54,8 @@ public class TheatricalClient extends TheatricalCommon {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(TheatricalEntities.FALLING_LIGHT.get(), FallingLightRenderer::new);
+        EntityRendererManager rendererManager = Minecraft.getInstance().getRenderManager();
+        rendererManager.register(TheatricalEntities.FALLING_LIGHT.get(), new FallingLightRenderer(rendererManager));
         RenderType cutout = RenderType.getCutout();
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.TRUSS.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT.get(), cutout);
