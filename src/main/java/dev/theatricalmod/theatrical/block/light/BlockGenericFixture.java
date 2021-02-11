@@ -17,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootParameters;
@@ -54,28 +55,37 @@ public class BlockGenericFixture extends BlockLight implements ITOPInfoProvider 
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
         if (!world.isRemote && hand == Hand.MAIN_HAND) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
-                if(ent.getHeldItem(hand).getItem() instanceof ItemPositioner){
-                    ItemStack heldItem = ent.getHeldItem(hand);
+                if(player.getHeldItem(hand).getItem() instanceof ItemPositioner){
+                    ItemStack heldItem = player.getHeldItem(hand);
                    TileEntityGenericFixture tileEntityGenericFixture = (TileEntityGenericFixture) tileEntity;
                    if(tileEntityGenericFixture.getTrackingEntity() != null){
                         tileEntityGenericFixture.setTrackingEntity(null);
                         heldItem.removeChildTag("light");
                    } else {
-                        tileEntityGenericFixture.setTrackingEntity(ent);
+                        tileEntityGenericFixture.setTrackingEntity(player);
                         heldItem.getOrCreateChildTag("light").merge(NBTUtil.writeBlockPos(tileEntityGenericFixture.getPos()));
                    }
                     return ActionResultType.SUCCESS;
                 } else {
-                    NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
+                    INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
+                    Container container = provider.createMenu(0, player.inventory, player);
+                    if (container != null) {
+                        if (player instanceof ServerPlayerEntity) {
+                            NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                                buffer.writeBlockPos(pos);
+                            });
+                        }
+                        return ActionResultType.SUCCESS;
+                    }
                 }
             }
             return ActionResultType.PASS;
         }
-        return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override

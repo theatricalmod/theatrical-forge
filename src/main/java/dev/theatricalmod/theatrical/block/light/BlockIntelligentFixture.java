@@ -1,12 +1,14 @@
 package dev.theatricalmod.theatrical.block.light;
 
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
+import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
@@ -21,6 +23,8 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import javax.annotation.Nullable;
 
 public class BlockIntelligentFixture extends BlockLight {
 
@@ -50,14 +54,21 @@ public class BlockIntelligentFixture extends BlockLight {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
-        if(!world.isRemote){
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if(tileEntity instanceof INamedContainerProvider){
-                NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if(tileEntity instanceof INamedContainerProvider) {
+            INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
+            Container container = provider.createMenu(0, player.inventory, player);
+            if (container != null) {
+                if (player instanceof ServerPlayerEntity) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                        buffer.writeBlockPos(pos);
+                    });
+                }
+                return ActionResultType.SUCCESS;
             }
-            return ActionResultType.PASS;
         }
-        return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
     }
+
 }
