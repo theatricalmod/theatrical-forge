@@ -187,6 +187,14 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(this.dmxStartField.isMouseOver(mouseX, mouseY)){
+            this.dmxStartField.setFocused2(true);
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.getMinecraft().getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
@@ -235,18 +243,15 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
             int plugY = height + (activePlug < 3 ? 45 : 65);
             int xDist = plugX - x;
             int yDist = plugY - y;
-            float lineWidth = 2;
             if (Minecraft.getInstance().currentScreen != null) {
                 long distanceSq = xDist * xDist + yDist * yDist;
                 int screenDim = Minecraft.getInstance().currentScreen.width * Minecraft.getInstance().currentScreen.height;
                 float percentOfDim = Math.min(1, distanceSq / (float) screenDim);
-                lineWidth = 1 + ((1 - (percentOfDim)) * 3);
             }
             final int color = 0x13C90A;
             int red = (color >> 16) & 255;
             int green = (color >> 8) & 255;
             int blue = (color) & 255;
-            int alpha = (color >> 24) & 255;
             RenderSystem.disableTexture();
             RenderSystem.disableCull();
             RenderSystem.lineWidth(3);

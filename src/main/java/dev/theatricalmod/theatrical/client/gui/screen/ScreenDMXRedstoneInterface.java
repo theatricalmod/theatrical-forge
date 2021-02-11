@@ -37,7 +37,6 @@ public class ScreenDMXRedstoneInterface extends ContainerScreen<ContainerDMXReds
         return this.dmxAddress.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || this.dmxAddress.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
     }
 
-
     @Override
     public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_) {
         String lvt_4_1_ = this.dmxAddress.getText();
@@ -104,11 +103,11 @@ public class ScreenDMXRedstoneInterface extends ContainerScreen<ContainerDMXReds
         font.drawString(matrixStack, name, xSize / 2 - font.getStringWidth(name) / 2, 6, 0x404040);
         font.drawString(matrixStack, "DMX Start Address", xSize / 2 - font.getStringWidth("DMX Start Address") / 2, 16, 0x404040);
     }
+    
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(this.dmxAddress.isMouseOver(mouseX, mouseY)){
-            dmxAddress.setFocused2(true);
-            return true;
+            this.dmxAddress.setFocused2(true);
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
