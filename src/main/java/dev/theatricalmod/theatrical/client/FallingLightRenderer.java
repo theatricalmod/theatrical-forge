@@ -3,6 +3,7 @@ package dev.theatricalmod.theatrical.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
+import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.light.BlockLight;
 import dev.theatricalmod.theatrical.entity.FallingLightEntity;
 import net.minecraft.block.BlockState;
@@ -14,8 +15,10 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -40,6 +43,15 @@ public class FallingLightRenderer extends EntityRenderer<FallingLightEntity> {
         Fixture fixture = ((BlockLight)blockstate.getBlock()).getFixture();
         if(fixture != null) {
             matrixStackIn.push();
+            matrixStackIn.translate(0.5F, 0, .5F);
+            Direction facing = blockstate.get(BlockHangable.FACING);
+            if(facing.getAxis() == Direction.Axis.Z) {
+                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(facing.getOpposite().getHorizontalAngle()));
+            } else  {
+                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(facing.getHorizontalAngle()));
+            }
+            matrixStackIn.translate(-0.5F, 0, -.5F);
+            matrixStackIn.translate(-.5F, 0, -.5F);
             IBakedModel panBakedModel = Minecraft.getInstance().getModelManager().getModel(fixture.getPanModelLocation());
             IBakedModel tiltBakedModel = Minecraft.getInstance().getModelManager().getModel(fixture.getTiltModelLocation());
             IBakedModel staticBakedModel = Minecraft.getInstance().getModelManager().getModel(fixture.getStaticModelLocation());
