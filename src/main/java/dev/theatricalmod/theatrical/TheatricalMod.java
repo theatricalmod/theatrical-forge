@@ -17,6 +17,7 @@ import dev.theatricalmod.theatrical.artnet.ArtNetManager;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.TheatricalClient;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
+import dev.theatricalmod.theatrical.compat.cc.CCCompat;
 import dev.theatricalmod.theatrical.compat.top.TOPCompat;
 import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.fixtures.FixtureFresnel;
@@ -101,6 +102,7 @@ public class TheatricalMod {
 
     private void imc(final InterModEnqueueEvent enqueueEvent){
         TOPCompat.register();
+        CCCompat.register();
     }
 
     private void attachWorldCap(final AttachCapabilitiesEvent<World> t) {

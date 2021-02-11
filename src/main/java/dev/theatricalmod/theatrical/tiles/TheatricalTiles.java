@@ -5,6 +5,7 @@ import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
 import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXInterface;
 import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXRedstoneInterface;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIlluminator;
@@ -14,6 +15,7 @@ import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntitySocapexDistribution;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -36,4 +38,13 @@ public class TheatricalTiles {
     public static final RegistryObject<TileEntityType<TileEntityBasicLightingControl>> BASIC_LIGHTING_DESK = TILES.register("basic_lighting_desk", () -> TileEntityType.Builder.create(TileEntityBasicLightingControl::new, TheatricalBlocks.BASIC_LIGHTING_DESK.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityDMXRedstoneInterface>> DMX_REDSTONE_INTERFACE = TILES.register("redstone_interface", () -> TileEntityType.Builder.create(TileEntityDMXRedstoneInterface::new, TheatricalBlocks.DMX_REDSTONE_INTERFACE.get()).build(null));
 
+    public static final RegistryObject<TileEntityType<TileEntityDMXInterface>> DMX_INTERFACE = registerDMXInterface();
+
+
+    private static RegistryObject<TileEntityType<TileEntityDMXInterface>> registerDMXInterface(){
+        if(ModList.get().isLoaded("computercraft")) {
+            return TILES.register("dmx_interface", () -> TileEntityType.Builder.create(TileEntityDMXInterface::new, TheatricalBlocks.DMX_INTERFACE.get()).build(null));
+        }
+        return null;
+    }
 }

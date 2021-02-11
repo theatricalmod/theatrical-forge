@@ -6,6 +6,7 @@ import dev.theatricalmod.theatrical.block.cables.BlockCable;
 import dev.theatricalmod.theatrical.block.cables.BlockDimmedPowerCable;
 import dev.theatricalmod.theatrical.block.cables.BlockPowerCable;
 import dev.theatricalmod.theatrical.block.control.BlockBasicLightingControl;
+import dev.theatricalmod.theatrical.block.interfaces.BlockDMXInterface;
 import dev.theatricalmod.theatrical.block.interfaces.BlockDMXRedstoneInterface;
 import dev.theatricalmod.theatrical.block.power.BlockDimmerRack;
 import dev.theatricalmod.theatrical.block.interfaces.BlockArtNetInterface;
@@ -25,6 +26,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -55,5 +57,14 @@ public class TheatricalBlocks {
 
     public static Boolean neverAllowSpawn(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
         return false;
+    }
+
+    public static final RegistryObject<Block> DMX_INTERFACE = registerDMXInterface();
+
+    public static RegistryObject<Block> registerDMXInterface(){
+        if(ModList.get().isLoaded("computercraft")) {
+            return BLOCKS.register("dmx_interface", BlockDMXInterface::new);
+        }
+        return null;
     }
 }
