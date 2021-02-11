@@ -110,28 +110,29 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         }
         if (receivers.size() > 0) {
             ISocapexReceiver iSocapexReceiver = receivers.get(currentPage);
-            int[] channels = inventoryPlayer.getChannelsForReceiver(iSocapexReceiver);
-            for (int i = 0; i < channels.length; i++) {
-                int x = width + 45 + (20 * (i < 3 ? i : i - 3));
-                int y = height + (i < 3 ? 45 : 65);
-                if (channels[i] != 1) {
-                    int finalI = i;
-                    ButtonPlug buttonPlug = new ButtonPlug(x, y, i + 1, "", activePlug == i, (button) -> {
-                        if (button instanceof ButtonPlug) {
-                            ButtonPlug plug = (ButtonPlug) button;
-                            if (activePlug == finalI) {
-                                plug.setActive(false);
-                                activePlug = -1;
-                            } else {
-                                plug.setActive(true);
-                                activePlug = finalI;
+            inventoryPlayer.getChannelsForReceiver(iSocapexReceiver).ifPresent(channels -> {
+                for (int i = 0; i < channels.length; i++) {
+                    int x = width + 45 + (20 * (i < 3 ? i : i - 3));
+                    int y = height + (i < 3 ? 45 : 65);
+                    if (channels[i] != 1) {
+                        int finalI = i;
+                        ButtonPlug buttonPlug = new ButtonPlug(x, y, i + 1, "", activePlug == i, (button) -> {
+                            if (button instanceof ButtonPlug) {
+                                ButtonPlug plug = (ButtonPlug) button;
+                                if (activePlug == finalI) {
+                                    plug.setActive(false);
+                                    activePlug = -1;
+                                } else {
+                                    plug.setActive(true);
+                                    activePlug = finalI;
+                                }
                             }
-                        }
-                    });
-                    this.addButton(buttonPlug);
-                    plugs.add(buttonPlug);
+                        });
+                        this.addButton(buttonPlug);
+                        plugs.add(buttonPlug);
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -230,8 +231,8 @@ public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
         if (activePlug != -1) {
             int width = this.width / 2;
             int height = (this.height - this.ySize) / 2;
-            int plugX = width + 35 + (20 * (activePlug < 4 ? activePlug : activePlug - 4));
-            int plugY = height + (activePlug < 4 ? 45 : 65);
+            int plugX = width + 45 + (20 * (activePlug < 3 ? activePlug : activePlug - 3));
+            int plugY = height + (activePlug < 3 ? 45 : 65);
             int xDist = plugX - x;
             int yDist = plugY - y;
             float lineWidth = 2;

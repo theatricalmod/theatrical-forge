@@ -6,6 +6,7 @@ import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -38,11 +39,11 @@ public class ContainerDimmerRack extends Container {
         return receivers;
     }
 
-    public int[] getChannelsForReceiver(ISocapexReceiver iSocapexReceiver) {
-        if (dimmerRack.getCapability(SocapexReceiver.CAP, null).isPresent()) {
-            return dimmerRack.getCapability(SocapexProvider.CAP, null).orElse(null).getPatchedCables(iSocapexReceiver);
+    public Optional<int[]> getChannelsForReceiver(ISocapexReceiver iSocapexReceiver) {
+        if (dimmerRack.getCapability(SocapexProvider.CAP, null).isPresent()) {
+            return dimmerRack.getCapability(SocapexProvider.CAP, null).map(iSocapexProvider -> iSocapexProvider.getPatchedCables(iSocapexReceiver));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Nullable
