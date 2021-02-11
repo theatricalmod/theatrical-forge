@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer.Builder;
@@ -56,17 +57,21 @@ public class BlockDimmerRack extends HorizontalBlock implements ITOPInfoProvider
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity ent, Hand hand, BlockRayTraceResult blockRayTraceResult) {
-        if (!world.isRemote) {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof INamedContainerProvider) {
-                NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-            } else {
-
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if(tileEntity instanceof INamedContainerProvider) {
+            INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
+            Container container = provider.createMenu(0, player.inventory, player);
+            if (container != null) {
+                if (player instanceof ServerPlayerEntity) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                        buffer.writeBlockPos(pos);
+                    });
+                }
+                return ActionResultType.SUCCESS;
             }
-            return ActionResultType.PASS;
         }
-        return super.onBlockActivated(state, world, pos, ent, hand, blockRayTraceResult);
+        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override

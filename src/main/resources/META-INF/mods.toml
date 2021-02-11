@@ -1,15 +1,12 @@
-modLoader="javafml" #mandatory
-loaderVersion="[30,)" #mandatory (28 is current forge version)
-issueTrackerURL="http://my.issue.tracker/" #optional
-license="MIT"
-[[mods]] #mandatory
-modId="theatrical" #mandatory
-version="${file.jarVersion}" #mandatory
-displayName="Theatrical" #mandatory
-updateJSONURL="https://imabad.dev/" #optional
-displayURL="http://example.com/" #optional
-logoFile="examplemod.png" #optional
-credits="Manmaed" #optional
-authors="Rushmead" #optional
-description='''
-'''
+modLoader="javafml"
+loaderVersion="[34,)"
+issueTrackerURL="https://github.com/theatricalmod/theatrical-forge/issues"
+license="Apache-2.0"
+[[mods]]
+    modId="theatrical"
+    version="${file.jarVersion}"
+    displayName="Theatrical"
+    credits="Manmaed"
+    authors="Rushmead"
+    description='''
+    '''

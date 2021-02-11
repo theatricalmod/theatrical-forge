@@ -23,6 +23,7 @@ public class TheatricalUSLangProvider extends LanguageProvider {
         this.addBlock(TheatricalBlocks.DIMMER_RACK, "Dimmer Rack");
         this.addBlock(TheatricalBlocks.SOCAPEX_DISTRIBUTION, "Socapex Distro");
         this.addBlock(TheatricalBlocks.GENERIC_LIGHT, "Generic Light");
+        this.addBlock(TheatricalBlocks.POWER_CABLE, "Power Cable");
         this.addBlock(TheatricalBlocks.DIMMED_POWER_CABLE, "Dimmed Power Cable");
         this.addBlock(TheatricalBlocks.BASIC_LIGHTING_DESK, "Basic Lighting Desk");
         this.addBlock(TheatricalBlocks.DMX_REDSTONE_INTERFACE, "DMX-Redstone Interface");

@@ -94,7 +94,7 @@ dependencies {
     runtimeOnly fg.deobf(curse.resolve('lollipop', '3084134'))
 //    compile fg.deobf(files("libs/simplytech-I-HOpe-it-works.jar"))
     implementation fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.4-beta-7")
-    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
     compile fg.deobf("xyz.brassgoggledcoders:PatchouliProvider:1.16.4-1.0.2-Snapshot.3")
 }
 

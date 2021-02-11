@@ -8,6 +8,7 @@ import net.minecraft.block.DirectionalBlock;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
@@ -91,17 +92,21 @@ public class BlockBasicLightingControl extends DirectionalBlock {
 
 
     @Override
-    public ActionResultType onBlockActivated(BlockState p_225533_1_, World world, BlockPos pos, PlayerEntity ent, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-        if (!world.isRemote) {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof INamedContainerProvider) {
-                NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-            } else {
-
+    public ActionResultType onBlockActivated(BlockState p_225533_1_, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if(tileEntity instanceof INamedContainerProvider) {
+            INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
+            Container container = provider.createMenu(0, player.inventory, player);
+            if (container != null) {
+                if (player instanceof ServerPlayerEntity) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                        buffer.writeBlockPos(pos);
+                    });
+                }
+                return ActionResultType.SUCCESS;
             }
-            return ActionResultType.PASS;
         }
-        return super.onBlockActivated(p_225533_1_, world, pos, ent, p_225533_5_, p_225533_6_);
+        return super.onBlockActivated(p_225533_1_, world, pos, player, p_225533_5_, p_225533_6_);
     }
 
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {

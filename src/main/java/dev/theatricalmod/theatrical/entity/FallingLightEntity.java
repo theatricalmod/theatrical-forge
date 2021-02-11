@@ -1,7 +1,9 @@
 package dev.theatricalmod.theatrical.entity;
 
+import dev.theatricalmod.theatrical.block.BlockHangable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
@@ -97,7 +99,7 @@ public class FallingLightEntity extends FallingBlockEntity implements IEntityAdd
                         this.getEntityWorld().playEvent(2008, new BlockPos(this.getPosX(), this.getPosY(), this.getPosZ()), 0);
                         this.getEntityWorld().playSound(null, this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 1, 1);
                         this.getEntityWorld().playSound(null, this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1, 1);
-
+                        this.world.setBlockState(currentPos, this.fallTile.with(BlockHangable.BROKEN, true));
                         if (this.tileEntityData != null && this.fallTile.hasTileEntity()) {
                             TileEntity tileentity = this.world.getTileEntity(currentPos);
                             if (tileentity != null) {

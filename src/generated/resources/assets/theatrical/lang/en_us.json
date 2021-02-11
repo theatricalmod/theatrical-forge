@@ -1,0 +1,22 @@
+{
+  "block.theatrical.artnet_interface": "ArtNet Interface",
+  "block.theatrical.basic_lighting_desk": "Basic Lighting Desk",
+  "block.theatrical.dimmed_power_cable": "Dimmed Power Cable",
+  "block.theatrical.dimmer_rack": "Dimmer Rack",
+  "block.theatrical.dmx_cable": "DMX Cable",
+  "block.theatrical.generic_light": "Generic Light",
+  "block.theatrical.iwb": "Internally Wired Bar (IWB)",
+  "block.theatrical.moving_light": "Moving Light",
+  "block.theatrical.power_cable": "Power Cable",
+  "block.theatrical.redstone_interface": "DMX-Redstone Interface",
+  "block.theatrical.socapex_distribution": "Socapex Distro",
+  "block.theatrical.test_dmx": "Test DMX Block",
+  "block.theatrical.truss": "MT100 Truss",
+  "item.theatrical.bulb": "Tungsten Bulb",
+  "item.theatrical.cog": "Mechanical Cog",
+  "item.theatrical.led": "LED",
+  "item.theatrical.motor": "Electrical Motor",
+  "item.theatrical.positioner": "Remote Light Positioner",
+  "item.theatrical.wrench": "Wrench",
+  "itemGroup.theatrical": "Theatrical"
+}
