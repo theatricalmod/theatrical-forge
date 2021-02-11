@@ -13,11 +13,15 @@ public class TheatricalDataGen {
     @SubscribeEvent
     public static void dataGenEvent(GatherDataEvent event){
         DataGenerator gen = event.getGenerator();
+        if(event.includeClient()) {
+            gen.addProvider(new TheatricalUSLangProvider(gen));
+        }
         if(event.includeServer()){
             gen.addProvider(new TheatricalRecipes(gen));
             gen.addProvider(new TheatricalLootTables(gen));
             BlockTagProvider blockTagProvider = new BlockTagProvider(event.getGenerator());
             gen.addProvider(new TheatricalItemTagProvider(event.getGenerator(), blockTagProvider, event.getExistingFileHelper()));
+            gen.addProvider(new TheatricalBookProvider((gen)));
         }
     }
 
