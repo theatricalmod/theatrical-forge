@@ -42,6 +42,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Arrays;
 
+import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
+
 @Mod.EventBusSubscriber(modid = TheatricalMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TheatricalClient extends TheatricalCommon {
 
@@ -70,14 +72,12 @@ public class TheatricalClient extends TheatricalCommon {
         ScreenManager.registerFactory(TheatricalContainers.DIMMER_RACK.get(), ScreenDimmerRack::new);
         ScreenManager.registerFactory(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), ScreenBasicLightingConsole::new);
         ScreenManager.registerFactory(TheatricalContainers.DMX_REDSTONE_INTERFACE.get(), ScreenDMXRedstoneInterface::new);
-//        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable"), new CableModelLoader());
     }
 
     @SubscribeEvent
-    public void worldRenderLastEvent(RenderWorldLastEvent event) {
-//        Minecraft.getInstance().getBufferBuilders().getBlockBufferBuilders().get(MAIN_BEAM).finishDrawing();
-//        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(MAIN_BEAM);
-//       Minecraft.getInstance().getBufferBuilders().getBlockBufferBuilders().get()
+    public void worldRenderLastEvent(RenderWorldLastEvent event){
+        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().getBuffer(MAIN_BEAM).endVertex();
+        Minecraft.getInstance().getRenderTypeBuffers().getBufferSource().finish(MAIN_BEAM);
     }
 
     public void modelLoad(ModelRegistryEvent event) {
