@@ -15,9 +15,9 @@ public enum CableType implements IStringSerializable {
     SOCAPEX(2, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/socapex"), "socapex"),
     BUNDLED(99, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/bundled"), "bundled");
 
-    private int index;
-    private ResourceLocation texture;
-    private String name;
+    private final int index;
+    private final ResourceLocation texture;
+    private final String name;
 
     CableType(int index, ResourceLocation location, String name) {
         this.index = index;

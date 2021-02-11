@@ -29,9 +29,10 @@ public class ChangeDimmerPatchPacket {
         socketNumber = buffer.readInt();
     }
 
-    private BlockPos blockPos;
-    private int channel, socketNumber;
-    private SocapexPatch patch;
+    private final BlockPos blockPos;
+    private final int channel;
+    private final int socketNumber;
+    private final SocapexPatch patch;
 
     public BlockPos getBlockPos() {
         return blockPos;

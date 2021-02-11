@@ -13,6 +13,15 @@
         {
           "condition": "minecraft:survives_explosion"
         }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:copy_state",
+          "block": "theatrical:generic_light",
+          "properties": [
+            "broken"
+          ]
+        }
       ]
     }
   ]

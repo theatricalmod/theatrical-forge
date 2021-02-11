@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class DMXReceiver implements IDMXReceiver, INBTSerializable<CompoundNBT> {
 
     @CapabilityInject(IDMXReceiver.class)
-    public static Capability<IDMXReceiver> CAP = null;
+    public static final Capability<IDMXReceiver> CAP = null;
 
     private int dmxStartPoint;
     private int dmxChannels;

@@ -19,7 +19,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> {
 
     @CapabilityInject(IDMXProvider.class)
-    public static Capability<IDMXProvider> CAP = null;
+    public static final Capability<IDMXProvider> CAP = null;
 
     private DMXUniverse dmxUniverse;
     private HashSet<BlockPos> devices = null;

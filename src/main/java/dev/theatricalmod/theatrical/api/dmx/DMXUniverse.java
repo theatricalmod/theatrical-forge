@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class DMXUniverse {
 
-    private UUID uuid;
+    private final UUID uuid;
     private byte[] dmxChannels;
 
     public DMXUniverse() {

@@ -2,7 +2,6 @@ package dev.theatricalmod.theatrical.client.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;

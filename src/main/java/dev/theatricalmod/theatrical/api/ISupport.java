@@ -7,8 +7,6 @@ import net.minecraft.world.World;
 
 public interface ISupport {
 
-    Direction getBlockPlacementDirection(IWorldReader world, BlockPos pos, Direction facing);
-
     float[] getLightTransforms(World world, BlockPos pos, Direction facing);
 
 }

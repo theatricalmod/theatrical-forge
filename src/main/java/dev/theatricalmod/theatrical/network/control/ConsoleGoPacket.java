@@ -24,8 +24,9 @@ public class ConsoleGoPacket {
         fadeOutTicks = buffer.readInt();
     }
 
-    private BlockPos blockPos;
-    private int fadeInTicks,fadeOutTicks;
+    private final BlockPos blockPos;
+    private final int fadeInTicks;
+    private final int fadeOutTicks;
 
     public BlockPos getBlockPos() {
         return blockPos;

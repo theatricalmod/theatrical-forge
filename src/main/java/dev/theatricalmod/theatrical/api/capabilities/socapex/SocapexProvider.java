@@ -25,8 +25,8 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     private int lastIdentifier = -1;
     private HashMap<Direction, BlockPos> devices = null;
-    private int[] channels = new int[6];
-    private HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
+    private final int[] channels = new int[6];
+    private final HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
 
     public void addToList(HashMap<Direction, BlockPos> scanned, World world, BlockPos pos, Direction facing, Direction connectionSide) {
         BlockState blockState = world.getBlockState(pos);

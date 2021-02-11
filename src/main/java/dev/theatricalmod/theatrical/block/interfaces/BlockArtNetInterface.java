@@ -50,8 +50,6 @@ public class BlockArtNetInterface extends Block {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
                 NetworkHooks.openGui((ServerPlayerEntity) ent, (INamedContainerProvider) tileEntity, tileEntity.getPos());
-            } else {
-
             }
             return ActionResultType.PASS;
         }

@@ -1,91 +1,112 @@
 package dev.theatricalmod.theatrical.block;
 
 import dev.theatricalmod.theatrical.api.ISupport;
-import dev.theatricalmod.theatrical.items.ItemWrench;
+import dev.theatricalmod.theatrical.entity.FallingLightEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.material.PushReaction;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.*;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 public class BlockHangable extends HorizontalBlock {
 
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 
-    public Direction[] allowedPlaces;
-
-    protected BlockHangable(Properties builder, Direction[] allowedPlaces) {
+    protected BlockHangable(Properties builder) {
         super(builder);
-        this.allowedPlaces = allowedPlaces;
-        setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH));
+        this.setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(BROKEN, false));
     }
 
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable IBlockReader p_190948_2_, List<ITextComponent> tooltips, ITooltipFlag advanced) {
+        if(stack.hasTag() && stack.getTag().contains("BlockStateTag") && Boolean.parseBoolean(stack.getTag().getCompound("BlockStateTag").getString("broken"))) {
+            tooltips.add(new StringTextComponent(TextFormatting.RED + "Broken!"));
+        }
+    }
+
+    @Override
+    public void onBlockHarvested(World world, BlockPos blockPos, BlockState state, PlayerEntity playerIn) {
+        if (!world.isRemote && playerIn.isCreative() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {
+            ItemStack stack = new ItemStack(this);
+            CompoundNBT nbt = new CompoundNBT();
+            if(state.get(BlockHangable.BROKEN)) {
+                nbt.putString("broken", String.valueOf(state.get(BlockHangable.BROKEN)));
+                stack.setTagInfo("BlockStateTag", nbt);
+            }
+            ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
+            itemEntity.setDefaultPickupDelay();
+            world.addEntity(itemEntity);
+        }
+        super.onBlockHarvested(world, blockPos, state, playerIn);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing());
+        return super.getStateForPlacement(context).with(FACING, context.getPlacementHorizontalFacing());
     }
 
+    @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
-    public boolean isHanging(World world, BlockPos pos){
-        BlockPos up = pos.offset(Direction.UP);
-        return world.getBlockState(up).getBlock() instanceof ISupport;
+        builder.add(FACING, BROKEN);
     }
 
     @Override
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
-        BlockPos up = pos.offset(Direction.UP);
-        if(worldIn.getBlockState(up).getBlock() != Blocks.AIR && worldIn.getBlockState(up).getBlock() instanceof ISupport){
-            ISupport support = (ISupport) worldIn.getBlockState(up).getBlock();
-            for(Direction facing : allowedPlaces){
-                if (support.getBlockPlacementDirection(worldIn, pos, facing).equals(facing)) {
-                    return true;
-                }
-            }
-            return false;
-        }else{
-            return true;
+        return isHanging(worldIn, pos);
+    }
+
+    @Override
+    public BlockState updatePostPlacement(BlockState state, Direction from, BlockState fromState, IWorld world, BlockPos pos, BlockPos fromPos) {
+        world.getPendingBlockTicks().scheduleTick(pos, this, 3);
+        return super.updatePostPlacement(state, from, fromState, world, pos, fromPos);
+    }
+
+    @Override
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
+        if (!state.get(BROKEN) && !isValidPosition(state, worldIn, pos)) {
+            FallingLightEntity fallingblockentity = new FallingLightEntity(worldIn, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, worldIn.getBlockState(pos));
+            worldIn.addEntity(fallingblockentity);
+            //N.B. Block removal is handled in the first tick of the entity because...reasons (vanilla does it)
         }
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if(!isHanging(worldIn, pos)){
-            if(!worldIn.isRemote) {
-                FallingBlockEntity fallingBlock = new FallingBlockEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), worldIn.getBlockState(pos));
-                fallingBlock.shouldDropItem = false;
-                worldIn.addEntity(fallingBlock);
-                worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
-            }
-        }
+    public PushReaction getPushReaction(BlockState state) {
+        return PushReaction.DESTROY;
     }
 
-    @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if(player.getHeldItem(handIn).getItem() instanceof ItemWrench){
-            Direction currentDirection = state.get(FACING);
-            int index = currentDirection.getHorizontalIndex();
-            if(index == 3) {
-                index = 0;
-            } else {
-                index += 1;
-            }
-            Direction newDirection = Direction.byHorizontalIndex(index);
-            worldIn.setBlockState(pos, state.with(FACING, newDirection));
-            return ActionResultType.SUCCESS;
-        }
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+    public boolean isHanging(IWorldReader world, BlockPos pos){
+        BlockPos up = pos.up();
+        return !world.isAirBlock(up) && world.getBlockState(up).getBlock() instanceof ISupport;
     }
 }

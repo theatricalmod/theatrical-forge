@@ -25,7 +25,7 @@ public class SendDMXProviderPacket {
         buffer.readBytes(data);
     }
 
-    private BlockPos blockPos;
+    private final BlockPos blockPos;
     private byte[] data;
 
     public BlockPos getBlockPos() {

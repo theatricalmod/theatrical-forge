@@ -60,11 +60,6 @@ public class BlockTruss extends RotatedPillarBlock implements IWaterLoggable, IS
     }
 
     @Override
-    public Direction getBlockPlacementDirection(IWorldReader world, BlockPos pos, Direction facing) {
-        return facing.getOpposite();
-    }
-
-    @Override
     public float[] getLightTransforms(World world, BlockPos pos, Direction facing) {
         return new float[]{0, 0F, 0};
     }

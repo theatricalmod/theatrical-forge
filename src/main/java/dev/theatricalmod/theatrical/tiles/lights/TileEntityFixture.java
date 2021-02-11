@@ -122,7 +122,12 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         float f3 = MathHelper.sin(f1);
         float f4 = MathHelper.cos(f);
         float f5 = MathHelper.sin(f);
-        return new Vector3d((double) (f3 * f4), (double) (-f5), (double) (f2 * f4));
+        return new Vector3d(f3 * f4, -f5, f2 * f4);
+    }
+
+    @Override
+    public boolean emitsLight() {
+        return !getBlockState().get(BlockHangable.BROKEN);
     }
 
     public double doRayTrace() {

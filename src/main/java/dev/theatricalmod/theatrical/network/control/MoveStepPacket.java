@@ -21,8 +21,8 @@ public class MoveStepPacket {
             isForwards = buffer.readBoolean();
         }
 
-        private BlockPos blockPos;
-        private boolean isForwards;
+        private final BlockPos blockPos;
+        private final boolean isForwards;
 
         public BlockPos getBlockPos() {
             return blockPos;

@@ -1,7 +1,5 @@
 package dev.theatricalmod.theatrical.tiles.lights;
 
-import static dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture.FLIPPED;
-
 import dev.theatricalmod.theatrical.api.ChannelType;
 import dev.theatricalmod.theatrical.api.capabilities.TheatricalEnergyStorage;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
@@ -29,7 +27,7 @@ import net.minecraftforge.energy.EnergyStorage;
 
 public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, INamedContainerProvider {
 
-    private TheatricalEnergyStorage energyStorage;
+    private final TheatricalEnergyStorage energyStorage;
 
     public TileEntityIntelligentFixture() {
         super(TheatricalTiles.MOVING_LIGHT.get());
@@ -83,7 +81,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean isUpsideDown() {
-        return world.getBlockState(pos).get(BlockIntelligentFixture.FLIPPED);
+        return !this.getBlockState().get(BlockIntelligentFixture.HANGING);
     }
 
     @Override
@@ -189,7 +187,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public float getRayTraceRotation() {
         if (getFixture() != null) {
-            return world.getBlockState(pos).get(FLIPPED) ? getFixture().getRayTraceRotation() : 0;
+            return this.getBlockState().get(BlockIntelligentFixture.HANGING) ? 0 : getFixture().getRayTraceRotation();
         }
         return 0;
     }

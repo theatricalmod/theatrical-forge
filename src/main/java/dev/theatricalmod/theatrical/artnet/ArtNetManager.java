@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class ArtNetManager {
 
-    private HashMap<String, ArtNetClient> clients = new HashMap<>();
+    private final HashMap<String, ArtNetClient> clients = new HashMap<>();
 
     public ArtNetClient getClient(String ip){
         if(!this.clients.containsKey(ip)){

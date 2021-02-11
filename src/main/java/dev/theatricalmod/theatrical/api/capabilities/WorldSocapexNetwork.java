@@ -17,14 +17,14 @@ import net.minecraftforge.common.util.LazyOptional;
 public class WorldSocapexNetwork implements ICapabilityProvider {
 
     @CapabilityInject(WorldSocapexNetwork.class)
-    public static Capability<WorldSocapexNetwork> CAP = null;
-    private LazyOptional<WorldSocapexNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
+    public static final Capability<WorldSocapexNetwork> CAP = null;
+    private final LazyOptional<WorldSocapexNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
 
 //    public static WorldSocapexNetwork getCapability(World world) {
 //        return world.getCapability(CAP).;
 //    }
 
-    private HashMap<BlockPos, ISocapexProvider> panelList = new HashMap<>();
+    private final HashMap<BlockPos, ISocapexProvider> panelList = new HashMap<>();
     private boolean refresh = true;
 
     public WorldSocapexNetwork() {

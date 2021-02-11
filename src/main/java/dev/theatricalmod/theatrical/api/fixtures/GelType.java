@@ -234,9 +234,9 @@ public enum GelType {
     PALE_GREY("Pale Grey", 397, 0xD4D3D3),
     NEUTRAL_GREY("Neutral Grey", 398, 0xB0B4B9);
 
-    private String name;
-    private int id;
-    private int hex;
+    private final String name;
+    private final int id;
+    private final int hex;
 
     public String getName() {
         return name;

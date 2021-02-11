@@ -15,7 +15,7 @@ public class WorldPipePanelNetwork implements ICapabilityProvider {
 
     @CapabilityInject(WorldPipePanelNetwork.class)
     public static Capability<WorldPipePanelNetwork> CAP;
-    private LazyOptional<WorldPipePanelNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
+    private final LazyOptional<WorldPipePanelNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
 
 //    public static WorldPipePanelNetwork getCapability(World world) {
 //        return world.getCapability(CAP, null);

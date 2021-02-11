@@ -11,9 +11,9 @@ public class TheatricalPower implements ITheatricalPowerStorage, INBTSerializabl
     public static Capability<ITheatricalPowerStorage> CAP;
 
     private int power;
-    private int capacity;
-    private int maxReceive;
-    private int maxExtract;
+    private final int capacity;
+    private final int maxReceive;
+    private final int maxExtract;
 
     public TheatricalPower(){
         this(100, 100, 100, 0);

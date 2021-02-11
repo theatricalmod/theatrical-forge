@@ -25,8 +25,9 @@ public class UpdateConsoleFaderPacket {
             value = buffer.readInt();
         }
 
-        private BlockPos blockPos;
-        private int fader, value;
+        private final BlockPos blockPos;
+        private final int fader;
+    private final int value;
 
         public BlockPos getBlockPos() {
             return blockPos;

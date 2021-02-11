@@ -23,9 +23,9 @@ public class UpdateArtNetInterfacePacket {
         ipAddress = buffer.readString(32767);
     }
 
-    private BlockPos blockPos;
-    private int universe;
-    private String ipAddress;
+    private final BlockPos blockPos;
+    private final int universe;
+    private final String ipAddress;
 
     public BlockPos getBlockPos() {
         return blockPos;

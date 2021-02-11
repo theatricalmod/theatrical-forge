@@ -28,11 +28,11 @@ public class TileEntityPowerCable extends TileEntity implements ITickableTileEnt
         super(TheatricalTiles.POWER_CABLE.get());
     }
 
-    private int transferRate = 6000;
+    private final int transferRate = 6000;
 
     private int ticksSinceLastSend = 0;
 
-    private ArrayList<Direction> sendingFace = new ArrayList<Direction>();
+    private final ArrayList<Direction> sendingFace = new ArrayList<Direction>();
 
     public boolean isConnected(Direction direction) {
         TileEntity tileEntity = world.getTileEntity(pos.offset(direction));

@@ -21,8 +21,8 @@ public class UpdateDMXAddressPacket {
         address = buffer.readInt();
     }
 
-    private BlockPos blockPos;
-    private int address;
+    private final BlockPos blockPos;
+    private final int address;
 
     public BlockPos getBlockPos() {
         return blockPos;

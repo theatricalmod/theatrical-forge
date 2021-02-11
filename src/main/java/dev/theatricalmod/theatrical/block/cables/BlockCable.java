@@ -25,7 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlockCable extends SixWayBlock {
 
-    private CableType cableType;
+    private final CableType cableType;
 
     public BlockCable(CableType cableType) {
         super(0.125F, TheatricalBlocks.BASE_PROPERTIES.notSolid());

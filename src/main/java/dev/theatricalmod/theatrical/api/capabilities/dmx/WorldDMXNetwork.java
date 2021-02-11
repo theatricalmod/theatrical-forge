@@ -17,10 +17,10 @@ import net.minecraftforge.common.util.LazyOptional;
 public class WorldDMXNetwork implements ICapabilityProvider {
 
     @CapabilityInject(WorldDMXNetwork.class)
-    public static Capability<WorldDMXNetwork> CAP = null;
-    private LazyOptional<WorldDMXNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
+    public static final Capability<WorldDMXNetwork> CAP = null;
+    private final LazyOptional<WorldDMXNetwork> instance = LazyOptional.of(CAP::getDefaultInstance);
 
-    private HashMap<IDMXProvider, BlockPos> providerList = new HashMap<>();
+    private final HashMap<IDMXProvider, BlockPos> providerList = new HashMap<>();
     private boolean refresh = true;
     public WorldDMXNetwork() {
     }

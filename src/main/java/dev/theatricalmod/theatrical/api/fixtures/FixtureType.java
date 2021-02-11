@@ -10,7 +10,7 @@ public enum FixtureType {
     INTELLIGENT(TileEntityIntelligentFixture::new),
     TUNGSTEN(TileEntityGenericFixture::new);
 
-    private Supplier<? extends TileEntityFixture> tileClass;
+    private final Supplier<? extends TileEntityFixture> tileClass;
 
     FixtureType(Supplier<? extends TileEntityFixture> tileClass) {
         this.tileClass = tileClass;

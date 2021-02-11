@@ -27,13 +27,13 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityDimmerRack extends TileEntityTheatricalBase implements INamedContainerProvider, ITickableTileEntity, IEnergyStorage, IAcceptsCable{
 
-    private DMXReceiver dmxReceiver;
-    private SocapexProvider socapexProvider;
+    private final DMXReceiver dmxReceiver;
+    private final SocapexProvider socapexProvider;
 
     private int[] channels;
     private int power;
 
-    private int ticks = 0;
+    private final int ticks = 0;
 
     public TileEntityDimmerRack() {
         super(TheatricalTiles.DIMMER_RACK.get());

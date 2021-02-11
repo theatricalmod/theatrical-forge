@@ -19,8 +19,12 @@ import dev.theatricalmod.theatrical.block.test.BlockTestDMX;
 import dev.theatricalmod.theatrical.fixtures.TheatricalFixtures;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,6 +32,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class TheatricalBlocks {
 
     public static final AbstractBlock.Properties BASE_PROPERTIES = Block.Properties.create(Material.ANVIL, MaterialColor.GRAY).setRequiresTool().hardnessAndResistance(3, 3);
+    public static final AbstractBlock.Properties LIGHT_PROPERTIES = BASE_PROPERTIES.notSolid().setAllowsSpawn(TheatricalBlocks::neverAllowSpawn);
+
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, TheatricalMod.MOD_ID);
 
@@ -46,4 +52,8 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> SOCAPEX_DISTRIBUTION = BLOCKS.register("socapex_distribution", BlockSocapexDistribution::new);
     public static final RegistryObject<Block> BASIC_LIGHTING_DESK = BLOCKS.register("basic_lighting_desk", BlockBasicLightingControl::new);
     public static final RegistryObject<Block> DMX_REDSTONE_INTERFACE = BLOCKS.register("redstone_interface", BlockDMXRedstoneInterface::new);
+
+    public static Boolean neverAllowSpawn(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
+        return false;
+    }
 }
