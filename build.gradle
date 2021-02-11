@@ -23,7 +23,7 @@ apply plugin: 'com.wynprice.cursemaven'
 apply plugin: 'java'
 apply plugin: 'idea'
 
-version = '0.6.2'
+version = '0.7.0'
 group = 'dev.imabad.theatrical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'Theatrical-1.16.3'
 
