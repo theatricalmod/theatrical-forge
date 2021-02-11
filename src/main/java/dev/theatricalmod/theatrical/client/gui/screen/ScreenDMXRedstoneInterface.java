@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerDMXRedstoneInterface;
-import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.network.UpdateDMXAddressPacket;
 import net.minecraft.client.Minecraft;

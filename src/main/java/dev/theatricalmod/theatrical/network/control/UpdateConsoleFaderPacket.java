@@ -1,9 +1,7 @@
 package dev.theatricalmod.theatrical.network.control;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 

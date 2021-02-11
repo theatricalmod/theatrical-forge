@@ -4,8 +4,6 @@ import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
-
-import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -15,6 +13,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class BlockDimmedPowerCable extends BlockCable implements ITOPInfoProvider {
 

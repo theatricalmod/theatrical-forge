@@ -1,7 +1,8 @@
 package dev.theatricalmod.theatrical.data;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.data.*;
+import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.DataGenerator;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;

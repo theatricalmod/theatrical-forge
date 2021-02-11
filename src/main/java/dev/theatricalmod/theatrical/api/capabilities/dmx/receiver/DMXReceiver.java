@@ -1,12 +1,13 @@
 package dev.theatricalmod.theatrical.api.capabilities.dmx.receiver;
 
-import java.util.Arrays;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.Arrays;
 
 public class DMXReceiver implements IDMXReceiver, INBTSerializable<CompoundNBT> {
 

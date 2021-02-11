@@ -13,10 +13,7 @@ import dev.theatricalmod.theatrical.network.ChangeDimmerPatchPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.network.UpdateDMXAddressPacket;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -30,6 +27,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScreenDimmerRack extends ContainerScreen<ContainerDimmerRack> {
 

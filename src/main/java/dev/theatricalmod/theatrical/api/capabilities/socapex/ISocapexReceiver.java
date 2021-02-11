@@ -1,7 +1,8 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
-import java.util.List;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
 
 public interface ISocapexReceiver {
 

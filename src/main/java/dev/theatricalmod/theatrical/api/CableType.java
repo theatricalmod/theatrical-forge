@@ -1,10 +1,11 @@
 package dev.theatricalmod.theatrical.api;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import javax.annotation.Nullable;
 import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
 
 public enum CableType implements IStringSerializable {
 

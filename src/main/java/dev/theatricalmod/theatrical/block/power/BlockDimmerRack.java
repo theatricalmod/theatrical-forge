@@ -4,7 +4,6 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
-import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -25,6 +24,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import javax.annotation.Nullable;
 
 public class BlockDimmerRack extends HorizontalBlock implements ITOPInfoProvider {
 

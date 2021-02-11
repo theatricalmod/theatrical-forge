@@ -2,9 +2,6 @@ package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.block.cables.BlockCable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -15,6 +12,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class SocapexProvider implements ISocapexProvider, INBTSerializable<CompoundNBT> {
 

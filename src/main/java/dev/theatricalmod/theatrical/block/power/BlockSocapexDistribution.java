@@ -4,7 +4,6 @@ import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.compat.top.ITOPInfoProvider;
 import dev.theatricalmod.theatrical.tiles.power.TileEntitySocapexDistribution;
-import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -19,6 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class BlockSocapexDistribution extends DirectionalBlock implements ITOPInfoProvider {
 

@@ -1,15 +1,14 @@
 package dev.theatricalmod.theatrical.api.capabilities;
 
-import java.util.ArrayList;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class WorldPipePanelNetwork implements ICapabilityProvider {
 

@@ -1,11 +1,12 @@
 package dev.theatricalmod.theatrical.util;
 
-import javax.annotation.Nullable;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import javax.annotation.Nullable;
 
 public class CapabilityStorageProvider<T> implements IStorage<T> {
 
