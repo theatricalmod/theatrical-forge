@@ -1,0 +1,8 @@
+{
+  "name": "guide.theatrical.name",
+  "landing_text": "guide.theatrical.landing_text",
+  "model": "theatrical:guide",
+  "show_progress": false,
+  "version": "1",
+  "creative_tab": "theatrical"
+}

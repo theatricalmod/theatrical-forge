@@ -1,0 +1,11 @@
+{
+  "name": "Glossary",
+  "category": "lighting_category",
+  "icon": "theatrical:bulb",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Lamp: Proper name for what is commonly known as a bulb\nFixture: Another word to refer to an individual light"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Command and Control",
+  "category": "lighting_category",
+  "icon": "theatrical:basic_lighting_desk",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Lighting equipment is controlled through DMX cable. For intelligent lights, this needs to be plugged directly into the light, whereas for generics the DMX is run to the dimmer rack."
+    },
+    {
+      "type": "text",
+      "text": "Available in-game is a very basic lighting desk for sending DMX signals. You can also use the ArtNet interface to interface with real lighting control software, or even a physical desk!"
+    },
+    {
+      "type": "text",
+      "text": "There also exists a DMX -> Redstone converter, allowing control of redstone lighting, pistons, etc, with DMX signal."
+    }
+  ]
+}

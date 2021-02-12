@@ -1,0 +1,26 @@
+{
+  "name": "Dimmers and Generics",
+  "category": "lighting_category",
+  "icon": "theatrical:dimmer_rack",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Dimmed vs 'Hot' Power",
+      "title": "Dimmed power is used to control the brightness of generic lighting. 'Hot' Power by contrast, is standard Forge Energy used to power everything else. Make sure you use the correct power type!"
+    },
+    {
+      "type": "crafting",
+      "recipe": "theatrical:dimmer_rack",
+      "text": "To convert into dimmed power, you need a $(item)Dimmer Rack$(). The dimmer rack also routes the power based on the settings in its GUI, and is the DMX interface point for all connected generics."
+    },
+    {
+      "type": "text",
+      "text": "Now that you have the dimmed power, you can plug in generic lights. Ensure you plug them into appropriate sides of your rack, and remember that each side of the Dimmer Rack represents a different DMX channel. If you connect multiple lights to one side, they will all respond to that DMX channel."
+    },
+    {
+      "type": "crafting",
+      "recipe": "theatrical:generic_light",
+      "recipe2": "theatrical:bulb"
+    }
+  ]
+}
