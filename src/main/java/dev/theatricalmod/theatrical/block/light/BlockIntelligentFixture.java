@@ -1,7 +1,6 @@
 package dev.theatricalmod.theatrical.block.light;
 
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
-import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,8 +20,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-
-import javax.annotation.Nullable;
 
 public class BlockIntelligentFixture extends BlockLight {
 

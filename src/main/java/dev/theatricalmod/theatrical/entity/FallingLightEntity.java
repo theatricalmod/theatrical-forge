@@ -3,7 +3,6 @@ package dev.theatricalmod.theatrical.entity;
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;

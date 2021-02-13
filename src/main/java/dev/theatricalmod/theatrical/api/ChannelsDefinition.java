@@ -2,9 +2,9 @@ package dev.theatricalmod.theatrical.api;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ChannelsDefinition {
 
