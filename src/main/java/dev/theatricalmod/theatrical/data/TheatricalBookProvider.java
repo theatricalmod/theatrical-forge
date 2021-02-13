@@ -34,20 +34,20 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
         final CategoryBuilder lightingCategory =
                 builder.addCategory("lighting_category", "Lighting", "", new ItemStack(TheatricalBlocks.GENERIC_LIGHT.get()));
         lightingCategory.addEntry("glossary", "Glossary", new ItemStack(TheatricalItems.BULB.get()))
-                .addSimpleTextPage("Lamp: Proper name for what is commonly known as a bulb\n" +
-                                    "Fixture: Another word to refer to an individual light");
+                .addSimpleTextPage("$(li) Lamp: Proper name for what is commonly known as a bulb" +
+                                    "$(li) Fixture: Another word to refer to an individual light");
         lightingCategory.addEntry("rigging", "Rigging", new ItemStack(TheatricalItems.TRUSS.get()))
                 .addSimpleTextPage("Lights may only be rigged off (placed on) appropriate surfaces. Moving lights may be placed on top of any solid block, or hung from $(item)Truss$(). Generics may only hang, and may only do so from $(item)Truss$() or from internally wired bars. The latter contains power wiring within the bar.")
                 .addCraftingPage(modLoc("truss")).setRecipe2(modLoc("iwb"));
         lightingCategory.addEntry("dimmer_rack", "Dimmers and Generics", new ItemStack(TheatricalItems.DIMMER_RACK.get()))
-                .addSimpleTextPage("Dimmed vs 'Hot' Power", "Dimmed power is used to control the brightness of generic lighting. 'Hot' Power by contrast, is standard Forge Energy used to power everything else. Make sure you use the correct power type!")
+                .addSimpleTextPage("Dimmed power is used to control the brightness of generic lighting. 'Hot' Power by contrast, is standard Forge Energy used to power everything else. Make sure you use the correct power type!", "Dimmed vs 'Hot' Power")
                 .addCraftingPage(modLoc("dimmer_rack")).setText("To convert into dimmed power, you need a $(item)Dimmer Rack$(). The dimmer rack also routes the power based on the settings in its GUI, and is the DMX interface point for all connected generics.")
                 .build().addSimpleTextPage("Now that you have the dimmed power, you can plug in generic lights. Ensure you plug them into appropriate sides of your rack, and remember that each side of the Dimmer Rack represents a different DMX channel. If you connect multiple lights to one side, they will all respond to that DMX channel." +
                 "Generic lights must be re-focused by hand.")
                 .addCraftingPage(modLoc("generic_light")).setRecipe2(modLoc("bulb"));
         lightingCategory.addEntry("intels", "Intelligent Lighting", new ItemStack(TheatricalItems.MOVING_LIGHT.get()))
                 .addSimpleTextPage("Intelligent Lighting presents a lot more options than generic lighting. DMX and hot power should connected directly to this fixture, and it has 7 channels of control.")
-                .addSimpleTextPage(Fixture.getRegistry().getValue(MovingLightFixture.ID).getChannelsDefinition().toString().replace("|", "$(li)"))
+                .addSimpleTextPage(Fixture.getRegistry().getValue(MovingLightFixture.ID).getChannelsDefinition().toString().replace("#", "$(li)"))
                 .addCraftingPage(modLoc("moving_light")).setRecipe2(modLoc("led"))
                 .build().addCraftingPage(modLoc("motor")).setRecipe2(modLoc("cog"));
         lightingCategory.addEntry("control", "Command and Control", new ItemStack(TheatricalItems.BASIC_LIGHTING_DESK.get()))
