@@ -33,5 +33,8 @@ public class TheatricalUSLangProvider extends LanguageProvider {
         this.addItem(TheatricalItems.MOTOR, "Electrical Motor");
         this.addItem(TheatricalItems.BULB, "Tungsten Bulb");
         this.addItem(TheatricalItems.WRENCH, "Wrench");
+
+        this.add(TheatricalBookProvider.NAME_KEY, "Theatrical Guide");
+        this.add(TheatricalBookProvider.DESC_KEY, "On the art of theatrics");
     }
 }

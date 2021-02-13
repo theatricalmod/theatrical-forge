@@ -71,7 +71,7 @@ public class Fixture extends ForgeRegistryEntry<Fixture> {
      */
     public Fixture(ResourceLocation name, FixtureType fixtureType, HangableType hangableType, ResourceLocation staticModelLocation, ResourceLocation hookedModelLocation, ResourceLocation tiltModelLocation, ResourceLocation panModelLocation, float[] tiltRotationPosition, float[] panRotationPosition, float[] beamStartPosition, float defaultRotation, float beamWidth, float rayTraceRotation, float maxLightDistance, int maxEnergy, int energyUse, int energyUseTimer, int channelCount, ChannelsDefinition channelsDefinition, ResourceLocation... textures) {
         this.name = name;
-        this.setRegistryName(new ResourceLocation(name.getNamespace(), name.getPath() + "_fixture"));
+        this.setRegistryName(name);
         this.fixtureType = fixtureType;
         this.hangableType = hangableType;
         this.staticModelLocation = staticModelLocation;

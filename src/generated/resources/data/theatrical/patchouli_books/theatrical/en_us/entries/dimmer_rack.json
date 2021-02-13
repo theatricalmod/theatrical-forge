@@ -15,7 +15,7 @@
     },
     {
       "type": "text",
-      "text": "Now that you have the dimmed power, you can plug in generic lights. Ensure you plug them into appropriate sides of your rack, and remember that each side of the Dimmer Rack represents a different DMX channel. If you connect multiple lights to one side, they will all respond to that DMX channel."
+      "text": "Now that you have the dimmed power, you can plug in generic lights. Ensure you plug them into appropriate sides of your rack, and remember that each side of the Dimmer Rack represents a different DMX channel. If you connect multiple lights to one side, they will all respond to that DMX channel.Generic lights must be re-focused by hand."
     },
     {
       "type": "crafting",

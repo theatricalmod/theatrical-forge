@@ -65,18 +65,21 @@ minecraft {
         client {
             workingDirectory project.file('run')
             source sourceSets.main
+            properties 'mixin.env.disableRefMap': 'true'
             property 'forge.logging.console.level', 'debug'
         }
 
         server {
             workingDirectory project.file('run')
             source sourceSets.main
+            properties 'mixin.env.disableRefMap': 'true'
             property 'forge.logging.console.level', 'debug'
         }
 
         data {
             workingDirectory project.file('run')
             source sourceSets.main
+            properties 'mixin.env.disableRefMap': 'true'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
