@@ -35,7 +35,8 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
                 builder.addCategory("lighting_category", "Lighting", "", new ItemStack(TheatricalBlocks.GENERIC_LIGHT.get()));
         lightingCategory.addEntry("glossary", "Glossary", new ItemStack(TheatricalItems.BULB.get()))
                 .addSimpleTextPage("$(li) Lamp: Proper name for what is commonly known as a bulb" +
-                                    "$(li) Fixture: Another word to refer to an individual light");
+                                    "$(li) Fixture: Another word to refer to an individual light")
+                .setPriority(true);
         lightingCategory.addEntry("rigging", "Rigging", new ItemStack(TheatricalItems.TRUSS.get()))
                 .addSimpleTextPage("Lights may only be rigged off (placed on) appropriate surfaces. Moving lights may be placed on top of any solid block, or hung from $(item)Truss$(). Generics may only hang, and may only do so from $(item)Truss$() or from internally wired bars. The latter contains power wiring within the bar.")
                 .addCraftingPage(modLoc("truss")).setRecipe2(modLoc("iwb"));
@@ -53,7 +54,9 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
         lightingCategory.addEntry("control", "Command and Control", new ItemStack(TheatricalItems.BASIC_LIGHTING_DESK.get()))
                 .addSimpleTextPage("Lighting equipment is controlled through DMX cable. For intelligent lights, this needs to be plugged directly into the light, whereas for generics the DMX is run to the dimmer rack.")
                 .addSimpleTextPage("Available in-game is a very basic lighting desk for sending DMX signals. You can also use the ArtNet interface to interface with real lighting control software, or even a physical desk!")
-                .addSimpleTextPage("There also exists a DMX -> Redstone converter, allowing control of redstone lighting, pistons, etc, with DMX signal.");
+                .addCraftingPage(modLoc("artnet_interface")).build()
+                .addCraftingPage(modLoc("redstone_interface"))
+                .setText("There also exists a DMX -> Redstone converter, allowing control of redstone lighting, pistons, etc, with DMX signal.");
         builder.build(consumer);
     }
 
