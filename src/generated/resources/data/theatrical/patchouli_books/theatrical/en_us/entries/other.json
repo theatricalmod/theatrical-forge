@@ -1,0 +1,12 @@
+{
+  "name": "Other",
+  "category": "resources_category",
+  "icon": "minecraft:bedrock",
+  "pages": [
+    {
+      "type": "link",
+      "url": "https://discord.gg/7qMs5d6",
+      "link_text": "Mod Discord"
+    }
+  ]
+}

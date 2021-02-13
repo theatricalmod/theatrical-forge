@@ -32,7 +32,7 @@ public class ChannelsDefinition {
         LinkedHashMap<ChannelType, Integer> sortedMap = new LinkedHashMap<>();
         channels.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
-                .forEachOrdered(entry -> string.append(String.format("|%d: %s", entry.getValue(), StringUtils.capitalize(entry.getKey().name().toLowerCase()))));
+                .forEachOrdered(entry -> string.append(String.format("#%d: %s", entry.getValue(), StringUtils.capitalize(entry.getKey().name().toLowerCase()))));
         return string.toString();
     }
 }

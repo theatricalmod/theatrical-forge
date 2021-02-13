@@ -12,7 +12,12 @@
       "text": "Available in-game is a very basic lighting desk for sending DMX signals. You can also use the ArtNet interface to interface with real lighting control software, or even a physical desk!"
     },
     {
-      "type": "text",
+      "type": "crafting",
+      "recipe": "theatrical:artnet_interface"
+    },
+    {
+      "type": "crafting",
+      "recipe": "theatrical:redstone_interface",
       "text": "There also exists a DMX -> Redstone converter, allowing control of redstone lighting, pistons, etc, with DMX signal."
     }
   ]

@@ -5,7 +5,8 @@
   "pages": [
     {
       "type": "text",
-      "text": "Lamp: Proper name for what is commonly known as a bulb\nFixture: Another word to refer to an individual light"
+      "text": "$(li) Lamp: Proper name for what is commonly known as a bulb$(li) Fixture: Another word to refer to an individual light"
     }
-  ]
+  ],
+  "priority": true
 }

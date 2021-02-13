@@ -5,8 +5,8 @@
   "pages": [
     {
       "type": "text",
-      "text": "Dimmed vs 'Hot' Power",
-      "title": "Dimmed power is used to control the brightness of generic lighting. 'Hot' Power by contrast, is standard Forge Energy used to power everything else. Make sure you use the correct power type!"
+      "text": "Dimmed power is used to control the brightness of generic lighting. 'Hot' Power by contrast, is standard Forge Energy used to power everything else. Make sure you use the correct power type!",
+      "title": "Dimmed vs 'Hot' Power"
     },
     {
       "type": "crafting",

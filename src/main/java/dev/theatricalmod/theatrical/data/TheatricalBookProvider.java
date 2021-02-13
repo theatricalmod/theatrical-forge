@@ -7,6 +7,7 @@ import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import xyz.brassgoggledcoders.patchouliprovider.BookBuilder;
 import xyz.brassgoggledcoders.patchouliprovider.CategoryBuilder;
@@ -32,7 +33,7 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
         builder.setVersion("1");
         builder.setModel(TheatricalMod.MOD_ID + ":guide");
         final CategoryBuilder lightingCategory =
-                builder.addCategory("lighting_category", "Lighting", "", new ItemStack(TheatricalBlocks.GENERIC_LIGHT.get()));
+                builder.addCategory("lighting_category", "Lighting", "Let there be light!", new ItemStack(TheatricalBlocks.GENERIC_LIGHT.get()));
         lightingCategory.addEntry("glossary", "Glossary", new ItemStack(TheatricalItems.BULB.get()))
                 .addSimpleTextPage("$(li) Lamp: Proper name for what is commonly known as a bulb" +
                                     "$(li) Fixture: Another word to refer to an individual light")
@@ -57,6 +58,12 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
                 .addCraftingPage(modLoc("artnet_interface")).build()
                 .addCraftingPage(modLoc("redstone_interface"))
                 .setText("There also exists a DMX -> Redstone converter, allowing control of redstone lighting, pistons, etc, with DMX signal.");
+        final CategoryBuilder resourcesCategory =
+                builder.addCategory("resources_category", "Resources", "Useful resources for learning more about the mod, and theatre/live events in general", new ItemStack(Items.BOOKSHELF));
+        resourcesCategory.addEntry("videos", "Videos", new ItemStack(Items.ENDER_EYE))
+                .addLinkPage("https://www.youtube.com/watch?v=_aR-IkcK9dA", "gewenzsko's tutorial");
+        resourcesCategory.addEntry("other", "Other", new ItemStack(Items.BEDROCK))
+                .addLinkPage("https://discord.gg/7qMs5d6", "Mod Discord");
         builder.build(consumer);
     }
 
