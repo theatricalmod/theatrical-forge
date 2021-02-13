@@ -9,8 +9,6 @@ import dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture;
 import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,7 +21,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.EnergyStorage;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, INamedContainerProvider {
 

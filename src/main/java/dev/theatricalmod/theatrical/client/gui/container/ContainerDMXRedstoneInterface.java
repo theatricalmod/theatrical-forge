@@ -1,7 +1,6 @@
 package dev.theatricalmod.theatrical.client.gui.container;
 
 import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXRedstoneInterface;
-import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.math.BlockPos;

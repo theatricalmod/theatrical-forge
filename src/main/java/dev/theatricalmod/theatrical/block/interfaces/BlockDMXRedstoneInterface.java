@@ -1,7 +1,6 @@
 package dev.theatricalmod.theatrical.block.interfaces;
 
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXRedstoneInterface;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

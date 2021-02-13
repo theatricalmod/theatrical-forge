@@ -27,7 +27,6 @@ import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.util.CapabilityStorageProvider;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;

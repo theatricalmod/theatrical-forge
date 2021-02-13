@@ -1,7 +1,9 @@
 package dev.theatricalmod.theatrical.data;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.data.*;
+import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.data.DataGenerator;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -11,12 +13,18 @@ public class TheatricalDataGen {
 
     @SubscribeEvent
     public static void dataGenEvent(GatherDataEvent event){
-        DataGenerator gen = event.getGenerator();
+        final DataGenerator gen = event.getGenerator();
+        final ExistingFileHelper ex = event.getExistingFileHelper();
+        if(event.includeClient()) {
+            gen.addProvider(new TheatricalUSLangProvider(gen));
+            gen.addProvider(new TheatricalItemModelProvider(gen, ex));
+        }
         if(event.includeServer()){
             gen.addProvider(new TheatricalRecipes(gen));
             gen.addProvider(new TheatricalLootTables(gen));
             BlockTagProvider blockTagProvider = new BlockTagProvider(event.getGenerator());
-            gen.addProvider(new TheatricalItemTagProvider(event.getGenerator(), blockTagProvider, event.getExistingFileHelper()));
+            gen.addProvider(new TheatricalItemTagProvider(event.getGenerator(), blockTagProvider, ex));
+            gen.addProvider(new TheatricalBookProvider((gen)));
         }
     }
 

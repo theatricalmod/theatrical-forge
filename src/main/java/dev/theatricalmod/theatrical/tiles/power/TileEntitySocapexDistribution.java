@@ -7,10 +7,6 @@ import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +14,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class TileEntitySocapexDistribution extends TileEntity implements IAcceptsCable, ISocapexReceiver, ITickableTileEntity {
 

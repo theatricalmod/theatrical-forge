@@ -3,12 +3,9 @@ package dev.theatricalmod.theatrical.client.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.theatricalmod.theatrical.TheatricalMod;
-import dev.theatricalmod.theatrical.client.gui.IDraggable;
-import dev.theatricalmod.theatrical.client.gui.container.ContainerArtNetInterface;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerBasicLightingConsole;
 import dev.theatricalmod.theatrical.client.gui.widgets.ButtonFader;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
-import dev.theatricalmod.theatrical.network.UpdateArtNetInterfacePacket;
 import dev.theatricalmod.theatrical.network.control.ConsoleGoPacket;
 import dev.theatricalmod.theatrical.network.control.MoveStepPacket;
 import dev.theatricalmod.theatrical.network.control.ToggleModePacket;
@@ -22,7 +19,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 
 public class ScreenBasicLightingConsole extends ContainerScreen<ContainerBasicLightingConsole> {
 

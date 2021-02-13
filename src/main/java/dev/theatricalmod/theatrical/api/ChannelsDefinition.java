@@ -1,6 +1,9 @@
 package dev.theatricalmod.theatrical.api;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ChannelsDefinition {
@@ -20,5 +23,16 @@ public class ChannelsDefinition {
 
     public int getChannel(ChannelType type) {
         return channels.getOrDefault(type, 0);
+    }
+
+    @Override
+    public String toString() {
+        //Sort into ascending order of channel
+        StringBuilder string = new StringBuilder();
+        LinkedHashMap<ChannelType, Integer> sortedMap = new LinkedHashMap<>();
+        channels.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(entry -> string.append(String.format("#%d: %s", entry.getValue(), StringUtils.capitalize(entry.getKey().name().toLowerCase()))));
+        return string.toString();
     }
 }

@@ -6,8 +6,6 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
 import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
 import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
-import java.util.Random;
-import javax.annotation.Nonnull;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -16,6 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
+
+import javax.annotation.Nonnull;
+import java.util.Random;
 
 public class TileEntityTestDMX extends TileEntity implements ITickableTileEntity {
 

@@ -1,6 +1,7 @@
 package dev.theatricalmod.theatrical.artnet;
 
 import ch.bildspur.artnet.ArtNetClient;
+
 import java.util.HashMap;
 
 public class ArtNetManager {

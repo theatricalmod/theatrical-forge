@@ -2,11 +2,12 @@ package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
-import java.util.function.Supplier;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
+
+import java.util.function.Supplier;
 
 public class ChangeDimmerPatchPacket {
 

@@ -9,8 +9,6 @@ import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerGenericFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,6 +21,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityGenericFixture extends TileEntityFixture implements INamedContainerProvider, ITheatricalPowerStorage, IAcceptsCable {
 

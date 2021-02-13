@@ -9,8 +9,8 @@ import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityDMXRedstoneInterf
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIlluminator;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityIntelligentFixture;
-import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
+import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntitySocapexDistribution;
 import net.minecraft.tileentity.TileEntityType;

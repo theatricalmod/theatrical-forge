@@ -1,13 +1,14 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<CompoundNBT> {
 

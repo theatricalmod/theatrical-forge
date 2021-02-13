@@ -1,0 +1,16 @@
+{
+  "name": "Rigging",
+  "category": "lighting_category",
+  "icon": "theatrical:truss",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Lights may only be rigged off (placed on) appropriate surfaces. Moving lights may be placed on top of any solid block, or hung from $(item)Truss$(). Generics may only hang, and may only do so from $(item)Truss$() or from internally wired bars. The latter contains power wiring within the bar."
+    },
+    {
+      "type": "crafting",
+      "recipe": "theatrical:truss",
+      "recipe2": "theatrical:iwb"
+    }
+  ]
+}

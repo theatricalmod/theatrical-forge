@@ -1,7 +1,5 @@
 package dev.theatricalmod.theatrical.client;
 
-import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import dev.theatricalmod.theatrical.api.ISupport;
@@ -11,7 +9,6 @@ import dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture;
 import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
 import dev.theatricalmod.theatrical.util.FixtureUtil;
-import java.util.Random;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -24,6 +21,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.data.EmptyModelData;
+
+import java.util.Random;
+
+import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
 
 public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
 

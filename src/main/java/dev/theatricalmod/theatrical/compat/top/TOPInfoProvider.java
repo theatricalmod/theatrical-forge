@@ -1,15 +1,12 @@
 package dev.theatricalmod.theatrical.compat.top;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import java.util.function.Function;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoProvider;
-import mcjty.theoneprobe.api.ITheOneProbe;
-import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+
+import java.util.function.Function;
 
 public class TOPInfoProvider implements IProbeInfoProvider, Function<ITheOneProbe, Void> {
 

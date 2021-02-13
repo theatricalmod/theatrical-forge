@@ -1,8 +1,6 @@
 package dev.theatricalmod.theatrical.tiles.lights;
 
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import javax.annotation.Nullable;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,6 +8,8 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
 
 public class TileEntityIlluminator extends TileEntity implements ITickableTileEntity {
 

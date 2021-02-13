@@ -4,14 +4,11 @@ import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
-import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
-import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
-import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
+import dev.theatricalmod.theatrical.tiles.interfaces.TileEntityArtNetInterface;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -19,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class TheatricalCommon {
 
