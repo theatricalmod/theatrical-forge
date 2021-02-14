@@ -123,29 +123,18 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     }
 
     public double doRayTrace() {
-//        if (!this.getBlock().isInstance(world.getBlockState(pos).getBlock())) {
-//            return 0;
-//        }
         BlockState blockState = world.getBlockState(pos);
         Direction direction = blockState.get(
             HorizontalBlock.HORIZONTAL_FACING);
-        float horizontalAngle = direction.getHorizontalAngle();
-        float lookingAngle = horizontalAngle;
+        float lookingAngle = direction.getHorizontalAngle();
         lookingAngle = (isUpsideDown() ? lookingAngle + getPan() : lookingAngle - getPan());
         lookingAngle = lookingAngle % 360;
-        if (isUpsideDown()) {
-//            lookingAngle = 360 - lookingAngle;
-//            lookingAngle = lookingAngle % 360;
-        }
 
         float tilt = getTilt() + getExtraTilt();
         if (!isUpsideDown()) {
             tilt = -tilt;
         }
-//        tilt = (tilt / 2) + 90;
-//        if(isUpsideDown()){
-//            lookingAngle = -lookingAngle;
-//        }
+
         Vector3d look = getVectorForRotation(tilt, lookingAngle);
         double distance = getMaxLightDistance();
         Vector3d startVec = look.scale(0.9F).add(pos.getX() + 0.5, pos.getY() + 0.51, pos.getZ() + 0.5);
@@ -172,23 +161,6 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         }
         distance = new Vector3d(lightPos.getX(), lightPos.getY(), lightPos.getZ()).distanceTo(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
         if (lightPos.equals(lightBlock)) {
-            if (world.getBlockState(lightBlock).getBlock() instanceof AirBlock) {
-                if (this.emitsLight()) {
-                    float newVal = getIntensity() / 255F;
-                    int lightval = (int) (newVal * 15F);
-                    world.setBlockState(lightPos,
-                        TheatricalBlocks.ILLUMINATOR.get().getDefaultState().with(BlockIlluminator.lightValue, lightval), 3);
-                    TileEntity tileEntity = world.getTileEntity(lightPos);
-                    if (tileEntity != null) {
-                        TileEntityIlluminator illuminator = (TileEntityIlluminator) tileEntity;
-                        illuminator.setController(pos);
-//                        if (world.isRemote) {
-//                            TheatricalPacketHandler.INSTANCE
-//                                .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
-//                        }
-                    }
-                }
-            }
             return distance;
         }
         if (getLightBlock() != null && getLightBlock() != lightPos && world.getBlockState(getLightBlock()).getBlock() instanceof BlockIlluminator) {
@@ -198,24 +170,6 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
             return distance;
         }
         setLightBlock(lightPos);
-        if (this.emitsLight()) {
-            float newVal = getIntensity() / 255F;
-            int lightval = (int) (newVal * 15F);
-            world.setBlockState(lightPos,
-                TheatricalBlocks.ILLUMINATOR.get().getDefaultState().with(BlockIlluminator.lightValue, lightval), 3);
-            TileEntity tileEntity = world.getTileEntity(lightPos);
-            if (tileEntity != null) {
-                TileEntityIlluminator illuminator = (TileEntityIlluminator) tileEntity;
-                illuminator.setController(pos);
-                if (lightBlock != null) {
-                    world.getLightValue(lightBlock);
-                }
-//                if (world.isRemote) {
-//                    TheatricalPacketHandler.INSTANCE
-//                        .sendToServer(new UpdateIlluminatorPacket(lightPos, pos));
-//                }
-            }
-        }
         return distance;
     }
 
@@ -382,6 +336,16 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         return getFixture().getRayTraceRotation();
     }
 
+    @Override
+    public void remove() {
+        if(lightBlock != null) {
+            if(!world.isAirBlock(lightBlock) && world.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator) {
+                world.setBlockState(lightBlock, Blocks.AIR.getDefaultState());
+                lightBlock = null;
+            }
+        }
+        super.remove();
+    }
 
     @Override
     public void tick() {
@@ -394,12 +358,17 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
                 if (shouldTrace()) {
                     this.distance = doRayTrace();
                     world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);
-                    markDirty();
-                    if (lightBlock != null) {
-                        if (!world.getBlockState(lightBlock).isAir() && world.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator) {
-                            float newVal = getIntensity() / 255F;
-                            int lightval = (int) (newVal * 15F);
-                            world.setBlockState(lightBlock, world.getBlockState(lightBlock).with(BlockIlluminator.lightValue, lightval));
+                    if (lightBlock != null && this.emitsLight()) {
+                        float newVal = getIntensity() / 255F;
+                        int lightval = (int) (newVal * 15F);
+                        if(world.getBlockState(lightBlock).isAir() || !(world.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator)){
+                            world.setBlockState(lightBlock,
+                                TheatricalBlocks.ILLUMINATOR.get().getDefaultState().with(BlockIlluminator.lightValue, lightval), 3);
+                                world.getLightValue(lightBlock);
+                        } else {
+                            if(world.getBlockState(lightBlock).get(BlockIlluminator.lightValue) != lightval){
+                                world.setBlockState(lightBlock, world.getBlockState(lightBlock).with(BlockIlluminator.lightValue, lightval));
+                            }
                         }
                     }
                 }

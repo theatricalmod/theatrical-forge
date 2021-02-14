@@ -71,7 +71,10 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean shouldTrace() {
-        return true;
+        if(energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+            return this.getLightBlock() == null || prevPan != getPan() || prevTilt != getTilt();
+        }
+        return false;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean isUpsideDown() {
-        return !this.getBlockState().get(BlockIntelligentFixture.HANGING);
+        return this.getBlockState().get(BlockIntelligentFixture.HANGING);
     }
 
     @Override
