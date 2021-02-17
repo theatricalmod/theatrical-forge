@@ -84,7 +84,9 @@ public class TileEntityArtNetInterface extends TileEntityTheatricalBase implemen
         nbtTagCompound.putInt("subnet", this.subnet);
         nbtTagCompound.putInt("universe", this.universe);
         nbtTagCompound.putString("ip", this.ip);
-        nbtTagCompound.putString("owner", this.player.toString());
+        if(this.player != null) {
+            nbtTagCompound.putString("owner", this.player.toString());
+        }
         return nbtTagCompound;
     }
 
