@@ -1,21 +1,17 @@
 package dev.theatricalmod.theatrical.block.light;
 
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import dev.theatricalmod.theatrical.tiles.lights.TileEntityIlluminator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-
-import javax.annotation.Nullable;
 
 public class BlockIlluminator extends Block {
 
@@ -24,17 +20,6 @@ public class BlockIlluminator extends Block {
     public BlockIlluminator() {
         super(TheatricalBlocks.BASE_PROPERTIES.notSolid());
         setDefaultState(getDefaultState().with(lightValue, 0));
-    }
-
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityIlluminator();
     }
 
     @Override
