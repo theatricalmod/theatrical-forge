@@ -100,11 +100,17 @@ public class ScreenArtNetInterface extends ContainerScreen<ContainerArtNetInterf
         this.ipAddress.setMaxStringLength(35);
         this.children.add(this.ipAddress);
         this.addButton(new Button(lvt_1_1_ + 40, lvt_2_1_ + 90, 100, 20, new StringTextComponent("Save"), p_onPress_1_ -> {
-            int dmx = Integer.parseInt(this.dmxAddress.getText());
-            if (dmx > 512 || dmx < 0) {
-                return;
+            try {
+                int dmx = Integer.parseInt(this.dmxAddress.getText());
+                if (dmx > 512 || dmx < 0) {
+                    return;
+                }
+                TheatricalNetworkHandler.MAIN.sendToServer(
+                    new UpdateArtNetInterfacePacket(container.blockEntity.getPos(), dmx,
+                        ipAddress.getText()));
+            } catch(NumberFormatException ignored) {
+                //We need a nicer way to show that this is invalid?
             }
-            TheatricalNetworkHandler.MAIN.sendToServer(new UpdateArtNetInterfacePacket(container.blockEntity.getPos(), dmx, ipAddress.getText()));
         }));
     }
 
