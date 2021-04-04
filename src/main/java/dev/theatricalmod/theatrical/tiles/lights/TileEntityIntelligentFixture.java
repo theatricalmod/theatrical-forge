@@ -79,7 +79,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean emitsLight() {
-        return true;
+        return super.emitsLight();
     }
 
     @Override

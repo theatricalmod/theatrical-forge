@@ -1,6 +1,7 @@
 package dev.theatricalmod.theatrical.tiles.lights;
 
 import com.mojang.authlib.GameProfile;
+import dev.theatricalmod.theatrical.TheatricalConfigHandler;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.api.fixtures.HangableType;
 import dev.theatricalmod.theatrical.api.fixtures.IFixture;
@@ -119,7 +120,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
 
     @Override
     public boolean emitsLight() {
-        return !getBlockState().get(BlockHangable.BROKEN);
+        return !getBlockState().get(BlockHangable.BROKEN) && TheatricalConfigHandler.COMMON.emitLight.get();
     }
 
     public double doRayTrace() {

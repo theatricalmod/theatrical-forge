@@ -76,7 +76,7 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     @Override
     public boolean shouldTrace() {
-        return true;
+        return power > 0;
     }
 
     @Override
