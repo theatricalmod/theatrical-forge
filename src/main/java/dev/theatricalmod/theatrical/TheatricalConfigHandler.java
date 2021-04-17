@@ -7,11 +7,14 @@ public class TheatricalConfigHandler {
 
   public static class Common {
     public final ForgeConfigSpec.BooleanValue emitLight;
+    public final ForgeConfigSpec.BooleanValue consumePower;
 
     public Common(ForgeConfigSpec.Builder builder) {
       builder.push("fixtures");
       emitLight = builder.comment("Set this to false to prevent lights emitting actual light")
           .define("emitLight", true);
+      consumePower = builder.comment("Set this to false to prevent moving lights consuming power")
+              .define("consumePower", true);
       builder.pop();
     }
   }

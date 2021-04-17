@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.tiles.lights;
 
+import dev.theatricalmod.theatrical.TheatricalConfigHandler;
 import dev.theatricalmod.theatrical.api.ChannelType;
 import dev.theatricalmod.theatrical.api.capabilities.TheatricalEnergyStorage;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
@@ -71,7 +72,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean shouldTrace() {
-        if(energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if(isPowered()) {
             return this.getLightBlock() == null || prevPan != getPan() || prevTilt != getTilt();
         }
         return false;
@@ -107,21 +108,21 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     public int getRed() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()) {
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.RED)))).orElse(0);
         }
         return 0;
     }
 
     public int getGreen() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()){
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.GREEN)))).orElse(0);
         }
         return 0;
     }
 
     public int getBlue() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()) {
             return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.BLUE)))).orElse(0);
         }
         return 0;
@@ -129,7 +130,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public int getPan() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null && isPowered()) {
             return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F);
         }
         return prevPan;
@@ -137,7 +138,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public int getTilt() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null && isPowered()) {
             return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.TILT))).orElse((byte) prevTilt)) * 180) / 255F) - 90;
         }
         return prevTilt;
@@ -153,7 +154,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public float getIntensity() {
-        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && energyStorage.getEnergyStored() >= getFixture().getEnergyUse()) {
+        if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()){
             return convertByte(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.INTENSITY))).orElse((byte) 0));
         }
         return 0;
@@ -173,13 +174,22 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
         return isUpsideDown() ? 90 : 90;
     }
 
+    public boolean isPowered(){
+        if(!TheatricalConfigHandler.COMMON.consumePower.get()){
+            return true;
+        }
+        return energyStorage.getEnergyStored() >= getFixture().getEnergyUse();
+    }
+
     @Override
     public void tick() {
         if(getFixture() == null){
             return;
         }
-        if(energyStorage.getEnergyStored() >= getFixture().getEnergyUse()){
-            energyStorage.extractEnergy(getFixture().getEnergyUse(), false);
+        if(isPowered()){
+            if(TheatricalConfigHandler.COMMON.consumePower.get()) {
+                energyStorage.extractEnergy(getFixture().getEnergyUse(), false);
+            }
             super.tick();
         }
         prevPan = getPan();
