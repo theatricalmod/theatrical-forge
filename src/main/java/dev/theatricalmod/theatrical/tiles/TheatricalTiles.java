@@ -12,6 +12,8 @@ import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmerRack;
 import dev.theatricalmod.theatrical.tiles.power.TileEntityPowerCable;
 import dev.theatricalmod.theatrical.tiles.power.TileEntitySocapexDistribution;
+import dev.theatricalmod.theatrical.tiles.sound.TileEntityAmplifier;
+import dev.theatricalmod.theatrical.tiles.sound.TileEntitySpeaker;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -33,5 +35,7 @@ public class TheatricalTiles {
     public static final RegistryObject<TileEntityType<TileEntityCable>> CABLE = TILES.register("cable", () -> TileEntityType.Builder.create(TileEntityCable::new, TheatricalBlocks.SOCAPEX_CABLE.get(), TheatricalBlocks.DMX_CABLE.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityBasicLightingControl>> BASIC_LIGHTING_DESK = TILES.register("basic_lighting_desk", () -> TileEntityType.Builder.create(TileEntityBasicLightingControl::new, TheatricalBlocks.BASIC_LIGHTING_DESK.get()).build(null));
     public static final RegistryObject<TileEntityType<TileEntityDMXRedstoneInterface>> DMX_REDSTONE_INTERFACE = TILES.register("redstone_interface", () -> TileEntityType.Builder.create(TileEntityDMXRedstoneInterface::new, TheatricalBlocks.DMX_REDSTONE_INTERFACE.get()).build(null));
+    public static final RegistryObject<TileEntityType<TileEntitySpeaker>> SPEAKER = TILES.register("speaker", () -> TileEntityType.Builder.create(TileEntitySpeaker::new, TheatricalBlocks.SPEAKER.get()).build(null));
+    public static final RegistryObject<TileEntityType<TileEntityAmplifier>> AMPLIFIER = TILES.register("amplifier", () -> TileEntityType.Builder.create(TileEntityAmplifier::new, TheatricalBlocks.AMPLIFIER.get()).build(null));
 
 }

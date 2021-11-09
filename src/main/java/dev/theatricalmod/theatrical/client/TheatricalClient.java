@@ -1,5 +1,6 @@
 package dev.theatricalmod.theatrical.client;
 
+import com.google.common.collect.Lists;
 import dev.theatricalmod.theatrical.TheatricalCommon;
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
@@ -13,6 +14,7 @@ import dev.theatricalmod.theatrical.client.tile.TileEntityRendererBasicLightingD
 import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -23,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -38,13 +41,26 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.openal.AL10;
 
+import javax.sound.sampled.AudioFormat;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
 
 @Mod.EventBusSubscriber(modid = TheatricalMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TheatricalClient extends TheatricalCommon {
+
+    private HashMap<Integer, SoundSource> soundSources = new HashMap<>();
+    private HashMap<Integer, AudioFormat> audioFormats = new HashMap<>();
+    private HashMap<Integer, Buffer> buffers = new HashMap<>();
 
     @Override
     public void init() {
@@ -141,6 +157,79 @@ public class TheatricalClient extends TheatricalCommon {
                 idmxProvider.refreshDevices();
                 idmxProvider.updateDevices(getWorld(), pos);
             });
+        }
+    }
+    private static int getSampleSize(AudioFormat audioFormat, int sampleAmount) {
+        return (int)((float)(sampleAmount * audioFormat.getSampleSizeInBits()) / 8.0F * (float)audioFormat.getChannels() * audioFormat.getSampleRate());
+    }
+
+    public void handleAudioData(int audioID, float sampleRate, int numChannels, ByteBuffer data) {
+        if(buffers.containsKey(audioID)) {
+            buffers.get(audioID).appendOggAudioBytes(data);
+        } else {
+            AudioFormat audioFormat = new AudioFormat(sampleRate, 16, numChannels, true, false);
+            Buffer buffer = new Buffer(getSampleSize(audioFormat, 1) + 8192);
+            buffers.put(audioID, buffer);
+            data = data.rewind();
+            buffer.appendOggAudioBytes(data);
+            CompletableFuture<ChannelManager.Entry> completablefuture = Minecraft.getInstance().getSoundHandler().sndManager.channelManager.requestSoundEntry(SoundSystem.Mode.STREAMING);
+            ChannelManager.Entry channelmanager$entry = completablefuture.join();
+            channelmanager$entry.runOnSoundExecutor((source) -> {
+                source.setPitch(1f);
+                source.setGain(1f);
+
+                source.setNoAttenuation();
+
+                source.setLooping(false);
+                source.updateSource(new Vector3d(0,0, 0));
+                source.setRelative(true);
+            });
+            channelmanager$entry.runOnSoundExecutor(source -> {
+                source.playStreamableSounds(new IAudioStream() {
+                    @Override
+                    public AudioFormat getAudioFormat() {
+                        return audioFormat;
+                    }
+
+                    @Override
+                    public ByteBuffer readOggSoundWithCapacity(int size) throws IOException {
+                        return buffer.mergeBuffers();
+                    }
+
+                    @Override
+                    public void close() throws IOException {
+                        buffers.remove(audioID);
+                    }
+                });
+                source.play();
+            });
+        }
+    }
+
+    static class Buffer {
+        private final List<ByteBuffer> storedBuffers = Lists.newArrayList();
+        private final int bufferCapacity;
+        private int filledBytes;
+        private ByteBuffer currentBuffer;
+
+        public Buffer(int capacity) {
+            this.bufferCapacity = capacity + 1 & -2;
+        }
+
+        public void appendOggAudioBytes(ByteBuffer buffer) {
+            this.storedBuffers.add(buffer);
+            this.filledBytes += buffer.limit();
+        }
+
+        public ByteBuffer mergeBuffers() {
+            if (this.storedBuffers.isEmpty()) {
+                return this.currentBuffer;
+            } else {
+                ByteBuffer bytebuffer = BufferUtils.createByteBuffer(this.filledBytes);
+                new ArrayList<>(this.storedBuffers).forEach(bytebuffer::put);
+                ((java.nio.Buffer)bytebuffer).flip();
+                return bytebuffer;
+            }
         }
     }
 }

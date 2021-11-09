@@ -17,6 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
+import java.nio.ByteBuffer;
+
 public class TheatricalCommon {
 
     public void init(){
@@ -143,4 +145,6 @@ public class TheatricalCommon {
             world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), BlockFlags.DEFAULT_AND_RERENDER, 512);
         }
     }
+
+    public void handleAudioData(int audioID, float sampleRate, int numChannels, ByteBuffer data) {}
 }

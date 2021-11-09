@@ -13,11 +13,12 @@ public class TheatricalRenderType extends RenderType {
     }
 
     public static final RenderType MAIN_BEAM = makeType("TheatricalLightBeam",
-        DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256,
+        DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256, false, false,
         RenderType.State.getBuilder().layer(RenderState.POLYGON_OFFSET_LAYERING)
             .texture(NO_TEXTURE)
             .transparency(TRANSLUCENT_TRANSPARENCY)
             .cull(RenderState.CULL_ENABLED)
+            .depthTest(RenderState.DEPTH_LEQUAL)
             .lightmap(RenderState.LIGHTMAP_DISABLED)
             .writeMask(WriteMaskState.COLOR_WRITE)
             .shadeModel(RenderState.SHADE_ENABLED)

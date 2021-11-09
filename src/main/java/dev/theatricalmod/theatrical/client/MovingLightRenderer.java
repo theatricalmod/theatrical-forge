@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -49,7 +50,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         boolean isHanging = ((BlockHangable) blockState.getBlock()).isHanging(movingLightEntity.getWorld(), movingLightEntity.getPos());
         renderLight(movingLightEntity, matrixStack, iVertexBuilder, movingLightEntity.getBlockState().get(BlockMovingLight.FACING), v, isFlipped, movingLightEntity.getBlockState(), isHanging);
         if(movingLightEntity.getIntensity() > 0) {
-            IVertexBuilder iVertexBuilder1 = iRenderTypeBuffer.getBuffer(MAIN_BEAM);
+            IVertexBuilder iVertexBuilder1 = iRenderTypeBuffer.getBuffer(RenderType.getLightning());
     //        RenderSystem.shadeModel(GL11.GL_SMOOTH);
             matrixStack.translate(0.5, 0.5, 0.5);
             matrixStack.rotate(Vector3f.XP.rotationDegrees(movingLightEntity.getDefaultRotation()));
@@ -122,26 +123,31 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
         int b = color & 0xFF;
         int a = (int) (alpha * 255);
         Matrix4f m = stack.getLast().getMatrix();
+        Matrix3f normal = stack.getLast().getNormal();
         float endMultiplier = beamSize * tileEntityFixture.getFocus();
-        builder.pos(m, beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, beamSize, beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        addVertex(builder, m, normal, r, g, b, 0, beamSize * endMultiplier, beamSize * endMultiplier, -length);
+        addVertex(builder, m, normal, r, g, b, a,  beamSize, beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, a, beamSize, -beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, 0,beamSize * endMultiplier, -beamSize * endMultiplier, -length);
 
-        builder.pos(m, -beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, -beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -beamSize, beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        addVertex(builder, m, normal, r, g, b, 0, -beamSize * endMultiplier, -beamSize * endMultiplier, -length);
+        addVertex(builder, m, normal, r, g, b, a, -beamSize, -beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, a, -beamSize, beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, 0, -beamSize * endMultiplier, beamSize * endMultiplier, -length);
 
-        builder.pos(m, -beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, -beamSize, beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, beamSize, beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, beamSize * endMultiplier, beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        addVertex(builder, m, normal, r, g, b, 0, -beamSize * endMultiplier, beamSize * endMultiplier, -length);
+        addVertex(builder, m, normal, r, g, b, a, -beamSize, beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, a, beamSize, beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, 0, beamSize * endMultiplier, beamSize * endMultiplier, -length);
 
-        builder.pos(m, beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
-        builder.pos(m, beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -beamSize, -beamSize, 0).color(r, g, b, a).endVertex();
-        builder.pos(m, -beamSize * endMultiplier, -beamSize * endMultiplier, -length).color(r, g, b, 0).endVertex();
+        addVertex(builder, m, normal, r, g, b, 0, beamSize * endMultiplier, -beamSize * endMultiplier, -length);
+        addVertex(builder, m, normal, r, g, b, a, beamSize, -beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, a, -beamSize, -beamSize, 0);
+        addVertex(builder, m, normal, r, g, b, 0, -beamSize * endMultiplier, -beamSize * endMultiplier, -length);
+    }
+
+    private void addVertex(IVertexBuilder builder, Matrix4f matrix4f, Matrix3f matrix3f, int r, int g, int b, int a, float x, float y, float z) {
+        builder.pos(matrix4f, x, y, z).color(r, g, b, a).overlay(OverlayTexture.NO_OVERLAY).lightmap(15728880).normal(matrix3f, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
 }

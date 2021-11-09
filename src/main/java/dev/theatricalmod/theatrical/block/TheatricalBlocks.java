@@ -15,6 +15,8 @@ import dev.theatricalmod.theatrical.block.power.BlockDimmerRack;
 import dev.theatricalmod.theatrical.block.power.BlockSocapexDistribution;
 import dev.theatricalmod.theatrical.block.rigging.BlockIWB;
 import dev.theatricalmod.theatrical.block.rigging.BlockTruss;
+import dev.theatricalmod.theatrical.block.sound.BlockAmplifier;
+import dev.theatricalmod.theatrical.block.sound.BlockSpeaker;
 import dev.theatricalmod.theatrical.block.test.BlockTestDMX;
 import dev.theatricalmod.theatrical.fixtures.TheatricalFixtures;
 import net.minecraft.block.AbstractBlock;
@@ -52,6 +54,8 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> SOCAPEX_DISTRIBUTION = BLOCKS.register("socapex_distribution", BlockSocapexDistribution::new);
     public static final RegistryObject<Block> BASIC_LIGHTING_DESK = BLOCKS.register("basic_lighting_desk", BlockBasicLightingControl::new);
     public static final RegistryObject<Block> DMX_REDSTONE_INTERFACE = BLOCKS.register("redstone_interface", BlockDMXRedstoneInterface::new);
+    public static final RegistryObject<Block> SPEAKER = BLOCKS.register("speaker", BlockSpeaker::new);
+    public static final RegistryObject<Block> AMPLIFIER = BLOCKS.register("amplifier", BlockAmplifier::new);
 
     public static Boolean neverAllowSpawn(BlockState state, IBlockReader reader, BlockPos pos, EntityType<?> entity) {
         return false;
