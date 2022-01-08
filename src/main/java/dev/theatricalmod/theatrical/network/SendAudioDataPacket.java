@@ -12,18 +12,20 @@ import java.util.function.Supplier;
 public class SendAudioDataPacket {
 
     private ByteBuffer audioData;
-    private int audioID, numChannels;
+    private int audioID, numChannels, packetID;
     private float sampleRate;
 
-    public SendAudioDataPacket(int audioID, float sampleRate, int numChannels, ByteBuffer buffer) {
+    public SendAudioDataPacket(int audioID, int packetID, float sampleRate, int numChannels, ByteBuffer buffer) {
         this.audioID = audioID;
         this.sampleRate = sampleRate;
+        this.packetID = packetID;
         this.numChannels = numChannels;
         this.audioData = buffer;
     }
 
     public SendAudioDataPacket(PacketBuffer buffer){
         audioID = buffer.readInt();
+        packetID = buffer.readInt();
         sampleRate = buffer.readFloat();
         numChannels = buffer.readInt();
         int i = buffer.readInt();
@@ -48,6 +50,7 @@ public class SendAudioDataPacket {
 
     public void toBytes(PacketBuffer buf) {
         buf.writeInt(audioID);
+        buf.writeInt(packetID);
         buf.writeFloat(sampleRate);
         buf.writeInt(numChannels);
         buf.writeInt(audioData.limit());
@@ -55,7 +58,7 @@ public class SendAudioDataPacket {
     }
 
     public void handle(Supplier<NetworkEvent.Context> context){
-        context.get().enqueueWork(() -> TheatricalMod.proxy.handleAudioData(audioID, sampleRate, numChannels, audioData));
+        context.get().enqueueWork(() -> TheatricalMod.proxy.handleAudioData(audioID, packetID, sampleRate, numChannels, audioData));
         context.get().setPacketHandled(true);
     }
 

@@ -10,6 +10,7 @@ import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
 import dev.theatricalmod.theatrical.client.gui.screen.*;
+import dev.theatricalmod.theatrical.client.sound.NetworkedAudioStream;
 import dev.theatricalmod.theatrical.client.tile.TileEntityRendererBasicLightingDesk;
 import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
@@ -43,6 +44,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
+import sun.nio.ch.Net;
 
 import javax.sound.sampled.AudioFormat;
 import java.io.IOException;
@@ -60,7 +62,7 @@ public class TheatricalClient extends TheatricalCommon {
 
     private HashMap<Integer, SoundSource> soundSources = new HashMap<>();
     private HashMap<Integer, AudioFormat> audioFormats = new HashMap<>();
-    private HashMap<Integer, Buffer> buffers = new HashMap<>();
+    private HashMap<Integer, NetworkedAudioStream> buffers = new HashMap<>();
 
     @Override
     public void init() {
@@ -163,15 +165,15 @@ public class TheatricalClient extends TheatricalCommon {
         return (int)((float)(sampleAmount * audioFormat.getSampleSizeInBits()) / 8.0F * (float)audioFormat.getChannels() * audioFormat.getSampleRate());
     }
 
-    public void handleAudioData(int audioID, float sampleRate, int numChannels, ByteBuffer data) {
+    public void handleAudioData(int audioID, int packetID, float sampleRate, int numChannels, ByteBuffer data) {
         if(buffers.containsKey(audioID)) {
-            buffers.get(audioID).appendOggAudioBytes(data);
+            data = data.rewind();
+            buffers.get(audioID).addData(data);
         } else {
             AudioFormat audioFormat = new AudioFormat(sampleRate, 16, numChannels, true, false);
-            Buffer buffer = new Buffer(getSampleSize(audioFormat, 1) + 8192);
-            buffers.put(audioID, buffer);
             data = data.rewind();
-            buffer.appendOggAudioBytes(data);
+            NetworkedAudioStream audioStream = new NetworkedAudioStream(audioFormat, data);
+            buffers.put(audioID, audioStream);
             CompletableFuture<ChannelManager.Entry> completablefuture = Minecraft.getInstance().getSoundHandler().sndManager.channelManager.requestSoundEntry(SoundSystem.Mode.STREAMING);
             ChannelManager.Entry channelmanager$entry = completablefuture.join();
             channelmanager$entry.runOnSoundExecutor((source) -> {
@@ -184,30 +186,16 @@ public class TheatricalClient extends TheatricalCommon {
                 source.updateSource(new Vector3d(0,0, 0));
                 source.setRelative(true);
             });
+            ByteBuffer finalData = data;
             channelmanager$entry.runOnSoundExecutor(source -> {
-                source.playStreamableSounds(new IAudioStream() {
-                    @Override
-                    public AudioFormat getAudioFormat() {
-                        return audioFormat;
-                    }
-
-                    @Override
-                    public ByteBuffer readOggSoundWithCapacity(int size) throws IOException {
-                        return buffer.mergeBuffers();
-                    }
-
-                    @Override
-                    public void close() throws IOException {
-                        buffers.remove(audioID);
-                    }
-                });
+                source.playStreamableSounds(audioStream);
                 source.play();
             });
         }
     }
 
     static class Buffer {
-        private final List<ByteBuffer> storedBuffers = Lists.newArrayList();
+        private final List<ByteBuffer> storedBuffers = Lists.newArrayListWithCapacity(1);
         private final int bufferCapacity;
         private int filledBytes;
         private ByteBuffer currentBuffer;
@@ -217,7 +205,7 @@ public class TheatricalClient extends TheatricalCommon {
         }
 
         public void appendOggAudioBytes(ByteBuffer buffer) {
-            this.storedBuffers.add(buffer);
+            this.storedBuffers.add( buffer);
             this.filledBytes += buffer.limit();
         }
 

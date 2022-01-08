@@ -146,5 +146,5 @@ public class TheatricalCommon {
         }
     }
 
-    public void handleAudioData(int audioID, float sampleRate, int numChannels, ByteBuffer data) {}
+    public void handleAudioData(int audioID, int packetID, float sampleRate, int numChannels, ByteBuffer data) {}
 }
