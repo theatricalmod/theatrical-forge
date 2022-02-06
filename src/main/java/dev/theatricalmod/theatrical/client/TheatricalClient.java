@@ -2,6 +2,7 @@ package dev.theatricalmod.theatrical.client;
 
 import dev.theatricalmod.theatrical.TheatricalCommon;
 import dev.theatricalmod.theatrical.TheatricalMod;
+import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
@@ -9,6 +10,7 @@ import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
 import dev.theatricalmod.theatrical.client.gui.screen.*;
+import dev.theatricalmod.theatrical.client.models.cable.CableModelLoader;
 import dev.theatricalmod.theatrical.client.tile.TileEntityRendererBasicLightingDesk;
 import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
@@ -17,10 +19,13 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
@@ -31,6 +36,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -86,6 +92,7 @@ public class TheatricalClient extends TheatricalCommon {
             ModelLoader.addSpecialModel(fixture.getStaticModelLocation());
             ModelLoader.addSpecialModel(fixture.getTiltModelLocation());
         }
+        ModelLoaderRegistry.registerLoader(new ResourceLocation(TheatricalMod.MOD_ID, "cable_model_loader"), new CableModelLoader());
     }
 
     public static BlockRayTraceResult getLookingAt(PlayerEntity player, double range) {
@@ -113,8 +120,13 @@ public class TheatricalClient extends TheatricalCommon {
     }
 
     public void textureStitch(TextureStitchEvent.Pre event) {
+        if(event.getMap().getTextureLocation() != PlayerContainer.LOCATION_BLOCKS_TEXTURE) return;
         for (Fixture fixture : Fixture.getRegistry()) {
             Arrays.stream(fixture.getTextures()).forEach(event::addSprite);
+        }
+        for(CableType cableType :CableType.values()) {
+            if(cableType.getTexture() != null)
+                event.addSprite(cableType.getTexture());
         }
     }
 

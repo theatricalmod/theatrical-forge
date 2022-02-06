@@ -1,14 +1,25 @@
 package dev.theatricalmod.theatrical.api;
 
 
+import net.minecraft.data.BlockStateVariantBuilder;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class CableSide {
 
     private CableType[] types;
+    private BlockStateVariantBuilder.ITriFunction<Direction, CableType, Integer, Boolean> isConnected;
 
-    public CableSide(){
+    public CableSide(BlockStateVariantBuilder.ITriFunction<Direction, CableType, Integer, Boolean> isConnected){
+        this.isConnected = isConnected;
         this.types = new CableType[]{CableType.NONE, CableType.NONE, CableType.NONE, CableType.NONE, CableType.NONE};
+    }
+
+    public boolean isConnected(Direction direction, CableType cableType, int side) {
+        return isConnected.apply(direction, cableType, side);
     }
 
     public CableType[] getTypes() {
@@ -121,16 +132,4 @@ public class CableSide {
         return nbtTagCompound;
     }
 
-    public static CableSide readNBT(CompoundNBT nbtTagCompound){
-        CableSide side = new CableSide();
-        CableType[] cableTypes = new CableType[5];
-        if(nbtTagCompound.contains("types")){
-            int[] types = nbtTagCompound.getIntArray("types");
-            for(int i = 0; i < types.length; i++){
-                cableTypes[i] = CableType.byIndex(types[i]);
-            }
-        }
-        side.setTypes(cableTypes);
-        return side;
-    }
 }

@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class TileEntityDimmedPowerCable extends TileEntity implements ITheatricalPowerStorage, ITickableTileEntity {
 
     public TileEntityDimmedPowerCable() {
-        super(TheatricalTiles.DIMMED_POWER_CABLE.get());
+        super(TheatricalTiles.CABLE.get());
     }
 
     public int power = 0;

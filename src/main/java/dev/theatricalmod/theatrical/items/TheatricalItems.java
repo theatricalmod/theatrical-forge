@@ -19,10 +19,10 @@ public class TheatricalItems {
      */
     public static final RegistryObject<Item> TRUSS = ITEMS.register("truss", () -> new BlockItem(TheatricalBlocks.TRUSS.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> ARTNET_INTERFACE = ITEMS.register("artnet_interface", () -> new BlockItem(TheatricalBlocks.ARTNET_INTERFACE.get(), BASE_PROPERTIES));
-    public static final RegistryObject<Item> DMX_CABLE = ITEMS.register("dmx_cable", () -> new BlockItem(TheatricalBlocks.DMX_CABLE.get(), BASE_PROPERTIES));
-    public static final RegistryObject<Item> SOCAPEX_CABLE = ITEMS.register("socapex_cable", () -> new BlockItem(TheatricalBlocks.SOCAPEX_CABLE.get(), BASE_PROPERTIES));
-    public static final RegistryObject<Item> DIMMED_POWER_CABLE = ITEMS.register("dimmed_power_cable", () -> new BlockItem(TheatricalBlocks.DIMMED_POWER_CABLE.get(), BASE_PROPERTIES));
-    public static final RegistryObject<Item> POWER_CABLE = ITEMS.register("power_cable", () -> new BlockItem(TheatricalBlocks.POWER_CABLE.get(), BASE_PROPERTIES));
+    public static final RegistryObject<Item> CABLE = ITEMS.register("dmx_cable", () -> new ItemDMXCable(BASE_PROPERTIES));
+//    public static final RegistryObject<Item> SOCAPEX_CABLE = ITEMS.register("socapex_cable", () -> new BlockItem(TheatricalBlocks.SOCAPEX_CABLE.get(), BASE_PROPERTIES));
+//    public static final RegistryObject<Item> DIMMED_POWER_CABLE = ITEMS.register("dimmed_power_cable", () -> new BlockItem(TheatricalBlocks.DIMMED_POWER_CABLE.get(), BASE_PROPERTIES));
+//    public static final RegistryObject<Item> POWER_CABLE = ITEMS.register("power_cable", () -> new BlockItem(TheatricalBlocks.POWER_CABLE.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> IWB = ITEMS.register("iwb", () -> new BlockItem(TheatricalBlocks.IWB.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> TEST_DMX = ITEMS.register("test_dmx", () -> new BlockItem(TheatricalBlocks.TEST_DMX.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> MOVING_LIGHT = ITEMS.register("moving_light", () -> new BlockItem(TheatricalBlocks.MOVING_LIGHT.get(), BASE_PROPERTIES));

@@ -40,10 +40,10 @@ public class TheatricalBlocks {
     public static final RegistryObject<Block> TRUSS = BLOCKS.register("truss", BlockTruss::new);
     public static final RegistryObject<Block> MOVING_LIGHT = BLOCKS.register("moving_light", BlockMovingLight::new);
     public static final RegistryObject<Block> GENERIC_LIGHT = BLOCKS.register("generic_light", () -> new BlockGenericFixture(TheatricalFixtures.FRESNSEL));
-    public static final RegistryObject<Block> DMX_CABLE = BLOCKS.register("dmx_cable", () -> new BlockCable(CableType.DMX));
-    public static final RegistryObject<Block> SOCAPEX_CABLE = BLOCKS.register("socapex_cable", () -> new BlockCable(CableType.SOCAPEX));
-    public static final RegistryObject<Block> DIMMED_POWER_CABLE = BLOCKS.register("dimmed_power_cable", BlockDimmedPowerCable::new);
-    public static final RegistryObject<Block> POWER_CABLE = BLOCKS.register("power_cable", BlockPowerCable::new);
+    public static final RegistryObject<Block> CABLE = BLOCKS.register("cable", BlockCable::new);
+//    public static final RegistryObject<Block> SOCAPEX_CABLE = BLOCKS.register("socapex_cable", () -> new BlockCable(CableType.SOCAPEX));
+//    public static final RegistryObject<Block> DIMMED_POWER_CABLE = BLOCKS.register("dimmed_power_cable", BlockDimmedPowerCable::new);
+//    public static final RegistryObject<Block> POWER_CABLE = BLOCKS.register("power_cable", BlockPowerCable::new);
     public static final RegistryObject<Block> ILLUMINATOR = BLOCKS.register("illuminator", BlockIlluminator::new);
     public static final RegistryObject<Block> ARTNET_INTERFACE = BLOCKS.register("artnet_interface", BlockArtNetInterface::new);
     public static final RegistryObject<Block> IWB = BLOCKS.register("iwb", BlockIWB::new);

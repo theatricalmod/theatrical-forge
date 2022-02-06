@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class TileEntityPowerCable extends TileEntity implements ITickableTileEntity, IEnergyStorage {
 
     public TileEntityPowerCable() {
-        super(TheatricalTiles.POWER_CABLE.get());
+        super(TheatricalTiles.CABLE.get());
     }
 
     private final int transferRate = 6000;

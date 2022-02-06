@@ -31,22 +31,23 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     public void addToList(HashMap<Direction, BlockPos> scanned, World world, BlockPos pos, Direction facing, Direction connectionSide) {
         BlockState blockState = world.getBlockState(pos);
-        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.SOCAPEX) {
-            for (Direction direction : Direction.values()) {
-                if(direction != facing) {
-                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
-                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), connectionSide);
-                    }
-                }
-            }
-        } else {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity != null && (tileEntity.getCapability(SocapexReceiver.CAP, facing).isPresent())) {
-                if (!scanned.containsKey(connectionSide)) {
-                    scanned.put(connectionSide, pos);
-                }
-            }
-        }
+        //TODO: Fix this
+//        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.SOCAPEX) {
+//            for (Direction direction : Direction.values()) {
+//                if(direction != facing) {
+//                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
+//                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), connectionSide);
+//                    }
+//                }
+//            }
+//        } else {
+//            TileEntity tileEntity = world.getTileEntity(pos);
+//            if (tileEntity != null && (tileEntity.getCapability(SocapexReceiver.CAP, facing).isPresent())) {
+//                if (!scanned.containsKey(connectionSide)) {
+//                    scanned.put(connectionSide, pos);
+//                }
+//            }
+//        }
     }
 
     @Override

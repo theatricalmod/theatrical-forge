@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 public class BlockPowerCable extends BlockCable implements ITOPInfoProvider {
 
     public BlockPowerCable() {
-        super(CableType.DIMMED_POWER);
+        super();
     }
 
     @Override

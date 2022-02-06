@@ -54,27 +54,28 @@ public class DMXProvider implements IDMXProvider, INBTSerializable<CompoundNBT> 
 
     public void addToList(HashSet<BlockPos> scanned, World world, BlockPos pos, Direction facing, HashSet<BlockPos> scannedCable){
         BlockState blockState = world.getBlockState(pos);
-        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.DMX) {
-            scannedCable.add(pos);
-            for (Direction direction : Direction.values()) {
-                if(direction != facing) {
-                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.offset(direction))) {
-                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), scannedCable);
-                    }
-                }
-            }
-        } else {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity != null && (tileEntity.getCapability(DMXReceiver.CAP, facing).isPresent())) {
-                if (scanned.add(pos)) {
-                    for (Direction facing1 : Direction.values()) {
-                        if (facing1 != facing) {
-                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite(), scannedCable);
-                        }
-                    }
-                }
-            }
-        }
+        // TODO Fix this
+//        if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.DMX) {
+//            scannedCable.add(pos);
+//            for (Direction direction : Direction.values()) {
+//                if(direction != facing) {
+//                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.offset(direction))) {
+//                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), scannedCable);
+//                    }
+//                }
+//            }
+//        } else {
+//            TileEntity tileEntity = world.getTileEntity(pos);
+//            if (tileEntity != null && (tileEntity.getCapability(DMXReceiver.CAP, facing).isPresent())) {
+//                if (scanned.add(pos)) {
+//                    for (Direction facing1 : Direction.values()) {
+//                        if (facing1 != facing) {
+//                            addToList(scanned, world, pos.offset(facing1), facing1.getOpposite(), scannedCable);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     @Override
