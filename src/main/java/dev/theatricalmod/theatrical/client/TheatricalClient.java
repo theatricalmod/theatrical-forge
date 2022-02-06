@@ -62,8 +62,8 @@ public class TheatricalClient extends TheatricalCommon {
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.MOVING_LIGHT.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.GENERIC_LIGHT.get(), cutout);
         RenderTypeLookup.setRenderLayer(TheatricalBlocks.BASIC_LIGHTING_DESK.get(), cutout);
-        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.MOVING_LIGHT.get(), MovingLightRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.GENERIC_LIGHT.get(), MovingLightRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.MOVING_LIGHT.get(), TileEntityFixtureRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(TheatricalTiles.GENERIC_LIGHT.get(), TileEntityFixtureRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TheatricalTiles.BASIC_LIGHTING_DESK.get(), TileEntityRendererBasicLightingDesk::new);
         ScreenManager.registerFactory(TheatricalContainers.INTELLIGENT_FIXTURE.get(), ScreenIntelligentFixture::new);
         ScreenManager.registerFactory(TheatricalContainers.ARTNET_INTERFACE.get(), ScreenArtNetInterface::new);

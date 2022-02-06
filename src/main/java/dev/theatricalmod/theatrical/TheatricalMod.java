@@ -75,6 +75,7 @@ public class TheatricalMod {
         proxy = DistExecutor.runForDist(() -> () -> new TheatricalClient(), () -> () -> new TheatricalCommon());
         Fixture.createRegistry();
         ModLoadingContext.get().registerConfig(Type.COMMON, TheatricalConfigHandler.COMMON_SPEC);
+        ModLoadingContext.get().registerConfig(Type.CLIENT, TheatricalConfigHandler.CLIENT_SPEC);
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
         eventBus.addGenericListener(Fixture.class, this::registerFixture);

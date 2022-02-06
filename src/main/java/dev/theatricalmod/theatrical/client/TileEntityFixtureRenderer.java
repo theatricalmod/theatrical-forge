@@ -2,6 +2,7 @@ package dev.theatricalmod.theatrical.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import dev.theatricalmod.theatrical.TheatricalConfigHandler;
 import dev.theatricalmod.theatrical.api.ISupport;
 import dev.theatricalmod.theatrical.api.fixtures.HangableType;
 import dev.theatricalmod.theatrical.block.BlockHangable;
@@ -26,9 +27,11 @@ import java.util.Random;
 
 import static dev.theatricalmod.theatrical.client.tile.TheatricalRenderType.MAIN_BEAM;
 
-public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
+public class TileEntityFixtureRenderer extends TileEntityRenderer<TileEntityFixture> {
 
-    public MovingLightRenderer(TileEntityRendererDispatcher dispatcher) {
+    private final Double beamOpacity = TheatricalConfigHandler.CLIENT.lightBeamOpacity.get();
+
+    public TileEntityFixtureRenderer(TileEntityRendererDispatcher dispatcher) {
         super(dispatcher);
     }
 
@@ -55,7 +58,7 @@ public class MovingLightRenderer extends TileEntityRenderer<TileEntityFixture> {
             matrixStack.rotate(Vector3f.XP.rotationDegrees(movingLightEntity.getDefaultRotation()));
             matrixStack.translate(-0.5, -0.5, -0.5);
             matrixStack.translate(movingLightEntity.getBeamStartPosition()[0], movingLightEntity.getBeamStartPosition()[1], movingLightEntity.getBeamStartPosition()[2]);
-            renderLightBeam(iVertexBuilder1, matrixStack, movingLightEntity, v, (movingLightEntity.getIntensity() * 0.4F) / 255F, movingLightEntity.getBeamWidth(), (float) movingLightEntity.getDistance(), FixtureUtil.getColorFromBE(movingLightEntity));
+            renderLightBeam(iVertexBuilder1, matrixStack, movingLightEntity, v, (movingLightEntity.getIntensity() * beamOpacity.floatValue()) / 255F, movingLightEntity.getBeamWidth(), (float) movingLightEntity.getDistance(), FixtureUtil.getColorFromBE(movingLightEntity));
         }
 //        RenderSystem.shadeModel(GL11.GL_FLAT);
         matrixStack.pop();
