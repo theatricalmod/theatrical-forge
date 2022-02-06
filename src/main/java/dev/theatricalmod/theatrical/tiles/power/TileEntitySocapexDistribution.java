@@ -12,17 +12,21 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class TileEntitySocapexDistribution extends TileEntity implements IAcceptsCable, ISocapexReceiver, ITickableTileEntity {
 
     private final int[] channels;
+    private final Direction[] mappedDirections = new Direction[5];
 
     public TileEntitySocapexDistribution() {
         super(TheatricalTiles.SOCAPEX_DISTRIBUTION.get());
@@ -31,6 +35,15 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
 
     public Direction getFacing(){
         return getBlockState().get(BlockStateProperties.FACING);
+    }
+
+    public int getDirectionalIndex(Direction direction) {
+        for(int i = 0; i < mappedDirections.length; i++){
+            if(mappedDirections[i] == direction){
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -65,7 +78,7 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
             }
             energyReceived[i] = Math.min(255 - this.channels[i], Math.min(1000, channels[i]));
             if (!simulate) {
-                this.channels[i] = energyReceived[i];
+                this.channels[i] += energyReceived[i];
             }
         }
         return energyReceived;
@@ -93,7 +106,7 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
 
     @Override
     public boolean canReceive(int channel) {
-        if(channel == getFacing().getIndex()){
+        if(channel == getDirectionalIndex(getFacing())){
             return false;
         }
         return channel <= this.channels.length - 1;
@@ -110,6 +123,19 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
     }
 
     @Override
+    public void setWorldAndPos(World world, BlockPos pos) {
+        super.setWorldAndPos(world, pos);
+        int i = 0;
+        for (Direction direction : Direction.values()) {
+            if(direction == getFacing()){
+                continue;
+            }
+            mappedDirections[i] = direction;
+            i++;
+        }
+    }
+
+    @Override
     public void tick() {
         if(!world.isRemote) {
             for (Direction direction : Direction.values()) {
@@ -120,12 +146,12 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
                 if (tileEntity != null) {
                     LazyOptional<ITheatricalPowerStorage> capability = tileEntity.getCapability(TheatricalPower.CAP, direction.getOpposite());
                     capability.ifPresent(iTheatricalPowerStorage -> {
-                        if (iTheatricalPowerStorage.getEnergyStored() > getEnergyStored(direction.getIndex())) {
+                        if (iTheatricalPowerStorage.getEnergyStored() > getEnergyStored(getDirectionalIndex(direction))) {
                             return;
                         }
                         if (iTheatricalPowerStorage.receiveEnergy(255, true) > 0) {
-                            int amount = iTheatricalPowerStorage.receiveEnergy(getEnergyStored(direction.getIndex()), false);
-                            channels[direction.getIndex()] = channels[direction.getIndex()] - amount;
+                            int amount = iTheatricalPowerStorage.receiveEnergy(getEnergyStored(getDirectionalIndex(direction)), false);
+                            channels[getDirectionalIndex(direction)] = channels[getDirectionalIndex(direction)] - amount;
                         }
                     });
                 }

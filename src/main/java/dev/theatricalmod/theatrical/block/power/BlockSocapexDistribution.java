@@ -15,6 +15,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -56,8 +57,12 @@ public class BlockSocapexDistribution extends DirectionalBlock implements ITOPIn
         if (tileEntity instanceof TileEntitySocapexDistribution) {
             TileEntitySocapexDistribution pipe = (TileEntitySocapexDistribution) tileEntity;
             pipe.getCapability(SocapexReceiver.CAP, pipe.getFacing()).ifPresent(iTheatricalPowerStorage -> {
-                for(int i = 0; i < 5; i++){
-                    iProbeInfo.text(new StringTextComponent("Socapex #" + i + ": " + iTheatricalPowerStorage.getEnergyStored(i)));
+                for(Direction direction : Direction.values()) {
+                    if(direction == pipe.getFacing()){
+                        continue;
+                    }
+                    int index = pipe.getDirectionalIndex(direction);
+                    iProbeInfo.text(new StringTextComponent("Socapex (" + (index + 1) + ") " + (direction.getString()) + ": " + iTheatricalPowerStorage.getEnergyStored(index)));
                 }
             });
         }

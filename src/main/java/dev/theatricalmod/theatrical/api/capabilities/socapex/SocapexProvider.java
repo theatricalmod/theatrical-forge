@@ -15,6 +15,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class SocapexProvider implements ISocapexProvider, INBTSerializable<CompoundNBT> {
@@ -29,13 +30,14 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
     private final int[] channels = new int[6];
     private final HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
 
-    public void addToList(HashMap<Direction, BlockPos> scanned, World world, BlockPos pos, Direction facing, Direction connectionSide) {
+    public void addToList(HashMap<Direction, BlockPos> scanned, World world, BlockPos pos, Direction facing, Direction connectionSide, HashSet<BlockPos> scannedCable) {
         BlockState blockState = world.getBlockState(pos);
         if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.SOCAPEX) {
+            scannedCable.add(pos);
             for (Direction direction : Direction.values()) {
                 if(direction != facing) {
-                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction)) {
-                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), connectionSide);
+                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.offset(direction))) {
+                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), connectionSide, scannedCable);
                     }
                 }
             }
@@ -57,10 +59,12 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
                 return;
             }
             HashMap<Direction, BlockPos> receivers = new HashMap<>();
+            HashSet<BlockPos> scannedCable = new HashSet<>();
             for (Direction facing : Direction.values()) {
-                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite(), facing);
+                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite(), facing, scannedCable);
             }
-            devices = new HashMap<Direction, BlockPos>(receivers);
+            scannedCable.clear();
+            devices = new HashMap<>(receivers);
         }
         for (Direction direction : devices.keySet()) {
             BlockPos provider = devices.get(direction);
@@ -225,9 +229,11 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
         List<ISocapexReceiver> receivers = new ArrayList<>();
         if (world.isRemote || devices == null) {
             HashMap<Direction, BlockPos> blockPos = new HashMap<>();
+            HashSet<BlockPos> scannedCable = new HashSet<>();
             for (Direction facing : Direction.values()) {
-                addToList(blockPos, world, controller.offset(facing), facing.getOpposite(), facing);
+                addToList(blockPos, world, controller.offset(facing), facing.getOpposite(), facing, scannedCable);
             }
+            scannedCable.clear();
             devices = new HashMap<>(blockPos);
             updateDevices(world, controller);
         }
