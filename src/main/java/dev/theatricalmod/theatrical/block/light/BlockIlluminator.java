@@ -1,49 +1,49 @@
 package dev.theatricalmod.theatrical.block.light;
 
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockIlluminator extends Block {
 
     public static final IntegerProperty lightValue = IntegerProperty.create("light", 0, 15);
 
     public BlockIlluminator() {
-        super(TheatricalBlocks.BASE_PROPERTIES.notSolid());
-        setDefaultState(getDefaultState().with(lightValue, 0));
+        super(TheatricalBlocks.BASE_PROPERTIES.noOcclusion());
+        registerDefaultState(defaultBlockState().setValue(lightValue, 0));
     }
 
     @Override
-    public boolean isReplaceable(BlockState state, BlockItemUseContext useContext) {
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext useContext) {
         return true;
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return VoxelShapes.empty();
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override
-    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
-        return state.get(lightValue);
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.getValue(lightValue);
     }
 
     @Override
-    protected void fillStateContainer(Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(lightValue);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.INVISIBLE;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
     }
 }

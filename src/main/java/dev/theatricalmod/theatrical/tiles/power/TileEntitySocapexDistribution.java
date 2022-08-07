@@ -7,34 +7,56 @@ import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-public class TileEntitySocapexDistribution extends TileEntity implements IAcceptsCable, ISocapexReceiver, ITickableTileEntity {
+public class TileEntitySocapexDistribution extends BlockEntity implements IAcceptsCable, ISocapexReceiver {
+
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntitySocapexDistribution tile = (TileEntitySocapexDistribution) be;
+        if(!level.isClientSide) {
+            for (Direction direction : Direction.values()) {
+                if (direction == tile.getFacing()) {
+                    continue;
+                }
+                BlockEntity tileEntity = level.getBlockEntity(pos.relative(direction));
+                if (tileEntity != null) {
+                    LazyOptional<ITheatricalPowerStorage> capability = tileEntity.getCapability(TheatricalPower.CAP, direction.getOpposite());
+                    capability.ifPresent(iTheatricalPowerStorage -> {
+                        if (iTheatricalPowerStorage.getEnergyStored() > tile.getEnergyStored(tile.getDirectionalIndex(direction))) {
+                            return;
+                        }
+                        if (iTheatricalPowerStorage.receiveEnergy(255, true) > 0) {
+                            int amount = iTheatricalPowerStorage.receiveEnergy(tile.getEnergyStored(tile.getDirectionalIndex(direction)), false);
+                            tile.channels[tile.getDirectionalIndex(direction)] = tile.channels[tile.getDirectionalIndex(direction)] - amount;
+                        }
+                    });
+                }
+            }
+        }
+    }
 
     private final int[] channels;
     private final Direction[] mappedDirections = new Direction[5];
 
-    public TileEntitySocapexDistribution() {
-        super(TheatricalTiles.SOCAPEX_DISTRIBUTION.get());
+    public TileEntitySocapexDistribution(BlockPos blockPos, BlockState blockState) {
+        super(TheatricalTiles.SOCAPEX_DISTRIBUTION.get(), blockPos, blockState);
         channels = new int[6];
     }
 
     public Direction getFacing(){
-        return getBlockState().get(BlockStateProperties.FACING);
+        return getBlockState().getValue(BlockStateProperties.FACING);
     }
 
     public int getDirectionalIndex(Direction direction) {
@@ -123,8 +145,8 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
     }
 
     @Override
-    public void setWorldAndPos(World world, BlockPos pos) {
-        super.setWorldAndPos(world, pos);
+    public void setLevel(Level p_155231_) {
+        super.setLevel(p_155231_);
         int i = 0;
         for (Direction direction : Direction.values()) {
             if(direction == getFacing()){
@@ -136,31 +158,7 @@ public class TileEntitySocapexDistribution extends TileEntity implements IAccept
     }
 
     @Override
-    public void tick() {
-        if(!world.isRemote) {
-            for (Direction direction : Direction.values()) {
-                if (direction == getFacing()) {
-                    continue;
-                }
-                TileEntity tileEntity = world.getTileEntity(pos.offset(direction));
-                if (tileEntity != null) {
-                    LazyOptional<ITheatricalPowerStorage> capability = tileEntity.getCapability(TheatricalPower.CAP, direction.getOpposite());
-                    capability.ifPresent(iTheatricalPowerStorage -> {
-                        if (iTheatricalPowerStorage.getEnergyStored() > getEnergyStored(getDirectionalIndex(direction))) {
-                            return;
-                        }
-                        if (iTheatricalPowerStorage.receiveEnergy(255, true) > 0) {
-                            int amount = iTheatricalPowerStorage.receiveEnergy(getEnergyStored(getDirectionalIndex(direction)), false);
-                            channels[getDirectionalIndex(direction)] = channels[getDirectionalIndex(direction)] - amount;
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    @Override
     public BlockPos getReceiverPos() {
-        return super.getPos();
+        return super.getBlockPos();
     }
 }

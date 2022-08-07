@@ -1,6 +1,6 @@
 package dev.theatricalmod.theatrical.api;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public interface IAcceptsCable {
 

@@ -9,29 +9,65 @@ import dev.theatricalmod.theatrical.api.fixtures.IFixtureModelProvider;
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.block.light.BlockIlluminator;
-import net.minecraft.block.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.RayTraceContext.BlockMode;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Block;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public abstract class TileEntityFixture extends TileEntity implements IFixture, ITickableTileEntity, IFixtureModelProvider {
+public abstract class TileEntityFixture extends BlockEntity implements IFixture, IFixtureModelProvider {
 
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityFixture tile = (TileEntityFixture) be;
+        tile.prevFocus = tile.focus;
+        tile.prevPan = tile.pan;
+        tile.prevTilt = tile.tilt;
+        if (!level.isClientSide) {
+            tile.timer++;
+            if (tile.timer >= 5) {
+                if (tile.shouldTrace()) {
+                    tile.distance = tile.doRayTrace();
+                    level.sendBlockUpdated(pos, state, state, 11);
+                    if (tile.lightBlock != null && tile.emitsLight()) {
+                        float newVal = tile.getIntensity() / 255F;
+                        int lightval = (int) (newVal * 15F);
+                        if(level.getBlockState(tile.lightBlock).isAir() || !(level.getBlockState(tile.lightBlock).getBlock() instanceof BlockIlluminator)){
+                            level.setBlock(tile.lightBlock,
+                                    TheatricalBlocks.ILLUMINATOR.get().defaultBlockState().setValue(BlockIlluminator.lightValue, lightval), 3);
+                            level.getLightEmission(tile.lightBlock);
+                        } else {
+                            if(level.getBlockState(tile.lightBlock).getValue(BlockIlluminator.lightValue) != lightval){
+                                level.setBlockAndUpdate(tile.lightBlock, level.getBlockState(tile.lightBlock).setValue(BlockIlluminator.lightValue, lightval));
+                            }
+                        }
+                    }
+                }
+                tile.timer = 0;
+            }
+        }
+    }
     private Fixture fixture;
     private double distance = 0;
     private int pan, tilt = 0;
@@ -45,8 +81,8 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
 
     private FakePlayer fakePlayer;
 
-    public TileEntityFixture(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public TileEntityFixture(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
+        super(blockEntityType, blockPos, blockState);
     }
 
     public void setFixture(Fixture fixture) {
@@ -66,13 +102,13 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     }
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox() {
+    public AABB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
-    public CompoundNBT getNBT(@Nullable CompoundNBT compoundNBT) {
+    public CompoundTag getNBT(@Nullable CompoundTag compoundNBT) {
         if (compoundNBT == null) {
-            compoundNBT = new CompoundNBT();
+            compoundNBT = new CompoundTag();
         }
         compoundNBT.putInt("pan", this.pan);
         compoundNBT.putInt("tilt", this.tilt);
@@ -88,7 +124,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         return compoundNBT;
     }
 
-    public void readNBT(CompoundNBT compoundNBT) {
+    public void readNBT(CompoundTag compoundNBT) {
         pan = compoundNBT.getInt("pan");
         tilt = compoundNBT.getInt("tilt");
         focus = compoundNBT.getInt("focus");
@@ -98,7 +134,7 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         timer = compoundNBT.getLong("timer");
         distance = compoundNBT.getDouble("distance");
         if (compoundNBT.contains("fixture_type")) {
-            setFixture(Fixture.getRegistry().getValue(new ResourceLocation(compoundNBT.getString("fixture_type"))));
+            setFixture(Fixture.getRegistry().get().getValue(new ResourceLocation(compoundNBT.getString("fixture_type"))));
         } else {
             setFixture(null);
         }
@@ -108,26 +144,26 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
         return 0;
     }
 
-    public final Vector3d getVectorForRotation(float pitch, float yaw) {
+    public final Vec3 getVectorForRotation(float pitch, float yaw) {
         float f = pitch * ((float) Math.PI / 180F);
         float f1 = -yaw * ((float) Math.PI / 180F);
-        float f2 = MathHelper.cos(f1);
-        float f3 = MathHelper.sin(f1);
-        float f4 = MathHelper.cos(f);
-        float f5 = MathHelper.sin(f);
-        return new Vector3d(f3 * f4, -f5, f2 * f4);
+        float f2 = Mth.cos(f1);
+        float f3 = Mth.sin(f1);
+        float f4 = Mth.cos(f);
+        float f5 = Mth.sin(f);
+        return new Vec3(f3 * f4, -f5, f2 * f4);
     }
 
     @Override
     public boolean emitsLight() {
-        return !getBlockState().get(BlockHangable.BROKEN) && TheatricalConfigHandler.COMMON.emitLight.get();
+        return !getBlockState().getValue(BlockHangable.BROKEN) && TheatricalConfigHandler.COMMON.emitLight.get();
     }
 
     public double doRayTrace() {
-        BlockState blockState = world.getBlockState(pos);
-        Direction direction = blockState.get(
-            HorizontalBlock.HORIZONTAL_FACING);
-        float lookingAngle = direction.getHorizontalAngle();
+        BlockState blockState = level.getBlockState(worldPosition);
+        Direction direction = blockState.getValue(
+            HorizontalDirectionalBlock.FACING);
+        float lookingAngle = direction.toYRot();
         lookingAngle = (isUpsideDown() ? lookingAngle + getPan() : lookingAngle - getPan());
         lookingAngle = lookingAngle % 360;
 
@@ -136,38 +172,38 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
             tilt = -tilt;
         }
 
-        Vector3d look = getVectorForRotation(tilt, lookingAngle);
+        Vec3 look = getVectorForRotation(tilt, lookingAngle);
         double distance = getMaxLightDistance();
-        Vector3d startVec = look.scale(0.9F).add(pos.getX() + 0.5, pos.getY() + 0.51, pos.getZ() + 0.5);
-        Vector3d endVec = look.scale(distance).add(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-        world.addParticle(RedstoneParticleData.REDSTONE_DUST, endVec.x, endVec.y, endVec.z, 0, 0, 0);
+        Vec3 startVec = look.scale(0.9F).add(worldPosition.getX() + 0.5, worldPosition.getY() + 0.51, worldPosition.getZ() + 0.5);
+        Vec3 endVec = look.scale(distance).add(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+        level.addParticle(DustParticleOptions.REDSTONE, endVec.x, endVec.y, endVec.z, 0, 0, 0);
         if (fakePlayer == null) {
-            fakePlayer = new FakePlayer((ServerWorld) world, new GameProfile(UUID.randomUUID(), "light-faker"));
+            fakePlayer = new FakePlayer((ServerLevel) level, new GameProfile(UUID.randomUUID(), "light-faker"));
         }
-        fakePlayer.setPositionAndRotation(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, lookingAngle, tilt);
-        BlockRayTraceResult result = world.rayTraceBlocks(new RayTraceContext(startVec, endVec, BlockMode.OUTLINE, FluidMode.NONE, fakePlayer));
-        BlockPos lightPos = new BlockPos(result.getHitVec().x, result.getHitVec().getY(), result.getHitVec().getZ());
+        fakePlayer.absMoveTo(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D, lookingAngle, tilt);
+        BlockHitResult result = level.clip(new ClipContext(startVec, endVec, Block.OUTLINE, Fluid.NONE, fakePlayer));
+        BlockPos lightPos = new BlockPos(result.getLocation().x, result.getLocation().y(), result.getLocation().z());
         if (result.getType() != Type.MISS && !result.isInside()) {
-            distance = result.getHitVec().distanceTo(startVec);
-            if (!result.getPos().equals(pos)) {
-                lightPos = result.getPos().offset(result.getFace(), 1);
+            distance = result.getLocation().distanceTo(startVec);
+            if (!result.getBlockPos().equals(worldPosition)) {
+                lightPos = result.getBlockPos().relative(result.getDirection(), 1);
             }
         }
-        if (lightPos.equals(pos)) {
+        if (lightPos.equals(worldPosition)) {
             return distance;
         }
-        if (!world.isAirBlock(lightPos) && !(world
+        if (!level.isEmptyBlock(lightPos) && !(level
             .getBlockState(lightPos).getBlock() instanceof BlockIlluminator)) {
-            lightPos = lightPos.offset(result.getFace(), 1);
+            lightPos = lightPos.relative(result.getDirection(), 1);
         }
-        distance = new Vector3d(lightPos.getX(), lightPos.getY(), lightPos.getZ()).distanceTo(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
+        distance = new Vec3(lightPos.getX(), lightPos.getY(), lightPos.getZ()).distanceTo(new Vec3(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ()));
         if (lightPos.equals(lightBlock)) {
             return distance;
         }
-        if (getLightBlock() != null && getLightBlock() != lightPos && world.getBlockState(getLightBlock()).getBlock() instanceof BlockIlluminator) {
-            world.setBlockState(getLightBlock(), Blocks.AIR.getDefaultState());
+        if (getLightBlock() != null && getLightBlock() != lightPos && level.getBlockState(getLightBlock()).getBlock() instanceof BlockIlluminator) {
+            level.setBlockAndUpdate(getLightBlock(), Blocks.AIR.defaultBlockState());
         }
-        if ((!(world.getBlockState(lightPos).getBlock() instanceof AirBlock) && !(world.getBlockState(lightPos).getBlock() instanceof BlockIlluminator))) {
+        if ((!(level.getBlockState(lightPos).getBlock() instanceof AirBlock) && !(level.getBlockState(lightPos).getBlock() instanceof BlockIlluminator))) {
             return distance;
         }
         setLightBlock(lightPos);
@@ -192,64 +228,64 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
 
     public void setPan(int pan) {
         this.pan = pan;
-        this.markDirty();
-        if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        this.setChanged();
+        if (!level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, level.getBlockState(worldPosition), level.getBlockState(worldPosition), 11);
         }
     }
 
     public void setTilt(int tilt) {
         this.tilt = tilt;
-        this.markDirty();
-        if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        this.setChanged();
+        if (!level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, level.getBlockState(worldPosition), level.getBlockState(worldPosition), 11);
         }
     }
 
     public void setFocus(int focus) {
         this.focus = focus;
-        this.markDirty();
-        if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
+        this.setChanged();
+        if (!level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, level.getBlockState(worldPosition), level.getBlockState(worldPosition), 11);
         }
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
         readNBT(nbt);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        return super.write(getNBT(compound));
+    protected void saveAdditional(CompoundTag compound) {
+        super.saveAdditional(getNBT(compound));
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(pos, 0, getNBT(null));
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
+    public CompoundTag getUpdateTag() {
         return getNBT(super.getUpdateTag());
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        super.handleUpdateTag(state, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
         readNBT(tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        readNBT(pkt.getNbtCompound());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        readNBT(pkt.getTag());
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         readNBT(nbt);
     }
 
@@ -264,8 +300,8 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     @Override
     public ResourceLocation getStaticModel() {
         if (fixture != null) {
-            Block block = getWorld().getBlockState(pos).getBlock();
-            if (block instanceof BlockHangable && ((BlockHangable) block).isHanging(world, pos)) {
+            net.minecraft.world.level.block.Block block = getLevel().getBlockState(worldPosition).getBlock();
+            if (block instanceof BlockHangable && ((BlockHangable) block).isHanging(level, worldPosition)) {
                 return getFixture().getHookedModelLocation();
             }
             return getFixture().getStaticModelLocation();
@@ -338,43 +374,13 @@ public abstract class TileEntityFixture extends TileEntity implements IFixture, 
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         if(lightBlock != null) {
-            if(!world.isAirBlock(lightBlock) && world.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator) {
-                world.setBlockState(lightBlock, Blocks.AIR.getDefaultState());
+            if(!level.isEmptyBlock(lightBlock) && level.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator) {
+                level.setBlockAndUpdate(lightBlock, Blocks.AIR.defaultBlockState());
                 lightBlock = null;
             }
         }
-        super.remove();
-    }
-
-    @Override
-    public void tick() {
-        prevFocus = focus;
-        prevPan = pan;
-        prevTilt = tilt;
-        if (!world.isRemote) {
-            timer++;
-            if (timer >= 5) {
-                if (shouldTrace()) {
-                    this.distance = doRayTrace();
-                    world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 11);
-                    if (lightBlock != null && this.emitsLight()) {
-                        float newVal = getIntensity() / 255F;
-                        int lightval = (int) (newVal * 15F);
-                        if(world.getBlockState(lightBlock).isAir() || !(world.getBlockState(lightBlock).getBlock() instanceof BlockIlluminator)){
-                            world.setBlockState(lightBlock,
-                                TheatricalBlocks.ILLUMINATOR.get().getDefaultState().with(BlockIlluminator.lightValue, lightval), 3);
-                                world.getLightValue(lightBlock);
-                        } else {
-                            if(world.getBlockState(lightBlock).get(BlockIlluminator.lightValue) != lightval){
-                                world.setBlockState(lightBlock, world.getBlockState(lightBlock).with(BlockIlluminator.lightValue, lightval));
-                            }
-                        }
-                    }
-                }
-                timer = 0;
-            }
-        }
+        super.setRemoved();
     }
 }

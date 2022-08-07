@@ -1,10 +1,10 @@
 {
   "name": "Videos",
-  "category": "resources_category",
+  "category": "theatrical:resources_category",
   "icon": "minecraft:ender_eye",
   "pages": [
     {
-      "type": "link",
+      "type": "patchouli:link",
       "url": "https://www.youtube.com/watch?v=_aR-IkcK9dA",
       "link_text": "gewenzsko's tutorial"
     }

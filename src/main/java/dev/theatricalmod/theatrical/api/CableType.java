@@ -1,29 +1,31 @@
 package dev.theatricalmod.theatrical.api;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.item.Item;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.Item;
 
 import javax.annotation.Nullable;
 
-public enum CableType implements IStringSerializable {
+public enum CableType implements StringRepresentable {
 
-    NONE(-1, null, "none"),
-    DMX(0, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/cable"), "dmx"),
-    DIMMED_POWER(1, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/power"), "power"),
-    POWER(3, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/dimmed_power"), "dimmed_power"),
-    SOCAPEX(2, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/socapex"), "socapex"),
-    BUNDLED(99, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/bundled"), "bundled");
+    NONE(-1, null, "none", null),
+    DMX(0, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/cable"), "dmx", ConnectableType.DMX),
+    DIMMED_POWER(1, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/dimmed_power"), "dimmed_power", ConnectableType.DIMMED_POWER),
+    POWER(3, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/power"), "power", ConnectableType.POWER),
+    SOCAPEX(2, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/socapex"), "socapex", ConnectableType.SOCAPEX),
+    BUNDLED(99, new ResourceLocation(TheatricalMod.MOD_ID, "block/cables/bundled"), "bundled", null);
 
     private final int index;
     private final ResourceLocation texture;
     private final String name;
+    private final ConnectableType connectableType;
 
-    CableType(int index, ResourceLocation location, String name) {
+    CableType(int index, ResourceLocation location, String name, ConnectableType connectableType) {
         this.index = index;
         this.texture = location;
         this.name = name;
+        this.connectableType = connectableType;
     }
 
     public int getIndex() {
@@ -62,7 +64,11 @@ public enum CableType implements IStringSerializable {
     }
 
     @Override
-    public String getString() {
+    public String getSerializedName() {
         return name;
+    }
+
+    public ConnectableType getConnectableType() {
+        return connectableType;
     }
 }

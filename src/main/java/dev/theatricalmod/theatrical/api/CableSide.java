@@ -1,7 +1,7 @@
 package dev.theatricalmod.theatrical.api;
 
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class CableSide {
 
@@ -111,8 +111,8 @@ public class CableSide {
         return false;
     }
 
-    public CompoundNBT getNBT(){
-        CompoundNBT nbtTagCompound = new CompoundNBT();
+    public CompoundTag getNBT(){
+        CompoundTag nbtTagCompound = new CompoundTag();
         int[] types = new int[5];
         for(int i = 0; i < this.types.length; i++){
             types[i] = this.types[i].getIndex();
@@ -121,7 +121,7 @@ public class CableSide {
         return nbtTagCompound;
     }
 
-    public static CableSide readNBT(CompoundNBT nbtTagCompound){
+    public static CableSide readNBT(CompoundTag nbtTagCompound){
         CableSide side = new CableSide();
         CableType[] cableTypes = new CableType[5];
         if(nbtTagCompound.contains("types")){

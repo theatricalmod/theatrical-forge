@@ -1,42 +1,46 @@
 package dev.theatricalmod.theatrical.block.control;
 
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
+import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-public class BlockBasicLightingControl extends DirectionalBlock {
+public class BlockBasicLightingControl extends DirectionalBlock implements EntityBlock {
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    private final VoxelShape shape = VoxelShapes.create(0, 0, 0, 16 / 16D, 3 / 16D, 16 / 16D);
+    private final VoxelShape shape = Shapes.box(0, 0, 0, 16 / 16D, 3 / 16D, 16 / 16D);
 
     public BlockBasicLightingControl() {
         super(TheatricalBlocks.BASE_PROPERTIES);
@@ -44,82 +48,84 @@ public class BlockBasicLightingControl extends DirectionalBlock {
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, p_196258_1_.getPlacementHorizontalFacing().getOpposite()).with(POWERED, false);
+    public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_) {
+        return this.defaultBlockState().setValue(HORIZONTAL_FACING, p_196258_1_.getHorizontalDirection().getOpposite()).setValue(POWERED, false);
     }
 
     @Override
-    protected void fillStateContainer(Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(HORIZONTAL_FACING, POWERED);
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityBasicLightingControl();
-    }
-
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 1.0F;
     }
 
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
 
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean causesSuffocation(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return false;
     }
 
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean isNormalCube(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return false;
     }
 
-    public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type) {
+    public boolean canEntitySpawn(BlockState state, BlockGetter worldIn, BlockPos pos, EntityType<?> type) {
         return false;
     }
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return shape;
     }
 
 
 
     @Override
-    public ActionResultType onBlockActivated(BlockState p_225533_1_, World world, BlockPos pos, PlayerEntity player, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if(tileEntity instanceof INamedContainerProvider) {
-            INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
-            Container container = provider.createMenu(0, player.inventory, player);
+    public InteractionResult use(BlockState p_225533_1_, Level world, BlockPos pos, Player player, InteractionHand p_225533_5_, BlockHitResult p_225533_6_) {
+        BlockEntity tileEntity = world.getBlockEntity(pos);
+        if(tileEntity instanceof MenuProvider) {
+            MenuProvider provider = (MenuProvider) tileEntity;
+            AbstractContainerMenu container = provider.createMenu(0, player.getInventory(), player);
             if (container != null) {
-                if (player instanceof ServerPlayerEntity) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                if (player instanceof ServerPlayer) {
+                    NetworkHooks.openGui((ServerPlayer) player, provider, buffer -> {
                         buffer.writeBlockPos(pos);
                     });
                 }
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return super.onBlockActivated(p_225533_1_, world, pos, player, p_225533_5_, p_225533_6_);
+        return super.use(p_225533_1_, world, pos, player, p_225533_5_, p_225533_6_);
     }
 
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (!worldIn.isRemote) {
-            boolean flag = worldIn.isBlockPowered(pos);
-            if (flag != state.get(POWERED)) {
+    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (!worldIn.isClientSide) {
+            boolean flag = worldIn.hasNeighborSignal(pos);
+            if (flag != state.getValue(POWERED)) {
                 if(flag){
-                    TileEntityBasicLightingControl tileEntityBasicLightingControl = (TileEntityBasicLightingControl) worldIn.getTileEntity(pos);
+                    TileEntityBasicLightingControl tileEntityBasicLightingControl = (TileEntityBasicLightingControl) worldIn.getBlockEntity(pos);
                     tileEntityBasicLightingControl.clickButton();
                 }
-                worldIn.setBlockState(pos, state.with(POWERED, Boolean.valueOf(flag)), 2);
+                worldIn.setBlock(pos, state.setValue(POWERED, Boolean.valueOf(flag)), 2);
             }
 
         }
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileEntityBasicLightingControl(pos, state);
+    }
+
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> type) {
+        return type == TheatricalTiles.BASIC_LIGHTING_DESK.get() ? TileEntityBasicLightingControl::tick : null;
     }
 }

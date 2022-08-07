@@ -1,199 +1,206 @@
 package dev.theatricalmod.theatrical.data;
 
 import dev.theatricalmod.theatrical.items.TheatricalItems;
-import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.tags.ITag;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.function.Consumer;
 
 class TheatricalRecipes extends RecipeProvider {
-    public final ITag<Item> IRON_INGOT = ItemTags.makeWrapperTag("forge:ingots/iron");
-    public final ITag<Item> IRON_BLOCK = ItemTags.makeWrapperTag("forge:storage_blocks/iron");
-    public final ITag<Item> GLOWSTONE_DUST = ItemTags.makeWrapperTag("forge:dusts/glowstone");
-    public final ITag<Item> REDSTONE_DUST = ItemTags.makeWrapperTag("forge:dusts/redstone");
-    public final ITag<Item> GOLD_NUGGET = ItemTags.makeWrapperTag("forge:nuggets/gold");
-    public final ITag<Item> GLASS = ItemTags.makeWrapperTag("forge:glass");
-    public final ITag<Item> STONE = ItemTags.makeWrapperTag("forge:stone");
-    public final ITag<Item> GEAR = ItemTags.makeWrapperTag("forge:gears/iron");
+    public final TagKey<Item> IRON_INGOT = ItemTags.create(new ResourceLocation("forge:ingots/iron"));
+    public final TagKey<Item> IRON_BLOCK = ItemTags.create(new ResourceLocation("forge:storage_blocks/iron"));
+    public final TagKey<Item> GLOWSTONE_DUST = ItemTags.create(new ResourceLocation("forge:dusts/glowstone"));
+    public final TagKey<Item> REDSTONE_DUST = ItemTags.create(new ResourceLocation("forge:dusts/redstone"));
+    public final TagKey<Item> GOLD_NUGGET = ItemTags.create(new ResourceLocation("forge:nuggets/gold"));
+    public final TagKey<Item> GLASS = ItemTags.create(new ResourceLocation("forge:glass"));
+    public final TagKey<Item> STONE = ItemTags.create(new ResourceLocation("forge:stone"));
+    public final TagKey<Item> GEAR = ItemTags.create(new ResourceLocation("forge:gears/iron"));
 
     public TheatricalRecipes(DataGenerator generatorIn) {
         super(generatorIn);
     }
 
+
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.TRUSS.get(), 4)
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine("III")
-                .patternLine("I I")
-                .patternLine("III")
-                .key('I', Items.IRON_BARS)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.BULB.get())
-                .addCriterion("has_item", hasItem(GLOWSTONE_DUST))
-                .patternLine("GGG")
-                .patternLine("GDG")
-                .patternLine("IRI")
-                .key('G', GLASS)
-                .key('D', GLOWSTONE_DUST)
-                .key('I', IRON_INGOT)
-                .key('R', Items.REDSTONE)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.GENERIC_LIGHT.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.BULB.get()))
-                .patternLine("III")
-                .patternLine("IBI")
-                .patternLine("IRI")
-                .key('I', IRON_INGOT)
-                .key('B', TheatricalItems.BULB.get())
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapelessRecipeBuilder.shapelessRecipe(TheatricalItems.GENERIC_LIGHT.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.GENERIC_LIGHT.get()))
-                .addIngredient(TheatricalItems.GENERIC_LIGHT.get())
-                .addIngredient(TheatricalItems.BULB.get())
-                .build(consumer, "generic_repair");
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.COG.get())
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine(" I ")
-                .patternLine("I I")
-                .patternLine(" I ")
-                .key('I', IRON_INGOT)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.MOTOR.get())
-                .addCriterion("has_item", hasItem(GEAR))
-                .patternLine("IRI")
-                .patternLine("RCR")
-                .patternLine("IRI")
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .key('C', GEAR)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.LED.get())
-                .addCriterion("has_item", hasItem(REDSTONE_DUST))
-                .patternLine("GRG")
-                .key('G', GOLD_NUGGET)
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.MOVING_LIGHT.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.LED.get()))
-                .patternLine("IGI")
-                .patternLine("MLM")
-                .patternLine("BDB")
-                .key('I', IRON_INGOT)
-                .key('G', GLASS)
-                .key('M', TheatricalItems.MOTOR.get())
-                .key('L', TheatricalItems.LED.get())
-                .key('B', IRON_BLOCK)
-                .key('D', TheatricalItems.DMX_CABLE.get())
-                .build(consumer);
-        ShapelessRecipeBuilder.shapelessRecipe(TheatricalItems.MOVING_LIGHT.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.MOVING_LIGHT.get()))
-                .addIngredient(TheatricalItems.MOVING_LIGHT.get())
-                .addIngredient(TheatricalItems.MOTOR.get())
-                .addIngredient(TheatricalItems.LED.get())
-                .build(consumer, "mover_repair");
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DMX_CABLE.get(), 6)
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine("WWW")
-                .patternLine("IRI")
-                .patternLine("WWW")
-                .key('W', Items.BLACK_WOOL)
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POWER_CABLE.get(), 6)
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine("WWW")
-                .patternLine("IRI")
-                .patternLine("WWW")
-                .key('W', Items.CYAN_WOOL)
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DIMMED_POWER_CABLE.get(), 6)
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine("WWW")
-                .patternLine("IRI")
-                .patternLine("WWW")
-                .key('W', Items.BLUE_WOOL)
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.SOCAPEX_CABLE.get(), 6)
-                .addCriterion("has_item", hasItem(IRON_INGOT))
-                .patternLine("WWW")
-                .patternLine("IRI")
-                .patternLine("WWW")
-                .key('W', Items.LIGHT_BLUE_WOOL)
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.SOCAPEX_DISTRIBUTION.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.SOCAPEX_CABLE.get()))
-                .patternLine("III")
-                .patternLine("IWI")
-                .patternLine("III")
-                .key('I', IRON_INGOT)
-                .key('W', TheatricalItems.SOCAPEX_CABLE.get())
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DMX_REDSTONE_INTERFACE.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.DMX_CABLE.get()))
-                .patternLine("III")
-                .patternLine("RDR")
-                .patternLine("III")
-                .key('I', IRON_INGOT)
-                .key('R', REDSTONE_DUST)
-                .key('D', TheatricalItems.DMX_CABLE.get())
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.BASIC_LIGHTING_DESK.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.DMX_CABLE.get()))
-                .patternLine("   ")
-                .patternLine("WWW")
-                .patternLine("IRI")
-                .key('W', Items.LIGHT_BLUE_WOOL)
-                .key('I', IRON_BLOCK)
-                .key('R', TheatricalItems.DMX_CABLE.get())
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.DIMMER_RACK.get())
-                .addCriterion("has_item", hasItem(TheatricalItems.SOCAPEX_CABLE.get()))
-                .patternLine("III")
-                .patternLine("SDS")
-                .patternLine("III")
-                .key('I', IRON_INGOT)
-                .key('S', TheatricalItems.SOCAPEX_CABLE.get())
-                .key('D', TheatricalItems.DMX_CABLE.get())
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.POSITIONER.get())
-                .addCriterion("has_item", hasItem(REDSTONE_DUST))
-                .patternLine("SRS")
-                .patternLine("SBS")
-                .patternLine("SIS")
-                .key('S', STONE)
-                .key('R', REDSTONE_DUST)
-                .key('B', Items.STONE_BUTTON)
-                .key('I', IRON_INGOT)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.IWB.get(), 6)
-                .addCriterion("has_item", hasItem(REDSTONE_DUST))
-                .patternLine("III")
-                .patternLine("DPD")
-                .patternLine("III")
-                .key('P', TheatricalItems.DIMMED_POWER_CABLE.get())
-                .key('D', TheatricalItems.DMX_CABLE.get())
-                .key('I', IRON_INGOT)
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(TheatricalItems.ARTNET_INTERFACE.get())
-                .addCriterion("has_item", hasItem(REDSTONE_DUST))
-                .patternLine("III")
-                .patternLine("DRD")
-                .patternLine("III")
-                .key('R', REDSTONE_DUST)
-                .key('D', TheatricalItems.DMX_CABLE.get())
-                .key('I', IRON_INGOT)
-                .build(consumer);
+    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(TheatricalItems.TRUSS.get(), 4)
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern("III")
+                .pattern("I I")
+                .pattern("III")
+                .define('I', Items.IRON_BARS)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.BULB.get())
+                .unlockedBy("has_item", has(GLOWSTONE_DUST))
+                .pattern("GGG")
+                .pattern("GDG")
+                .pattern("IRI")
+                .define('G', GLASS)
+                .define('D', GLOWSTONE_DUST)
+                .define('I', IRON_INGOT)
+                .define('R', Items.REDSTONE)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.GENERIC_LIGHT.get())
+                .unlockedBy("has_item", has(TheatricalItems.BULB.get()))
+                .pattern("III")
+                .pattern("IBI")
+                .pattern("IRI")
+                .define('I', IRON_INGOT)
+                .define('B', TheatricalItems.BULB.get())
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapelessRecipeBuilder.shapeless(TheatricalItems.GENERIC_LIGHT.get())
+                .unlockedBy("has_item", has(TheatricalItems.GENERIC_LIGHT.get()))
+                .requires(TheatricalItems.GENERIC_LIGHT.get())
+                .requires(TheatricalItems.BULB.get())
+                .save(consumer, "generic_repair");
+        ShapedRecipeBuilder.shaped(TheatricalItems.COG.get())
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern(" I ")
+                .pattern("I I")
+                .pattern(" I ")
+                .define('I', IRON_INGOT)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.MOTOR.get())
+                .unlockedBy("has_item", has(GEAR))
+                .pattern("IRI")
+                .pattern("RCR")
+                .pattern("IRI")
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .define('C', GEAR)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.LED.get())
+                .unlockedBy("has_item", has(REDSTONE_DUST))
+                .pattern("GRG")
+                .define('G', GOLD_NUGGET)
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.MOVING_LIGHT.get())
+                .unlockedBy("has_item", has(TheatricalItems.LED.get()))
+                .pattern("IGI")
+                .pattern("MLM")
+                .pattern("BDB")
+                .define('I', IRON_INGOT)
+                .define('G', GLASS)
+                .define('M', TheatricalItems.MOTOR.get())
+                .define('L', TheatricalItems.LED.get())
+                .define('B', IRON_BLOCK)
+                .define('D', TheatricalItems.DMX_CABLE.get())
+                .save(consumer);
+        ShapelessRecipeBuilder.shapeless(TheatricalItems.MOVING_LIGHT.get())
+                .unlockedBy("has_item", has(TheatricalItems.MOVING_LIGHT.get()))
+                .requires(TheatricalItems.MOVING_LIGHT.get())
+                .requires(TheatricalItems.MOTOR.get())
+                .requires(TheatricalItems.LED.get())
+                .save(consumer, "mover_repair");
+        ShapedRecipeBuilder.shaped(TheatricalItems.DMX_CABLE.get(), 6)
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern("WWW")
+                .pattern("IRI")
+                .pattern("WWW")
+                .define('W', Items.BLACK_WOOL)
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.POWER_CABLE.get(), 6)
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern("WWW")
+                .pattern("IRI")
+                .pattern("WWW")
+                .define('W', Items.CYAN_WOOL)
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.DIMMED_POWER_CABLE.get(), 6)
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern("WWW")
+                .pattern("IRI")
+                .pattern("WWW")
+                .define('W', Items.BLUE_WOOL)
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.SOCAPEX_CABLE.get(), 6)
+                .unlockedBy("has_item", has(IRON_INGOT))
+                .pattern("WWW")
+                .pattern("IRI")
+                .pattern("WWW")
+                .define('W', Items.LIGHT_BLUE_WOOL)
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.SOCAPEX_DISTRIBUTION.get())
+                .unlockedBy("has_item", has(TheatricalItems.SOCAPEX_CABLE.get()))
+                .pattern("III")
+                .pattern("IWI")
+                .pattern("III")
+                .define('I', IRON_INGOT)
+                .define('W', TheatricalItems.SOCAPEX_CABLE.get())
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.DMX_REDSTONE_INTERFACE.get())
+                .unlockedBy("has_item", has(TheatricalItems.DMX_CABLE.get()))
+                .pattern("III")
+                .pattern("RDR")
+                .pattern("III")
+                .define('I', IRON_INGOT)
+                .define('R', REDSTONE_DUST)
+                .define('D', TheatricalItems.DMX_CABLE.get())
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.BASIC_LIGHTING_DESK.get())
+                .unlockedBy("has_item", has(TheatricalItems.DMX_CABLE.get()))
+                .pattern("   ")
+                .pattern("WWW")
+                .pattern("IRI")
+                .define('W', Items.LIGHT_BLUE_WOOL)
+                .define('I', IRON_BLOCK)
+                .define('R', TheatricalItems.DMX_CABLE.get())
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.DIMMER_RACK.get())
+                .unlockedBy("has_item", has(TheatricalItems.SOCAPEX_CABLE.get()))
+                .pattern("III")
+                .pattern("SDS")
+                .pattern("III")
+                .define('I', IRON_INGOT)
+                .define('S', TheatricalItems.SOCAPEX_CABLE.get())
+                .define('D', TheatricalItems.DMX_CABLE.get())
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.POSITIONER.get())
+                .unlockedBy("has_item", has(REDSTONE_DUST))
+                .pattern("SRS")
+                .pattern("SBS")
+                .pattern("SIS")
+                .define('S', STONE)
+                .define('R', REDSTONE_DUST)
+                .define('B', Items.STONE_BUTTON)
+                .define('I', IRON_INGOT)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.IWB.get(), 6)
+                .unlockedBy("has_item", has(REDSTONE_DUST))
+                .pattern("III")
+                .pattern("DPD")
+                .pattern("III")
+                .define('P', TheatricalItems.DIMMED_POWER_CABLE.get())
+                .define('D', TheatricalItems.DMX_CABLE.get())
+                .define('I', IRON_INGOT)
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(TheatricalItems.ARTNET_INTERFACE.get())
+                .unlockedBy("has_item", has(REDSTONE_DUST))
+                .pattern("III")
+                .pattern("DRD")
+                .pattern("III")
+                .define('R', REDSTONE_DUST)
+                .define('D', TheatricalItems.DMX_CABLE.get())
+                .define('I', IRON_INGOT)
+                .save(consumer);
     }
 }

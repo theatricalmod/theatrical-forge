@@ -2,10 +2,10 @@ package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexPatch;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -18,11 +18,11 @@ public class ChangeDimmerPatchPacket {
         this.patch = patch;
     }
 
-    public ChangeDimmerPatchPacket(PacketBuffer buffer) {
+    public ChangeDimmerPatchPacket(FriendlyByteBuf buffer) {
         channel = buffer.readInt();
         patch = new SocapexPatch();
         patch.deserialize(
-            DataSerializers.COMPOUND_NBT.read(buffer));
+            EntityDataSerializers.COMPOUND_TAG.read(buffer));
         int x = buffer.readInt();
         int y = buffer.readInt();
         int z = buffer.readInt();
@@ -39,16 +39,16 @@ public class ChangeDimmerPatchPacket {
         return blockPos;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(channel);
-        DataSerializers.COMPOUND_NBT.write(buf, patch.serialize());
+        EntityDataSerializers.COMPOUND_TAG.write(buf, patch.serialize());
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(socketNumber);
     }
 
-    public void handle(Supplier<Context> context) {
+    public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> TheatricalMod.proxy.handleChangeDimmerPatch(context.get(), blockPos, patch, channel, socketNumber));
         context.get().setPacketHandled(true);
     }

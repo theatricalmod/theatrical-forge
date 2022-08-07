@@ -1,9 +1,9 @@
 package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -14,7 +14,7 @@ public class UpdateDMXAddressPacket {
         this.address = address;
     }
 
-    public UpdateDMXAddressPacket(PacketBuffer buffer) {
+    public UpdateDMXAddressPacket(FriendlyByteBuf buffer) {
         int x = buffer.readInt();
         int y = buffer.readInt();
         int z = buffer.readInt();
@@ -33,14 +33,14 @@ public class UpdateDMXAddressPacket {
         return address;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(address);
     }
 
-    public void handle(Supplier<Context> context) {
+    public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> TheatricalMod.proxy.handleUpdateDMXAddress(context.get(), blockPos, address));
         context.get().setPacketHandled(true);
     }

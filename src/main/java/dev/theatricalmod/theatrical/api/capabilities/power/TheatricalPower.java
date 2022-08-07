@@ -1,14 +1,14 @@
 package dev.theatricalmod.theatrical.api.capabilities.power;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class TheatricalPower implements ITheatricalPowerStorage, INBTSerializable<CompoundNBT> {
+public class TheatricalPower implements ITheatricalPowerStorage, INBTSerializable<CompoundTag> {
 
-    @CapabilityInject(ITheatricalPowerStorage.class)
-    public static Capability<ITheatricalPowerStorage> CAP;
+    public static final Capability<ITheatricalPowerStorage> CAP = CapabilityManager.get(new CapabilityToken<ITheatricalPowerStorage>() {});
 
     private int power;
     private final int capacity;
@@ -31,14 +31,14 @@ public class TheatricalPower implements ITheatricalPowerStorage, INBTSerializabl
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tagCompound = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tagCompound = new CompoundTag();
         tagCompound.putInt("power", power);
         return tagCompound;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         power = nbt.getInt("power");
     }
 

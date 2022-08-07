@@ -1,19 +1,19 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<CompoundNBT> {
+public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<CompoundTag> {
 
-    @CapabilityInject(ISocapexReceiver.class)
-    public static Capability<ISocapexReceiver> CAP;
+    public static Capability<ISocapexReceiver> CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     private int[] channels;
     private BlockPos pos;
@@ -30,17 +30,17 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbtTagCompound = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbtTagCompound = new CompoundTag();
         for (int i = 0; i < channels.length; i++) {
             nbtTagCompound.putInt("channel_" + i, channels[i]);
         }
-        nbtTagCompound.put("pos", NBTUtil.writeBlockPos(pos));
+        nbtTagCompound.put("pos", NbtUtils.writeBlockPos(pos));
         return nbtTagCompound;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         int[] channels = new int[8];
         for (int i = 0; i < 8; i++) {
             if (nbt.contains("channel_" + i)) {
@@ -48,7 +48,7 @@ public class SocapexReceiver implements ISocapexReceiver, INBTSerializable<Compo
             }
         }
         if (nbt.contains("pos")) {
-            pos = NBTUtil.readBlockPos(nbt.getCompound("pos"));
+            pos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
         }
         this.channels = channels;
     }

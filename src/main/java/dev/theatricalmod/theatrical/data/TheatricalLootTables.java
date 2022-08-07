@@ -3,12 +3,12 @@ package dev.theatricalmod.theatrical.data;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.LootTableProvider;
-import net.minecraft.loot.LootParameterSet;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.ValidationTracker;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.List;
 import java.util.Map;
@@ -22,11 +22,11 @@ class TheatricalLootTables extends LootTableProvider {
     }
 
     @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
-        return ImmutableList.of(Pair.of(TheatricalBlockLootTables::new, LootParameterSets.BLOCK));
+    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+        return ImmutableList.of(Pair.of(TheatricalBlockLootTables::new, LootContextParamSets.BLOCK));
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
     }
 }

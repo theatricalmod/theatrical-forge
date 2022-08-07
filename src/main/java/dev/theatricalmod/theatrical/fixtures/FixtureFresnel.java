@@ -5,7 +5,7 @@ import dev.theatricalmod.theatrical.api.ChannelsDefinition;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.api.fixtures.FixtureType;
 import dev.theatricalmod.theatrical.api.fixtures.HangableType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class FixtureFresnel extends Fixture {
 

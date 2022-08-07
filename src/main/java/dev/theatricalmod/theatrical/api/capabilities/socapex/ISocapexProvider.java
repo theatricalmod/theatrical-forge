@@ -1,13 +1,13 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public interface ISocapexProvider {
 
-    void updateDevices(World world, BlockPos controllerPos);
+    void updateDevices(Level world, BlockPos controllerPos);
 
     void refreshDevices();
 
@@ -29,7 +29,7 @@ public interface ISocapexProvider {
 
     int[] getChannelsForReceiver(ISocapexReceiver receiver);
 
-    List<ISocapexReceiver> getDevices(World world, BlockPos controller);
+    List<ISocapexReceiver> getDevices(Level world, BlockPos controller);
 
     int[] getPatchedCables(ISocapexReceiver socapexReceiver);
 

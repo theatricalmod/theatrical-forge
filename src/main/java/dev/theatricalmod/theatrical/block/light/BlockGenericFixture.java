@@ -9,24 +9,28 @@ import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockGenericFixture extends BlockLight implements ITOPInfoProvider {
 
@@ -35,55 +39,58 @@ public class BlockGenericFixture extends BlockLight implements ITOPInfoProvider 
     }
 
     @Override
-    public void onEntityWalk(World world, BlockPos pos, Entity entity) {
-        if (((TileEntityGenericFixture)world.getTileEntity(pos)).getIntensity() > 0 &&
-                !entity.isImmuneToFire() && entity instanceof LivingEntity) {
-            entity.attackEntityFrom(DamageSource.HOT_FLOOR, 1.0F);
+    public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
+        if (((TileEntityGenericFixture)level.getBlockEntity(blockPos)).getIntensity() > 0 &&
+                !entity.fireImmune() && entity instanceof LivingEntity) {
+            entity.hurt(DamageSource.HOT_FLOOR, 1.0F);
         }
-        super.onEntityWalk(world, pos, entity);
+        super.stepOn(level, blockPos, blockState, entity);
     }
 
+
+
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockRayTraceResult) {
-        if (!world.isRemote && hand == Hand.MAIN_HAND) {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof INamedContainerProvider) {
-                if(player.getHeldItem(hand).getItem() instanceof ItemPositioner){
-                    ItemStack heldItem = player.getHeldItem(hand);
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockRayTraceResult) {
+        if (!world.isClientSide && hand == InteractionHand.MAIN_HAND) {
+            BlockEntity tileEntity = world.getBlockEntity(pos);
+            if (tileEntity instanceof MenuProvider) {
+                if(player.getItemInHand(hand).getItem() instanceof ItemPositioner){
+                    ItemStack heldItem = player.getItemInHand(hand);
                    TileEntityGenericFixture tileEntityGenericFixture = (TileEntityGenericFixture) tileEntity;
                    if(tileEntityGenericFixture.getTrackingEntity() != null){
                         tileEntityGenericFixture.setTrackingEntity(null);
-                        heldItem.removeChildTag("light");
+                        heldItem.removeTagKey("light");
                    } else {
                         tileEntityGenericFixture.setTrackingEntity(player);
-                        heldItem.getOrCreateChildTag("light").merge(NBTUtil.writeBlockPos(tileEntityGenericFixture.getPos()));
+                        heldItem.getOrCreateTagElement("light").merge(NbtUtils.writeBlockPos(tileEntityGenericFixture.getBlockPos()));
                    }
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 } else {
-                    INamedContainerProvider provider = (INamedContainerProvider) tileEntity;
-                    Container container = provider.createMenu(0, player.inventory, player);
+                    MenuProvider provider = (MenuProvider) tileEntity;
+                    AbstractContainerMenu container = provider.createMenu(0, player.getInventory(), player);
                     if (container != null) {
-                        if (player instanceof ServerPlayerEntity) {
-                            NetworkHooks.openGui((ServerPlayerEntity) player, provider, buffer -> {
+                        if (player instanceof ServerPlayer) {
+                            NetworkHooks.openGui((ServerPlayer) player, provider, buffer -> {
                                 buffer.writeBlockPos(pos);
                             });
                         }
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
                 }
             }
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
-        return super.onBlockActivated(state, world, pos, player, hand, blockRayTraceResult);
+        return super.use(state, world, pos, player, hand, blockRayTraceResult);
     }
 
     @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
-        TileEntity tileEntity = world.getTileEntity(iProbeHitData.getPos());
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player playerEntity, Level world, BlockState blockState, IProbeHitData iProbeHitData) {
+        BlockEntity tileEntity = world.getBlockEntity(iProbeHitData.getPos());
 
         if (tileEntity instanceof TileEntityGenericFixture) {
             TileEntityGenericFixture pipe = (TileEntityGenericFixture) tileEntity;
-            pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> iProbeInfo.text(new StringTextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored())));
+            pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> iProbeInfo.text(new TextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored())));
         }
     }
+
 }

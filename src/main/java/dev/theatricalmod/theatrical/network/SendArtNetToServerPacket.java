@@ -1,10 +1,10 @@
 package dev.theatricalmod.theatrical.network;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -15,7 +15,7 @@ public class SendArtNetToServerPacket {
         this.data = data;
     }
 
-    public SendArtNetToServerPacket(PacketBuffer buffer){
+    public SendArtNetToServerPacket(FriendlyByteBuf buffer){
         int x = buffer.readInt();
         int y = buffer.readInt();
         int z = buffer.readInt();
@@ -27,7 +27,7 @@ public class SendArtNetToServerPacket {
         buffer.readBytes(data);
     }
 
-    private World world;
+    private Level world;
     private final BlockPos blockPos;
     private byte[] data;
 
@@ -39,7 +39,7 @@ public class SendArtNetToServerPacket {
         return data;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
@@ -47,7 +47,7 @@ public class SendArtNetToServerPacket {
         buf.writeBytes(data);
     }
 
-    public void handle(Supplier<Context> context){
+    public void handle(Supplier<NetworkEvent.Context> context){
         context.get().enqueueWork(() -> TheatricalMod.proxy.handleArtNetPacket(context.get(), blockPos, data));
         context.get().setPacketHandled(true);
     }

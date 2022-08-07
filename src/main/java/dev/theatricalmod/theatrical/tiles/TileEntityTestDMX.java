@@ -1,47 +1,47 @@
 package dev.theatricalmod.theatrical.tiles;
 
-import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
+import dev.theatricalmod.theatrical.api.dmx.IDMXProvider;
 import dev.theatricalmod.theatrical.api.dmx.DMXUniverse;
+import dev.theatricalmod.theatrical.capability.CapabilityDMXProvider;
+import dev.theatricalmod.theatrical.capability.TheatricalCapabilities;
 import dev.theatricalmod.theatrical.network.SendDMXProviderPacket;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-public class TileEntityTestDMX extends TileEntity implements ITickableTileEntity {
+public class TileEntityTestDMX extends BlockEntity {
+
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityTestDMX tile = (TileEntityTestDMX) be;
+        if (level.isClientSide) {
+            return;
+        }
+        tile.ticks++;
+        if (tile.ticks >= 20) {
+            byte[] data = tile.generateRandomDMX();
+            tile.idmxProvider.getUniverse(level).setDmxChannels(data);
+            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(level::dimension), new SendDMXProviderPacket(pos, data));
+            tile.sendDMXSignal();
+            tile.ticks = 0;
+        }
+    }
 
     private final IDMXProvider idmxProvider;
 
     private int ticks = 0;
 
-    public TileEntityTestDMX() {
-        super(TheatricalTiles.TEST_DMX.get());
-        this.idmxProvider = new DMXProvider(new DMXUniverse());
-    }
-
-    @Override
-    public void tick() {
-        if (world.isRemote) {
-            return;
-        }
-        ticks++;
-        if (ticks >= 20) {
-            byte[] data = generateRandomDMX();
-            this.idmxProvider.getUniverse(world).setDmxChannels(data);
-            TheatricalNetworkHandler.MAIN.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new SendDMXProviderPacket(pos, data));
-            sendDMXSignal();
-            ticks = 0;
-        }
+    public TileEntityTestDMX(BlockPos pos, BlockState state) {
+        super(TheatricalTiles.TEST_DMX.get(), pos, state);
+        this.idmxProvider = new CapabilityDMXProvider(new DMXUniverse());
     }
 
     public byte[] generateRandomDMX() {
@@ -54,30 +54,29 @@ public class TileEntityTestDMX extends TileEntity implements ITickableTileEntity
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nonnull Direction direction) {
-        if (cap == DMXProvider.CAP) {
-            return DMXProvider.CAP.orEmpty(cap, LazyOptional.of(() -> idmxProvider));
+        if (cap == TheatricalCapabilities.CAPABILITY_DMX_PROVIDER) {
+            return TheatricalCapabilities.CAPABILITY_DMX_PROVIDER.orEmpty(cap, LazyOptional.of(() -> idmxProvider));
         }
         return super.getCapability(cap, direction);
     }
 
     public void sendDMXSignal() {
-        idmxProvider.updateDevices(world, pos);
+        idmxProvider.updateDevices(level, worldPosition);
     }
 
     @Override
-    public void remove() {
-        if (hasWorld()) {
-            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+    public void setRemoved() {
+        if (hasLevel()) {
+//            level.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
         }
-        super.remove();
+        super.setRemoved();
     }
 
     @Override
-    public void setWorldAndPos(World p_226984_1_, BlockPos p_226984_2_) {
-        super.setWorldAndPos(p_226984_1_, p_226984_2_);
-        if (hasWorld()) {
-            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+    public void setLevel(Level p_155231_) {
+        super.setLevel(p_155231_);
+        if (hasLevel()) {
+//            level.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
         }
     }
-
 }

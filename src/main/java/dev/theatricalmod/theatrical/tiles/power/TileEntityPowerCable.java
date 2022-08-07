@@ -2,12 +2,13 @@ package dev.theatricalmod.theatrical.tiles.power;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
+import dev.theatricalmod.theatrical.capability.TheatricalCapabilities;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -18,10 +19,22 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TileEntityPowerCable extends TileEntity implements ITickableTileEntity, IEnergyStorage {
+public class TileEntityPowerCable extends BlockEntity implements IEnergyStorage {
 
-    public TileEntityPowerCable() {
-        super(TheatricalTiles.POWER_CABLE.get());
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityPowerCable tile = (TileEntityPowerCable) be;
+        if (level.isClientSide) {
+            return;
+        }
+        tile.ticksSinceLastSend++;
+        if (tile.ticksSinceLastSend >= 10) {
+            tile.sendingFace.clear();
+            tile.ticksSinceLastSend = 0;
+        }
+    }
+
+    public TileEntityPowerCable(BlockPos pos, BlockState state) {
+        super(TheatricalTiles.POWER_CABLE.get(), pos, state);
     }
 
     private final int transferRate = 6000;
@@ -31,7 +44,7 @@ public class TileEntityPowerCable extends TileEntity implements ITickableTileEnt
     private final ArrayList<Direction> sendingFace = new ArrayList<Direction>();
 
     public boolean isConnected(Direction direction) {
-        TileEntity tileEntity = world.getTileEntity(pos.offset(direction));
+        BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(direction));
         if (tileEntity == null) {
             return false;
         }
@@ -46,8 +59,8 @@ public class TileEntityPowerCable extends TileEntity implements ITickableTileEnt
                 return true;
             }
         }
-        return tileEntity.getCapability(DMXReceiver.CAP, direction.getOpposite()).isPresent() || tileEntity.getCapability(
-            DMXProvider.CAP, direction.getOpposite()).isPresent();
+        return tileEntity.getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, direction.getOpposite()).isPresent() || tileEntity.getCapability(
+            TheatricalCapabilities.CAPABILITY_DMX_PROVIDER, direction.getOpposite()).isPresent();
     }
 
     public boolean canAcceptPower(IAcceptsCable cable, Direction side){
@@ -63,18 +76,6 @@ public class TileEntityPowerCable extends TileEntity implements ITickableTileEnt
             }
         }
         return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void tick() {
-        if (world.isRemote) {
-            return;
-        }
-        ticksSinceLastSend++;
-        if (ticksSinceLastSend >= 10) {
-            sendingFace.clear();
-            ticksSinceLastSend = 0;
-        }
     }
 
     @Override

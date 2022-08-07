@@ -1,6 +1,6 @@
 package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 

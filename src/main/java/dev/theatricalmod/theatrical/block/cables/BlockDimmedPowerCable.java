@@ -7,40 +7,34 @@ import dev.theatricalmod.theatrical.tiles.power.TileEntityDimmedPowerCable;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-
-public class BlockDimmedPowerCable extends BlockCable implements ITOPInfoProvider {
+public class BlockDimmedPowerCable extends BlockCable implements ITOPInfoProvider{
 
     public BlockDimmedPowerCable() {
         super(CableType.DIMMED_POWER);
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityDimmedPowerCable();
+    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return new TileEntityDimmedPowerCable(blockPos, blockState);
     }
 
     @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
-        TileEntity tileEntity = world.getTileEntity(iProbeHitData.getPos());
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player playerEntity, Level world, BlockState blockState, IProbeHitData iProbeHitData) {
+        BlockEntity tileEntity = world.getBlockEntity(iProbeHitData.getPos());
 
         if (tileEntity instanceof TileEntityDimmedPowerCable) {
             TileEntityDimmedPowerCable pipe = (TileEntityDimmedPowerCable) tileEntity;
             pipe.getCapability(TheatricalPower.CAP, null).ifPresent(iTheatricalPowerStorage -> {
-                iProbeInfo.text(new StringTextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored()));
+                iProbeInfo.text(new TextComponent("Power: " + iTheatricalPowerStorage.getEnergyStored()));
             });
         }
     }

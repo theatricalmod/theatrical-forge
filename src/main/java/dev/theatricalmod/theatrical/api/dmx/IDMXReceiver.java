@@ -1,7 +1,7 @@
-package dev.theatricalmod.theatrical.api.capabilities.dmx.receiver;
+package dev.theatricalmod.theatrical.api.dmx;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public interface IDMXReceiver {
 
@@ -9,7 +9,7 @@ public interface IDMXReceiver {
 
     int getStartPoint();
 
-    void receiveDMXValues(byte[] data, World world, BlockPos pos);
+    void receiveDMXValues(byte[] data);
 
     byte getChannel(int index);
 

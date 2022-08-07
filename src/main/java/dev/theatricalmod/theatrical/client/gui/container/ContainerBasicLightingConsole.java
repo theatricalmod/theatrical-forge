@@ -1,25 +1,25 @@
 package dev.theatricalmod.theatrical.client.gui.container;
 
 import dev.theatricalmod.theatrical.tiles.control.TileEntityBasicLightingControl;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 
-public class ContainerBasicLightingConsole extends Container {
+public class ContainerBasicLightingConsole extends AbstractContainerMenu {
 
     public final TileEntityBasicLightingControl blockEntity;
-    protected final World world;
+    protected final Level world;
 
-    public ContainerBasicLightingConsole(int id, World world, BlockPos pos) {
+    public ContainerBasicLightingConsole(int id, Level world, BlockPos pos) {
         super(TheatricalContainers.BASIC_LIGHTING_CONSOLE.get(), id);
 
         this.world = world;
-        this.blockEntity = (TileEntityBasicLightingControl) world.getTileEntity(pos);
+        this.blockEntity = (TileEntityBasicLightingControl) world.getBlockEntity(pos);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean stillValid(Player playerIn) {
         return true;
     }
 }

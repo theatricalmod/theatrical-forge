@@ -1,17 +1,10 @@
 package dev.theatricalmod.theatrical;
 
-import dev.theatricalmod.theatrical.api.capabilities.WorldSocapexNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.IDMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
+import dev.theatricalmod.theatrical.api.dmx.IDMXProvider;
+import dev.theatricalmod.theatrical.api.dmx.IDMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.power.ITheatricalPowerStorage;
-import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexProvider;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.ISocapexReceiver;
-import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
-import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.artnet.ArtNetManager;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
@@ -24,27 +17,26 @@ import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import dev.theatricalmod.theatrical.util.CapabilityStorageProvider;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.NewRegistryEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,9 +47,9 @@ public class TheatricalMod {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final ItemGroup theatricalItemGroup = new ItemGroup("theatrical") {
+    public static final CreativeModeTab theatricalItemGroup = new CreativeModeTab("theatrical") {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(TheatricalItems.DIMMER_RACK.get());
         }
     };
@@ -73,11 +65,11 @@ public class TheatricalMod {
     public TheatricalMod() {
         //noinspection Convert2MethodRef
         proxy = DistExecutor.runForDist(() -> () -> new TheatricalClient(), () -> () -> new TheatricalCommon());
-        Fixture.createRegistry();
         ModLoadingContext.get().registerConfig(Type.COMMON, TheatricalConfigHandler.COMMON_SPEC);
         ModLoadingContext.get().registerConfig(Type.CLIENT, TheatricalConfigHandler.CLIENT_SPEC);
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
+        eventBus.addListener(this::registerRegistries);
         eventBus.addGenericListener(Fixture.class, this::registerFixture);
         eventBus.addListener(this::imc);
         TheatricalBlocks.BLOCKS.register(eventBus);
@@ -97,8 +89,8 @@ public class TheatricalMod {
 
     private void worldTickEvent(WorldTickEvent event) {
         if(event.phase == Phase.END){
-            event.world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.tick(event.world));
-            event.world.getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.tick(event.world));
+//            event.world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.tick(event.world));
+//            event.world.getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.tick(event.world));
 //            event.world.getCapability(WorldPipePanelNetwork.CAP).ifPresent(WorldPipePanelNetwork::tick);
         }
     }
@@ -107,38 +99,43 @@ public class TheatricalMod {
         TOPCompat.register();
     }
 
-    private void attachWorldCap(final AttachCapabilitiesEvent<World> t) {
+    private void attachWorldCap(final AttachCapabilitiesEvent<Level> t) {
         if(t.getObject() != null){
-            World w = t.getObject();
-            if(w.isRemote) return;
-            t.addCapability(WORLD_CAP_ID, new WorldDMXNetwork());
-            t.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork());
+            Level w = t.getObject();
+            if(w.isClientSide) return;
+//            t.addCapability(WORLD_CAP_ID, new WorldDMXNetwork());
+//            t.addCapability(SOCAPEX_NETWORK_ID, new WorldSocapexNetwork());
         }
 //        t.addCapability(PIPE_PANEL_NETWORK, new WorldPipePanelNetwork(t.getObject()));
-    }
-
-    private void registerCapabilities() {
-        CapabilityManager.INSTANCE.register(IDMXProvider.class, new CapabilityStorageProvider<>(), DMXProvider::new);
-        CapabilityManager.INSTANCE.register(IDMXReceiver.class, new CapabilityStorageProvider<>(), DMXReceiver::new);
-        CapabilityManager.INSTANCE.register(WorldDMXNetwork.class, new CapabilityStorageProvider<>(), WorldDMXNetwork::new);
-
-        CapabilityManager.INSTANCE.register(ISocapexReceiver.class, new CapabilityStorageProvider<>(), SocapexReceiver::new);
-        CapabilityManager.INSTANCE.register(ISocapexProvider.class, new CapabilityStorageProvider<>(), SocapexProvider::new);
-        CapabilityManager.INSTANCE.register(WorldSocapexNetwork.class, new CapabilityStorageProvider<>(), WorldSocapexNetwork::new);
-
-        CapabilityManager.INSTANCE.register(ITheatricalPowerStorage.class, new CapabilityStorageProvider<>(), TheatricalPower::new);
     }
 
 
     private void setup(final FMLCommonSetupEvent event) {
         LOGGER.info("Initialising Theatrical ");
-        registerCapabilities();
-        MinecraftForge.EVENT_BUS.addGenericListener(World.class, this::attachWorldCap);
+        MinecraftForge.EVENT_BUS.addGenericListener(Level.class, this::attachWorldCap);
         MinecraftForge.EVENT_BUS.addListener(this::worldTickEvent);
         MinecraftForge.EVENT_BUS.addListener(this::shutdown);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCapabiltiies);
     }
 
-    public void shutdown(FMLServerStoppedEvent serverStoppedEvent){
+    public void registerCapabiltiies(RegisterCapabilitiesEvent event){
+        event.register(IDMXProvider.class);
+        event.register(IDMXReceiver.class);
+//        event.register(WorldDMXNetwork.class);
+
+        event.register(ISocapexReceiver.class);
+        event.register(ISocapexProvider.class);
+//        event.register(WorldSocapexNetwork.class);
+
+        event.register(ITheatricalPowerStorage.class);
+    }
+
+    public void registerRegistries(NewRegistryEvent newRegistryEvent){
+
+        Fixture.createRegistry(newRegistryEvent);
+    }
+
+    public void shutdown(ServerStoppedEvent serverStoppedEvent){
         getArtNetManager().shutdownAll();
     }
 

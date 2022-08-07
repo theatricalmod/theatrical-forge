@@ -9,24 +9,63 @@ import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.block.light.BlockGenericFixture;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerGenericFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityGenericFixture extends TileEntityFixture implements INamedContainerProvider, ITheatricalPowerStorage, IAcceptsCable {
-
+public class TileEntityGenericFixture extends TileEntityFixture implements MenuProvider, ITheatricalPowerStorage, IAcceptsCable {
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityGenericFixture tile = (TileEntityGenericFixture) be;
+        TileEntityFixture.tick(level, pos, state, be);
+        if (level != null && !level.isClientSide) {
+            tile.prevPan = tile.getPan();
+            tile.prevTilt = tile.getTilt();
+            tile.prevFocus = tile.getFocus();
+            if (tile.trackingEntity != null) {
+                double distance = Math.sqrt(tile.trackingEntity.distanceToSqr(tile.getBlockPos().getX(), tile.trackingEntity.getY(), tile.getBlockPos().getZ()));
+                double height = tile.getBlockPos().getY() - tile.trackingEntity.getEyeY();
+                double someCalc = height / distance;
+                tile.setTilt(-(int) Math.toDegrees(Math.atan(someCalc)));
+                Direction facing = tile.getBlockState().getValue(BlockHangable.FACING);
+                double x = tile.getBlockPos().getX() - tile.trackingEntity.getX();
+                double z = tile.getBlockPos().getZ() - tile.trackingEntity.getZ();
+                double calc = Math.atan2(x, z);
+                int pan = (int) Math.toDegrees(calc);
+                pan = pan - (int) facing.toYRot();
+                if (pan < -180) {
+                    pan += 360;
+                } else if (pan > 180) {
+                    pan -= 360;
+                }
+                tile.setPan(pan);
+            }
+            if (tile.power != tile.lastPower) {
+                tile.lastPower = tile.power;
+                level.sendBlockUpdated(tile.worldPosition, level.getBlockState(tile.worldPosition), level.getBlockState(tile.worldPosition), 11);
+            }
+            if (tile.power > 0) {
+                int energyExtracted = Math.min(tile.power, Math.min(tile.maxExtract, tile.energyCost));
+                tile.power -= energyExtracted;
+            }
+        }
+    }
     public int lastPower = 0;
     public int energyUsage, energyCost;
 
@@ -36,8 +75,8 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
 
     private Entity trackingEntity;
 
-    public TileEntityGenericFixture() {
-        super(TheatricalTiles.GENERIC_LIGHT.get());
+    public TileEntityGenericFixture(BlockPos blockPos, BlockState blockState) {
+        super(TheatricalTiles.GENERIC_LIGHT.get(), blockPos, blockState);
     }
 
     @Override
@@ -50,14 +89,14 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     }
 
     @Override
-    public CompoundNBT getNBT(@Nullable CompoundNBT compoundNBT) {
-        CompoundNBT compoundNBT1 = super.getNBT(compoundNBT);
+    public CompoundTag getNBT(@Nullable CompoundTag compoundNBT) {
+        CompoundTag compoundNBT1 = super.getNBT(compoundNBT);
         compoundNBT1.putInt("lastPower", lastPower);
         return compoundNBT1;
     }
 
     @Override
-    public void readNBT(CompoundNBT compoundNBT) {
+    public void readNBT(CompoundTag compoundNBT) {
         super.readNBT(compoundNBT);
         if (compoundNBT.contains("lastPower")) {
             lastPower = compoundNBT.getInt("lastPower");
@@ -109,52 +148,15 @@ public class TileEntityGenericFixture extends TileEntityFixture implements IName
     public float getIntensity() {
         return lastPower;
     }
-
     @Override
-    public void tick() {
-        super.tick();
-        if (world != null && !world.isRemote) {
-            prevPan = getPan();
-            prevTilt = getTilt();
-            prevFocus = getFocus();
-            if (trackingEntity != null) {
-                double distance = Math.sqrt(trackingEntity.getDistanceSq(getPos().getX(), trackingEntity.getPosY(), getPos().getZ()));
-                double height = getPos().getY() - trackingEntity.getPosYEye();
-                double someCalc = height / distance;
-                setTilt(-(int) Math.toDegrees(Math.atan(someCalc)));
-                Direction facing = getBlockState().get(BlockHangable.FACING);
-                double x = getPos().getX() - trackingEntity.getPosX();
-                double z = getPos().getZ() - trackingEntity.getPosZ();
-                double calc = Math.atan2(x, z);
-                int pan = (int) Math.toDegrees(calc);
-                pan = pan - (int) facing.getHorizontalAngle();
-                if (pan < -180) {
-                    pan += 360;
-                } else if (pan > 180) {
-                    pan -= 360;
-                }
-                setPan(pan);
-            }
-            if (power != lastPower) {
-                lastPower = power;
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 11);
-            }
-            if (power > 0) {
-                int energyExtracted = Math.min(power, Math.min(this.maxExtract, this.energyCost));
-                power -= energyExtracted;
-            }
-        }
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return new StringTextComponent("Generic Fixture");
+    public Component getDisplayName() {
+        return new TextComponent("Generic Fixture");
     }
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ContainerGenericFixture(i, getWorld(), getPos());
+    public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player playerEntity) {
+        return new ContainerGenericFixture(i, getLevel(), getBlockPos());
     }
 
     @Override

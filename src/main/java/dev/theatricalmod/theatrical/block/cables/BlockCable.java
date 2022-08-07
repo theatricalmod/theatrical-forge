@@ -4,33 +4,34 @@ import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.tiles.TileEntityCable;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SixWayBlock;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer.Builder;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-public class BlockCable extends SixWayBlock {
+public class BlockCable extends PipeBlock implements EntityBlock {
 
     private final CableType cableType;
 
     public BlockCable(CableType cableType) {
-        super(0.125F, TheatricalBlocks.BASE_PROPERTIES.notSolid());
-        this.setDefaultState(this.stateContainer.getBaseState().with(NORTH, false).with(EAST, false).with(SOUTH, false).with(WEST, false).with(UP, false).with(DOWN, false));
+        super(0.125F, TheatricalBlocks.BASE_PROPERTIES.noOcclusion());
+        this.registerDefaultState(this.stateDefinition.any().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false).setValue(DOWN, false));
         this.cableType = cableType;
     }
 
@@ -39,50 +40,50 @@ public class BlockCable extends SixWayBlock {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 1.0F;
     }
 
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
 
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean causesSuffocation(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return false;
     }
 
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean isNormalCube(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return false;
     }
 
-    public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type) {
+    public boolean canEntitySpawn(BlockState state, BlockGetter worldIn, BlockPos pos, EntityType<?> type) {
         return false;
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult ray, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        return new ItemStack(BlockItem.BLOCK_TO_ITEM.get(this));
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+        return new ItemStack(BlockItem.BY_BLOCK.get(this));
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         boolean flag = canConnect(worldIn, facingPos, facing);
-        return stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), flag);
+        return stateIn.setValue(PROPERTY_BY_DIRECTION.get(facing), flag);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.makeConnections(context.getWorld(), context.getPos());
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.makeConnections(context.getLevel(), context.getClickedPos());
     }
 
-    public BlockState makeConnections(IBlockReader p_196497_1_, BlockPos p_196497_2_) {
-        boolean down = canConnect(p_196497_1_, p_196497_2_.down(), Direction.DOWN);
-        boolean up = canConnect(p_196497_1_, p_196497_2_.up(), Direction.UP);
+    public BlockState makeConnections(BlockGetter p_196497_1_, BlockPos p_196497_2_) {
+        boolean down = canConnect(p_196497_1_, p_196497_2_.below(), Direction.DOWN);
+        boolean up = canConnect(p_196497_1_, p_196497_2_.above(), Direction.UP);
         boolean north = canConnect(p_196497_1_, p_196497_2_.north(), Direction.NORTH);
         boolean east = canConnect(p_196497_1_, p_196497_2_.east(), Direction.EAST);
         boolean south = canConnect(p_196497_1_, p_196497_2_.south(), Direction.SOUTH);
         boolean west = canConnect(p_196497_1_, p_196497_2_.west(), Direction.WEST);
-        return this.getDefaultState().with(DOWN, down).with(UP, up).with(NORTH, north).with(EAST, east).with(SOUTH, south).with(WEST, west);
+        return this.defaultBlockState().setValue(DOWN, down).setValue(UP, up).setValue(NORTH, north).setValue(EAST, east).setValue(SOUTH, south).setValue(WEST, west);
     }
 
     public boolean containsType(CableType[] types){
@@ -94,9 +95,9 @@ public class BlockCable extends SixWayBlock {
         return false;
     }
 
-    public boolean canConnect(IBlockReader blockReader, BlockPos pos, Direction direction){
+    public boolean canConnect(BlockGetter blockReader, BlockPos pos, Direction direction){
         Block block = blockReader.getBlockState(pos).getBlock();
-        TileEntity tileEntity = blockReader.getTileEntity(pos);
+        BlockEntity tileEntity = blockReader.getBlockEntity(pos);
         if(tileEntity instanceof IAcceptsCable){
             return containsType(((IAcceptsCable) tileEntity).getAcceptedCables(direction.getOpposite()));
         }
@@ -104,19 +105,14 @@ public class BlockCable extends SixWayBlock {
     }
 
     @Override
-    protected void fillStateContainer(Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(NORTH, SOUTH, WEST, EAST, UP, DOWN);
     }
 
+    @org.jetbrains.annotations.Nullable
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        TileEntityCable tileEntityCable = new TileEntityCable();
+    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        TileEntityCable tileEntityCable = new TileEntityCable(blockPos, blockState);
         tileEntityCable.setCableType(cableType);
         return tileEntityCable;
     }

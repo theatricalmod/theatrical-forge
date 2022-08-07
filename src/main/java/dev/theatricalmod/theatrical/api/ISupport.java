@@ -1,11 +1,11 @@
 package dev.theatricalmod.theatrical.api;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public interface ISupport {
 
-    float[] getLightTransforms(World world, BlockPos pos, Direction facing);
+    float[] getLightTransforms(Level world, BlockPos pos, Direction facing);
 
 }

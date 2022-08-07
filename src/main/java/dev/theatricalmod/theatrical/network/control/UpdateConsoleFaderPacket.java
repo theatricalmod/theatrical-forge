@@ -1,9 +1,9 @@
 package dev.theatricalmod.theatrical.network.control;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -14,7 +14,7 @@ public class UpdateConsoleFaderPacket {
             this.value = value;
         }
 
-        public UpdateConsoleFaderPacket(PacketBuffer buffer) {
+        public UpdateConsoleFaderPacket(FriendlyByteBuf buffer) {
             int x = buffer.readInt();
             int y = buffer.readInt();
             int z = buffer.readInt();
@@ -31,7 +31,7 @@ public class UpdateConsoleFaderPacket {
             return blockPos;
         }
 
-        public void toBytes(PacketBuffer buf) {
+        public void toBytes(FriendlyByteBuf buf) {
             buf.writeInt(blockPos.getX());
             buf.writeInt(blockPos.getY());
             buf.writeInt(blockPos.getZ());

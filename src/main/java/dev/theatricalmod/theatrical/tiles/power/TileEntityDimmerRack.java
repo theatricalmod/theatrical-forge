@@ -2,22 +2,24 @@ package dev.theatricalmod.theatrical.tiles.power;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
-import dev.theatricalmod.theatrical.api.capabilities.WorldSocapexNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.socapex.SocapexProvider;
+import dev.theatricalmod.theatrical.api.dmx.IDMXReceiver;
+import dev.theatricalmod.theatrical.capability.CapabilityDMXReceiver;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerDimmerRack;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
 import dev.theatricalmod.theatrical.tiles.TileEntityTheatricalBase;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -26,9 +28,30 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityDimmerRack extends TileEntityTheatricalBase implements INamedContainerProvider, ITickableTileEntity, IEnergyStorage, IAcceptsCable{
+public class TileEntityDimmerRack extends TileEntityTheatricalBase implements MenuProvider, IEnergyStorage, IAcceptsCable{
 
-    private final DMXReceiver dmxReceiver;
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityDimmerRack tile = (TileEntityDimmerRack) be;
+        if (level.isClientSide) {
+            return;
+        }
+
+        int totalPower = 0;
+        int[] powerChannels = new int[6];
+        for (int i = 0; i < 6; i++) {
+            int val = tile.dmxReceiver.getChannel(tile.dmxReceiver.getStartPoint() + i) & 0xFF;
+            totalPower += val;
+            powerChannels[i] = val;
+        }
+        if (tile.getEnergyStored() < 1) {
+            return;
+        }
+        tile.socapexProvider.receiveSocapex(powerChannels, false);
+        tile.socapexProvider.updateDevices(level, pos);
+        tile.extractEnergy(totalPower, false);
+    }
+
+    private final IDMXReceiver dmxReceiver;
     private final SocapexProvider socapexProvider;
 
     private int[] channels;
@@ -36,32 +59,33 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
 
     private final int ticks = 0;
 
-    public TileEntityDimmerRack() {
-        super(TheatricalTiles.DIMMER_RACK.get());
-        dmxReceiver = new DMXReceiver(6, 0);
+    public TileEntityDimmerRack(BlockPos blockPos, BlockState blockState) {
+        super(TheatricalTiles.DIMMER_RACK.get(), blockPos, blockState);
+        dmxReceiver = new CapabilityDMXReceiver(6, 0);
         socapexProvider = new SocapexProvider();
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new StringTextComponent("Dimmer Rack");
+    public Component getDisplayName() {
+        return new TextComponent("Dimmer Rack");
     }
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-        return new ContainerDimmerRack(i, world, getPos());
+    public AbstractContainerMenu createMenu(int i, Inventory p_createMenu_2_, Player p_createMenu_3_) {
+        return new ContainerDimmerRack(i, level, getBlockPos());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == DMXReceiver.CAP) {
-            return DMXReceiver.CAP.orEmpty(cap, LazyOptional.of(() -> dmxReceiver));
-        }
-        if (cap == SocapexProvider.CAP) {
-            return SocapexProvider.CAP.orEmpty(cap, LazyOptional.of(() -> socapexProvider));
-        }
+        //TODO : fix Caps
+//        if (cap == DMXReceiver.CAP) {
+//            return DMXReceiver.CAP.orEmpty(cap, LazyOptional.of(() -> dmxReceiver));
+//        }
+//        if (cap == SocapexProvider.CAP) {
+//            return SocapexProvider.CAP.orEmpty(cap, LazyOptional.of(() -> socapexProvider));
+//        }
         if (cap == CapabilityEnergy.ENERGY) {
             return CapabilityEnergy.ENERGY.orEmpty(cap, LazyOptional.of(() -> this));
         }
@@ -69,7 +93,7 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
     }
 
     @Override
-    public void readNBT(CompoundNBT compound) {
+    public void readNBT(CompoundTag compound) {
         dmxReceiver.setDMXStartPoint(compound.getInt("dmxStart"));
         if (compound.contains("provider")) {
             socapexProvider.deserializeNBT(compound.getCompound("provider"));
@@ -77,9 +101,9 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
     }
 
     @Override
-    public CompoundNBT getNBT(CompoundNBT compound) {
+    public CompoundTag getNBT(CompoundTag compound) {
         if(compound == null){
-            compound = new CompoundNBT();
+            compound = new CompoundTag();
         }
         compound.putInt("dmxStart", dmxReceiver.getStartPoint());
         compound.put("provider", socapexProvider.serializeNBT());
@@ -92,42 +116,21 @@ public class TileEntityDimmerRack extends TileEntityTheatricalBase implements IN
     }
 
     @Override
-    public void remove() {
-        if (hasWorld()) {
-            getWorld().getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
-            getWorld().getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.setRefresh(true));
+    public void setRemoved() {
+        if (hasLevel()) {
+//            getLevel().getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+//            getLevel().getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.setRefresh(true));
         }
-        super.remove();
+        super.setRemoved();
     }
 
     @Override
-    public void validate() {
-        if (hasWorld()) {
-            getWorld().getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
-            getWorld().getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.setRefresh(true));
+    public void clearRemoved() {
+        if (hasLevel()) {
+//            getLevel().getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+//            getLevel().getCapability(WorldSocapexNetwork.CAP).ifPresent(worldSocapexNetwork -> worldSocapexNetwork.setRefresh(true));
         }
-        super.validate();
-    }
-
-    @Override
-    public void tick() {
-        if (world.isRemote) {
-            return;
-        }
-
-        int totalPower = 0;
-        int[] powerChannels = new int[6];
-        for (int i = 0; i < 6; i++) {
-            int val = dmxReceiver.getChannel(dmxReceiver.getStartPoint() + i) & 0xFF;
-            totalPower += val;
-            powerChannels[i] = val;
-        }
-        if (getEnergyStored() < 1) {
-            return;
-        }
-        socapexProvider.receiveSocapex(powerChannels, false);
-        socapexProvider.updateDevices(world, pos);
-        extractEnergy(totalPower, false);
+        super.clearRemoved();
     }
 
     @Override

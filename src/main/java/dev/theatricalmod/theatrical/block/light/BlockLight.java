@@ -3,22 +3,26 @@ package dev.theatricalmod.theatrical.block.light;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.block.BlockHangable;
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityFixture;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockLight extends BlockHangable {
+public class BlockLight extends BlockHangable implements EntityBlock {
 
     protected final Fixture fixture;
 
@@ -29,46 +33,47 @@ public class BlockLight extends BlockHangable {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader p_190948_2_, List<ITextComponent> tooltips, ITooltipFlag advanced) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter p_190948_2_, List<Component> tooltips, TooltipFlag advanced) {
         if(fixture != null && advanced.isAdvanced()) {
             String[] channels = fixture.getChannelsDefinition().toString().split("#");
             for(String channel : channels) {
-                tooltips.add(new StringTextComponent(channel));
+                tooltips.add(new TextComponent(channel));
             }
         }
-        super.addInformation(stack, p_190948_2_, tooltips, advanced);
+        super.appendHoverText(stack, p_190948_2_, tooltips, advanced);
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        TileEntityFixture tileEntityFixture = this.fixture.getFixtureType().getTileClass().get();
-        tileEntityFixture.setFixture(fixture);
-        return tileEntityFixture;
-    }
-
-    @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos) {
         return 1.0F;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
 
     public Fixture getFixture() {
         return fixture;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        TileEntityFixture tileEntityFixture = this.fixture.getFixtureType().getBlockEntitySupplier().create(blockPos, blockState);
+        tileEntityFixture.setFixture(fixture);
+        return tileEntityFixture;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
+        return (BlockEntityTicker<T>) this.fixture.getFixtureType().getBlockEntityTicker();
     }
 }

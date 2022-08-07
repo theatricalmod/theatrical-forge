@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'com.wynprice.cursemaven:CurseMaven:1.2.+'
     }
 }
@@ -22,18 +22,19 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.wynprice.cursemaven'
 apply plugin: 'java'
 apply plugin: 'idea'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "${mod_version}"
 group = 'dev.imabad.theatrical'
 archivesBaseName = "Theatrical-${minecraft_version}"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 repositories {
     maven { url 'https://squiddev.cc/maven/' }
     maven { url 'https://repo.spongepowered.org/maven' }
     maven { // TOP
-        name 'tterrag maven'
-        url "http://maven.tterrag.com/"
+        name 'k-4u'
+        url "https://maven.k-4u.nl/"
     }
     maven {
         name 'BGC Maven'
@@ -56,8 +57,16 @@ sourceSets {
     }
 }
 
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+
 minecraft {
-    mappings channel: 'snapshot', version: "${mappings_version}"
+    mappings channel: 'official', version: "${mappings_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
@@ -88,16 +97,25 @@ minecraft {
         }
     }
 }
+configurations {
+    library
+    implementation.extendsFrom library
+}
 
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    shade files("libs/artnet4j-0.6.1.jar")
-    runtimeOnly fg.deobf(curse.resolve('powah', '3187611'))
-    runtimeOnly fg.deobf(curse.resolve('lollipop', '3187610'))
-    implementation fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-    compile fg.deobf("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}")
-    compile fg.deobf("xyz.brassgoggledcoders:PatchouliProvider:1.16.4-1.0.2-Snapshot.3")
+    library files("libs/artnet4j-0.6.1.jar")
+    implementation fg.deobf("mcjty.theoneprobe:theoneprobe:${top_version}") {
+        transitive = false
+    }
+    implementation fg.deobf("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}")
+    implementation fg.deobf("xyz.brassgoggledcoders:PatchouliProvider:1.18.2-1.0.6-Snapshot.2")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

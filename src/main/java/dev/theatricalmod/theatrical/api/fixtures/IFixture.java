@@ -1,6 +1,6 @@
 package dev.theatricalmod.theatrical.api.fixtures;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public interface IFixture {
 

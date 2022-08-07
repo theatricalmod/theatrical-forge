@@ -3,22 +3,26 @@ package dev.theatricalmod.theatrical.tiles.lights;
 import dev.theatricalmod.theatrical.TheatricalConfigHandler;
 import dev.theatricalmod.theatrical.api.ChannelType;
 import dev.theatricalmod.theatrical.api.capabilities.TheatricalEnergyStorage;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.fixtures.Fixture;
 import dev.theatricalmod.theatrical.api.fixtures.IRGB;
 import dev.theatricalmod.theatrical.block.light.BlockIntelligentFixture;
 import dev.theatricalmod.theatrical.block.light.BlockMovingLight;
+import dev.theatricalmod.theatrical.capability.TheatricalCapabilities;
 import dev.theatricalmod.theatrical.client.gui.container.ContainerIntelligentFixture;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -26,12 +30,26 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, INamedContainerProvider {
-
+public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor implements IRGB, MenuProvider {
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityIntelligentFixture tile = (TileEntityIntelligentFixture) be;
+        if(tile.getFixture() == null){
+            return;
+        }
+        if(tile.isPowered()){
+            if(TheatricalConfigHandler.COMMON.consumePower.get()) {
+                tile.energyStorage.extractEnergy(tile.getFixture().getEnergyUse(), false);
+            }
+            TileEntityFixture.tick(level, pos, state, be);
+        }
+        tile.prevPan = tile.getPan();
+        tile.prevTilt = tile.getTilt();
+        tile.prevFocus = tile.getFocus();
+    }
     private final TheatricalEnergyStorage energyStorage;
 
-    public TileEntityIntelligentFixture() {
-        super(TheatricalTiles.MOVING_LIGHT.get());
+    public TileEntityIntelligentFixture(BlockPos blockPos, BlockState blockState) {
+        super(TheatricalTiles.MOVING_LIGHT.get(), blockPos, blockState);
         this.energyStorage = new TheatricalEnergyStorage(2000, 2000);
     }
 
@@ -44,16 +62,16 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     @Override
-    public CompoundNBT getNBT(@Nullable CompoundNBT compoundNBT) {
+    public CompoundTag getNBT(@Nullable CompoundTag compoundNBT) {
         if(compoundNBT == null){
-            compoundNBT = new CompoundNBT();
+            compoundNBT = new CompoundTag();
         }
         compoundNBT.put("energy", energyStorage.serializeNBT());
         return super.getNBT(compoundNBT);
     }
 
     @Override
-    public void readNBT(CompoundNBT compoundNBT) {
+    public void readNBT(CompoundTag compoundNBT) {
         super.readNBT(compoundNBT);
         if(compoundNBT.contains("energy")){
             this.energyStorage.deserializeNBT(compoundNBT.getCompound("energy"));
@@ -85,7 +103,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     @Override
     public boolean isUpsideDown() {
-        return this.getBlockState().get(BlockIntelligentFixture.HANGING);
+        return this.getBlockState().getValue(BlockIntelligentFixture.HANGING);
     }
 
     @Override
@@ -109,21 +127,21 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
 
     public int getRed() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()) {
-            return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.RED)))).orElse(0);
+            return getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.RED)))).orElse(0);
         }
         return 0;
     }
 
     public int getGreen() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()){
-            return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.GREEN)))).orElse(0);
+            return getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.GREEN)))).orElse(0);
         }
         return 0;
     }
 
     public int getBlue() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()) {
-            return getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.BLUE)))).orElse(0);
+            return getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> convertByteToInt(idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.BLUE)))).orElse(0);
         }
         return 0;
     }
@@ -131,7 +149,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public int getPan() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null && isPowered()) {
-            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F);
+            return (int) ((convertByteToInt(getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.PAN))).orElse((byte) prevPan)) * 360) / 255F);
         }
         return prevPan;
     }
@@ -139,7 +157,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public int getTilt() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null && isPowered()) {
-            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.TILT))).orElse((byte) prevTilt)) * 180) / 255F) - 90;
+            return (int) ((convertByteToInt(getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.TILT))).orElse((byte) prevTilt)) * 180) / 255F) - 90;
         }
         return prevTilt;
     }
@@ -147,7 +165,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public int getFocus() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null) {
-            return (int) ((convertByteToInt(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.FOCUS))).orElse((byte) prevTilt)) * 50) / 255F);
+            return (int) ((convertByteToInt(getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.FOCUS))).orElse((byte) prevTilt)) * 50) / 255F);
         }
         return prevFocus;
     }
@@ -155,7 +173,7 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     @Override
     public float getIntensity() {
         if (getFixture() != null && getFixture().getChannelsDefinition() != null  && isPowered()){
-            return convertByte(getCapability(DMXReceiver.CAP, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.INTENSITY))).orElse((byte) 0));
+            return convertByte(getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, Direction.SOUTH).map(idmxReceiver1 -> idmxReceiver1.getChannel(getFixture().getChannelsDefinition().getChannel(ChannelType.INTENSITY))).orElse((byte) 0));
         }
         return 0;
     }
@@ -182,39 +200,23 @@ public class TileEntityIntelligentFixture extends TileEntityFixtureDMXAcceptor i
     }
 
     @Override
-    public void tick() {
-        if(getFixture() == null){
-            return;
-        }
-        if(isPowered()){
-            if(TheatricalConfigHandler.COMMON.consumePower.get()) {
-                energyStorage.extractEnergy(getFixture().getEnergyUse(), false);
-            }
-            super.tick();
-        }
-        prevPan = getPan();
-        prevTilt = getTilt();
-        prevFocus = getFocus();
-    }
-
-    @Override
     public float getRayTraceRotation() {
         if (getFixture() != null) {
-            return this.getBlockState().get(BlockIntelligentFixture.HANGING) ? 0 : getFixture().getRayTraceRotation();
+            return this.getBlockState().getValue(BlockIntelligentFixture.HANGING) ? 0 : getFixture().getRayTraceRotation();
         }
         return 0;
     }
 
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new StringTextComponent("Intelligent Fixture");
+    public Component getDisplayName() {
+        return new TextComponent("Intelligent Fixture");
     }
 
     @Nullable
     @Override
-    public Container createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ContainerIntelligentFixture(i, getWorld(), getPos());
+    public AbstractContainerMenu createMenu(int i, Inventory playerInventory, Player playerEntity) {
+        return new ContainerIntelligentFixture(i, getLevel(), getBlockPos());
     }
 
     @Nonnull

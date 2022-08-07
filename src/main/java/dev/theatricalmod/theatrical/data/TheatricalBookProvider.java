@@ -6,9 +6,9 @@ import dev.theatricalmod.theatrical.block.TheatricalBlocks;
 import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import xyz.brassgoggledcoders.patchouliprovider.BookBuilder;
 import xyz.brassgoggledcoders.patchouliprovider.CategoryBuilder;
 import xyz.brassgoggledcoders.patchouliprovider.PatchouliBookProvider;
@@ -28,7 +28,7 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
     protected void addBooks(Consumer<BookBuilder> consumer) {
 
         final BookBuilder builder = createBookBuilder("theatrical", NAME_KEY, DESC_KEY);
-        builder.setCreativeTab(TheatricalMod.theatricalItemGroup.getPath());
+        builder.setCreativeTab(TheatricalMod.theatricalItemGroup.getRecipeFolderName());
         builder.setShowProgress(false);
         builder.setVersion("1");
         builder.setModel(TheatricalMod.MOD_ID + ":guide");
@@ -49,7 +49,7 @@ public class TheatricalBookProvider extends PatchouliBookProvider {
                 .addCraftingPage(modLoc("generic_light")).setRecipe2(modLoc("bulb"));
         lightingCategory.addEntry("intels", "Intelligent Lighting", new ItemStack(TheatricalItems.MOVING_LIGHT.get()))
                 .addSimpleTextPage("Intelligent Lighting presents a lot more options than generic lighting. DMX and hot power should connected directly to this fixture, and it has 7 channels of control.")
-                .addSimpleTextPage(Fixture.getRegistry().getValue(MovingLightFixture.ID).getChannelsDefinition().toString().replace("#", "$(li)"))
+                .addSimpleTextPage(Fixture.getRegistry().get().getValue(MovingLightFixture.ID).getChannelsDefinition().toString().replace("#", "$(li)"))
                 .addCraftingPage(modLoc("moving_light")).setRecipe2(modLoc("led"))
                 .build().addCraftingPage(modLoc("motor")).setRecipe2(modLoc("cog"));
         lightingCategory.addEntry("control", "Command and Control", new ItemStack(TheatricalItems.BASIC_LIGHTING_DESK.get()))

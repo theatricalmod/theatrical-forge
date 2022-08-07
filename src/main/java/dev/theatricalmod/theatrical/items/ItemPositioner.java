@@ -1,16 +1,16 @@
 package dev.theatricalmod.theatrical.items;
 
 import dev.theatricalmod.theatrical.tiles.lights.TileEntityGenericFixture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ItemPositioner extends Item {
 
@@ -20,21 +20,21 @@ public class ItemPositioner extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        if(!worldIn.isRemote) {
-            if (playerIn.isSneaking()) {
-                CompoundNBT lightTag = playerIn.getHeldItem(handIn).getChildTag("light");
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        if(!worldIn.isClientSide) {
+            if (playerIn.isShiftKeyDown()) {
+                CompoundTag lightTag = playerIn.getItemInHand(handIn).getTagElement("light");
                 if (lightTag != null) {
-                    BlockPos lightPos = NBTUtil.readBlockPos(lightTag);
-                    TileEntity tile = worldIn.getTileEntity(lightPos);
+                    BlockPos lightPos = NbtUtils.readBlockPos(lightTag);
+                    BlockEntity tile = worldIn.getBlockEntity(lightPos);
                     if (tile instanceof TileEntityGenericFixture) {
                         TileEntityGenericFixture tileEntityGenericFixture = (TileEntityGenericFixture) tile;
                         tileEntityGenericFixture.setTrackingEntity(null);
-                        playerIn.getHeldItem(handIn).removeChildTag("light");
+                        playerIn.getItemInHand(handIn).removeTagKey("light");
                     }
                 }
             }
         }
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+        return super.use(worldIn, playerIn, handIn);
     }
 }

@@ -2,19 +2,18 @@ package dev.theatricalmod.theatrical.tiles.power;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.provider.DMXProvider;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
 import dev.theatricalmod.theatrical.api.capabilities.power.ITheatricalPowerStorage;
 import dev.theatricalmod.theatrical.api.capabilities.power.TheatricalPower;
+import dev.theatricalmod.theatrical.capability.TheatricalCapabilities;
 import dev.theatricalmod.theatrical.tiles.TheatricalTiles;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -24,10 +23,23 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TileEntityDimmedPowerCable extends TileEntity implements ITheatricalPowerStorage, ITickableTileEntity {
+public class TileEntityDimmedPowerCable extends BlockEntity implements ITheatricalPowerStorage {
 
-    public TileEntityDimmedPowerCable() {
-        super(TheatricalTiles.DIMMED_POWER_CABLE.get());
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T be) {
+        TileEntityDimmedPowerCable tile = (TileEntityDimmedPowerCable) be;
+        if (level.isClientSide) {
+            return;
+        }
+        tile.ticksSinceLastSend++;
+        if (tile.ticksSinceLastSend >= 10) {
+            tile.sendingFace.clear();
+            tile.ticksSinceLastSend = 0;
+        }
+
+        tile.doEnergyTransfer();
+    }
+    public TileEntityDimmedPowerCable(BlockPos pos, BlockState state) {
+        super(TheatricalTiles.DIMMED_POWER_CABLE.get(), pos, state);
     }
 
     public int power = 0;
@@ -38,40 +50,40 @@ public class TileEntityDimmedPowerCable extends TileEntity implements ITheatrica
     private final ArrayList<Direction> sendingFace = new ArrayList<Direction>();
 
 
-    public CompoundNBT writeNBT(CompoundNBT nbtTagCompound) {
+    public CompoundTag writeNBT(CompoundTag nbtTagCompound) {
         return nbtTagCompound;
     }
 
-    public void readNBT(CompoundNBT nbt) {
+    public void readNBT(CompoundTag nbt) {
         if (nbt.contains("power")) {
             power = nbt.getInt("power");
         }
     }
 
     @Override
-    public void deserializeNBT(BlockState state, CompoundNBT nbt) {
-        super.deserializeNBT(state, nbt);
+    public void deserializeNBT(CompoundTag nbt) {
+        super.deserializeNBT(nbt);
         readNBT(nbt);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        return super.write(writeNBT(compound));
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(writeNBT(tag));
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        CompoundNBT tag = pkt.getNbtCompound();
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        CompoundTag tag = pkt.getTag();
         readNBT(tag);
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+    public void handleUpdateTag(CompoundTag tag) {
         readNBT(tag);
     }
 
     public boolean isConnected(Direction direction) {
-        TileEntity tileEntity = world.getTileEntity(pos.offset(direction));
+        BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(direction));
         if (tileEntity == null) {
             return false;
         }
@@ -86,8 +98,9 @@ public class TileEntityDimmedPowerCable extends TileEntity implements ITheatrica
                 return true;
             }
         }
-        return tileEntity.getCapability(DMXReceiver.CAP, direction.getOpposite()).isPresent() || tileEntity.getCapability(
-            DMXProvider.CAP, direction.getOpposite()).isPresent();
+        //TODO: don't use this, it's not a DMX cable?!
+        return tileEntity.getCapability(TheatricalCapabilities.CAPABILITY_DMX_RECEIVER, direction.getOpposite()).isPresent() || tileEntity.getCapability(
+            TheatricalCapabilities.CAPABILITY_DMX_PROVIDER, direction.getOpposite()).isPresent();
     }
 
     public boolean canAcceptPower(IAcceptsCable cable, Direction side){
@@ -169,8 +182,8 @@ public class TileEntityDimmedPowerCable extends TileEntity implements ITheatrica
         }
         ArrayList<ITheatricalPowerStorage> acceptors = new ArrayList<>();
         for (Direction face : Direction.values()) {
-            BlockPos newPos = pos.offset(face);
-            TileEntity tile = world.getTileEntity(newPos);
+            BlockPos newPos = worldPosition.relative(face);
+            BlockEntity tile = level.getBlockEntity(newPos);
             if (tile == null) {
                 continue;
             }else if (tile instanceof TileEntityDimmedPowerCable) {
@@ -198,20 +211,6 @@ public class TileEntityDimmedPowerCable extends TileEntity implements ITheatrica
                 }
             }
         }
-    }
-
-    @Override
-    public void tick() {
-        if (world.isRemote) {
-            return;
-        }
-        ticksSinceLastSend++;
-        if (ticksSinceLastSend >= 10) {
-            sendingFace.clear();
-            ticksSinceLastSend = 0;
-        }
-
-        doEnergyTransfer();
     }
 
 }

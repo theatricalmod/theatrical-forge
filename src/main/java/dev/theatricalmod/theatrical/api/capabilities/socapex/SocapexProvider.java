@@ -2,15 +2,13 @@ package dev.theatricalmod.theatrical.api.capabilities.socapex;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.block.cables.BlockCable;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
@@ -18,31 +16,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class SocapexProvider implements ISocapexProvider, INBTSerializable<CompoundNBT> {
+public class SocapexProvider implements ISocapexProvider, INBTSerializable<CompoundTag> {
 
     public static final String[] IDENTIFIERS = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-
-    @CapabilityInject(ISocapexProvider.class)
-    public static Capability<ISocapexProvider> CAP;
 
     private int lastIdentifier = -1;
     private HashMap<Direction, BlockPos> devices = null;
     private final int[] channels = new int[6];
     private final HashMap<Integer, SocapexPatch[]> patch = new HashMap<>();
 
-    public void addToList(HashMap<Direction, BlockPos> scanned, World world, BlockPos pos, Direction facing, Direction connectionSide, HashSet<BlockPos> scannedCable) {
+    public void addToList(HashMap<Direction, BlockPos> scanned, Level world, BlockPos pos, Direction facing, Direction connectionSide, HashSet<BlockPos> scannedCable) {
         BlockState blockState = world.getBlockState(pos);
         if (blockState.getBlock() instanceof BlockCable && ((BlockCable) blockState.getBlock()).getCableType() == CableType.SOCAPEX) {
             scannedCable.add(pos);
             for (Direction direction : Direction.values()) {
                 if(direction != facing) {
-                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.offset(direction))) {
-                        addToList(scanned, world, pos.offset(direction), direction.getOpposite(), connectionSide, scannedCable);
+                    if (((BlockCable) blockState.getBlock()).canConnect(world, pos, direction) && !scannedCable.contains(pos.relative(direction))) {
+                        addToList(scanned, world, pos.relative(direction), direction.getOpposite(), connectionSide, scannedCable);
                     }
                 }
             }
         } else {
-            TileEntity tileEntity = world.getTileEntity(pos);
+            BlockEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity != null && (tileEntity.getCapability(SocapexReceiver.CAP, facing).isPresent())) {
                 if (!scanned.containsKey(connectionSide)) {
                     scanned.put(connectionSide, pos);
@@ -52,16 +47,16 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
     }
 
     @Override
-    public void updateDevices(World world, BlockPos controllerPos) {
+    public void updateDevices(Level world, BlockPos controllerPos) {
         if (devices == null) {
-            if (world.isRemote) {
+            if (world.isClientSide) {
                 devices = new HashMap<>();
                 return;
             }
             HashMap<Direction, BlockPos> receivers = new HashMap<>();
             HashSet<BlockPos> scannedCable = new HashSet<>();
             for (Direction facing : Direction.values()) {
-                addToList(receivers, world, controllerPos.offset(facing), facing.getOpposite(), facing, scannedCable);
+                addToList(receivers, world, controllerPos.relative(facing), facing.getOpposite(), facing, scannedCable);
             }
             scannedCable.clear();
             devices = new HashMap<>(receivers);
@@ -72,9 +67,9 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
             if (blockState.getBlock() instanceof BlockCable) {
                 continue;
             }
-            TileEntity tile = world.getTileEntity(provider);
+            BlockEntity tile = world.getBlockEntity(provider);
             if (tile != null) {
-               tile.getCapability(SocapexReceiver.CAP, blockState.get(BlockStateProperties.FACING)).ifPresent(iSocapexReceiver1 -> {
+               tile.getCapability(SocapexReceiver.CAP, blockState.getValue(BlockStateProperties.FACING)).ifPresent(iSocapexReceiver1 -> {
                     if (hasPatch(iSocapexReceiver1)) {
                         int[] drain = iSocapexReceiver1.receiveSocapex(getChannelsForReceiver(iSocapexReceiver1), false);
                         extractSocapex(drain, false);
@@ -221,17 +216,17 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
 
     @Override
     public String getIdentifier(BlockPos pos) {
-        return devices.containsValue(pos) ? devices.entrySet().stream().filter(directionBlockPosEntry -> directionBlockPosEntry.getValue().equals(pos)).findFirst().get().getKey().getString() : "";
+        return devices.containsValue(pos) ? devices.entrySet().stream().filter(directionBlockPosEntry -> directionBlockPosEntry.getValue().equals(pos)).findFirst().get().getKey().getSerializedName() : "";
     }
 
     @Override
-    public List<ISocapexReceiver> getDevices(World world, BlockPos controller) {
+    public List<ISocapexReceiver> getDevices(Level world, BlockPos controller) {
         List<ISocapexReceiver> receivers = new ArrayList<>();
-        if (world.isRemote || devices == null) {
+        if (world.isClientSide || devices == null) {
             HashMap<Direction, BlockPos> blockPos = new HashMap<>();
             HashSet<BlockPos> scannedCable = new HashSet<>();
             for (Direction facing : Direction.values()) {
-                addToList(blockPos, world, controller.offset(facing), facing.getOpposite(), facing, scannedCable);
+                addToList(blockPos, world, controller.relative(facing), facing.getOpposite(), facing, scannedCable);
             }
             scannedCable.clear();
             devices = new HashMap<>(blockPos);
@@ -239,22 +234,22 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
         }
         for (Direction direction : devices.keySet()) {
             BlockPos pos = devices.get(direction);
-            TileEntity tileEntity = world.getTileEntity(pos);
+            BlockEntity tileEntity = world.getBlockEntity(pos);
             if (tileEntity != null) {
-                tileEntity.getCapability(SocapexReceiver.CAP, world.getBlockState(pos).get(BlockStateProperties.FACING)).ifPresent(receivers::add);
+                tileEntity.getCapability(SocapexReceiver.CAP, world.getBlockState(pos).getValue(BlockStateProperties.FACING)).ifPresent(receivers::add);
             }
         }
         return receivers;
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbtTagCompound = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbtTagCompound = new CompoundTag();
         nbtTagCompound.putInt("lastIdentifier", lastIdentifier);
-        CompoundNBT patchTag = new CompoundNBT();
+        CompoundTag patchTag = new CompoundTag();
         for (Integer i : patch.keySet()) {
             if (patch.get(i) != null) {
-                CompoundNBT tagCompound = new CompoundNBT();
+                CompoundTag tagCompound = new CompoundTag();
                 if(patch.get(i)[0] != null){
                     tagCompound.put("socket_0", patch.get(i)[0].serialize());
                 }
@@ -269,16 +264,16 @@ public class SocapexProvider implements ISocapexProvider, INBTSerializable<Compo
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("lastIdentifier")) {
             lastIdentifier = nbt.getInt("lastIdentifier");
         }
         if (nbt.contains("patch")) {
             patch.clear();
-            CompoundNBT patchTag = nbt.getCompound("patch");
+            CompoundTag patchTag = nbt.getCompound("patch");
             for (int i = 0; i < 6; i++) {
                 if (patchTag.contains("patch_" + i)) {
-                    CompoundNBT patchTag1 = patchTag.getCompound("patch_" + i);
+                    CompoundTag patchTag1 = patchTag.getCompound("patch_" + i);
                     SocapexPatch[] patches = new SocapexPatch[2];
                     for (int x = 0; x < 2; x++) {
                         if (patchTag1.contains("socket_" + x)) {

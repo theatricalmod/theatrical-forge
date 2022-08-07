@@ -2,14 +2,14 @@ package dev.theatricalmod.theatrical.tiles.lights;
 
 import dev.theatricalmod.theatrical.api.CableType;
 import dev.theatricalmod.theatrical.api.IAcceptsCable;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.WorldDMXNetwork;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.DMXReceiver;
-import dev.theatricalmod.theatrical.api.capabilities.dmx.receiver.IDMXReceiver;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import dev.theatricalmod.theatrical.api.dmx.IDMXReceiver;
+import dev.theatricalmod.theatrical.capability.CapabilityDMXReceiver;
+import dev.theatricalmod.theatrical.capability.TheatricalCapabilities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -20,21 +20,21 @@ public abstract class TileEntityFixtureDMXAcceptor extends TileEntityFixture imp
 
     private final IDMXReceiver idmxReceiver;
 
-    public TileEntityFixtureDMXAcceptor(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
-        this.idmxReceiver = new DMXReceiver(0, 0);
+    public TileEntityFixtureDMXAcceptor(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
+        super(blockEntityType, blockPos, blockState);
+        this.idmxReceiver = new CapabilityDMXReceiver(0, 0);
     }
 
     @Override
-    public CompoundNBT getNBT(@Nullable CompoundNBT compoundNBT) {
-        CompoundNBT tag = super.getNBT(compoundNBT);
+    public CompoundTag getNBT(@Nullable CompoundTag compoundNBT) {
+        CompoundTag tag = super.getNBT(compoundNBT);
         tag.putInt("channelCount", idmxReceiver.getChannelCount());
         tag.putInt("channelStartPoint", idmxReceiver.getStartPoint());
         return tag;
     }
 
     @Override
-    public void readNBT(CompoundNBT compoundNBT) {
+    public void readNBT(CompoundTag compoundNBT) {
         super.readNBT(compoundNBT);
         idmxReceiver.setChannelCount(compoundNBT.getInt("channelCount"));
         idmxReceiver.setDMXStartPoint(compoundNBT.getInt("channelStartPoint"));
@@ -43,26 +43,19 @@ public abstract class TileEntityFixtureDMXAcceptor extends TileEntityFixture imp
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == DMXReceiver.CAP) {
+        if (cap == TheatricalCapabilities.CAPABILITY_DMX_PROVIDER) {
             return LazyOptional.of(() -> (T) idmxReceiver);
         }
         return super.getCapability(cap, side);
     }
 
     @Override
-    public void remove() {
-        if (hasWorld()) {
-            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
+    public void setRemoved() {
+        if (hasLevel()) {
+            //TODO: DMX network
+//            level.getCapability(WorldDMXNetwork).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
         }
-        super.remove();
-    }
-
-    @Override
-    public void setWorldAndPos(World p_226984_1_, BlockPos p_226984_2_) {
-        super.setWorldAndPos(p_226984_1_, p_226984_2_);
-        if (hasWorld()) {
-            world.getCapability(WorldDMXNetwork.CAP).ifPresent(worldDMXNetwork -> worldDMXNetwork.setRefresh(true));
-        }
+        super.setRemoved();
     }
 
     @Override

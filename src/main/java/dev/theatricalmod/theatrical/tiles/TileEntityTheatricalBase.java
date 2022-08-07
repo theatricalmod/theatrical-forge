@@ -1,65 +1,67 @@
 package dev.theatricalmod.theatrical.tiles;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
-public class TileEntityTheatricalBase extends TileEntity {
+public class TileEntityTheatricalBase extends BlockEntity {
 
-    public TileEntityTheatricalBase(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public TileEntityTheatricalBase(BlockEntityType<?> tileEntityTypeIn, BlockPos blockPos, BlockState blockState) {
+        super(tileEntityTypeIn, blockPos, blockState);
     }
 
-    public void readNBT(CompoundNBT nbt){}
+    public void readNBT(CompoundTag nbt){}
 
-    public CompoundNBT getNBT(CompoundNBT nbt){
+    public CompoundTag getNBT(CompoundTag nbt){
         if(nbt == null){
-            return new CompoundNBT();
+            return new CompoundTag();
         }
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound) {
+    public void deserializeNBT(CompoundTag compound) {
         readNBT(compound);
         super.deserializeNBT(compound);
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
+    public void load(CompoundTag nbt) {
         readNBT(nbt);
-        super.read(state, nbt);
+        super.load(nbt);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        return super.write(getNBT(compound));
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(getNBT(tag));
     }
+
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(pos, 0, getNBT(null));
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundNBT getUpdateTag() {
+    public CompoundTag getUpdateTag() {
         return getNBT(super.getUpdateTag());
     }
 
     @Override
-    public void handleUpdateTag(BlockState blockState, CompoundNBT tag) {
-        super.handleUpdateTag(blockState, tag);
+    public void handleUpdateTag(CompoundTag tag) {
+        super.handleUpdateTag(tag);
         readNBT(tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        readNBT(pkt.getNbtCompound());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        readNBT(pkt.getTag());
     }
 }

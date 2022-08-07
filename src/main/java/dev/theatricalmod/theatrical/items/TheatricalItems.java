@@ -2,15 +2,15 @@ package dev.theatricalmod.theatrical.items;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.block.TheatricalBlocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class TheatricalItems {
 
-    private static final Item.Properties BASE_PROPERTIES = new Item.Properties().group(TheatricalMod.theatricalItemGroup);
+    private static final Item.Properties BASE_PROPERTIES = new Item.Properties().tab(TheatricalMod.theatricalItemGroup);
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TheatricalMod.MOD_ID);
 

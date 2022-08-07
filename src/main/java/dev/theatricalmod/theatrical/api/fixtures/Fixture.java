@@ -2,27 +2,27 @@ package dev.theatricalmod.theatrical.api.fixtures;
 
 import dev.theatricalmod.theatrical.TheatricalMod;
 import dev.theatricalmod.theatrical.api.ChannelsDefinition;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent.Register;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.*;
+
+import java.util.function.Supplier;
 
 public class Fixture extends ForgeRegistryEntry<Fixture> {
 
-    private static ForgeRegistry<Fixture> REGISTRY;
+    private static Supplier<IForgeRegistry<Fixture>> REGISTRY;
 
-    public static void createRegistry() {
+    public static void createRegistry(NewRegistryEvent newRegistryEvent) {
         if (REGISTRY == null) {
             ResourceLocation registryName = new ResourceLocation(TheatricalMod.MOD_ID, "fixtures");
-            REGISTRY = (ForgeRegistry<Fixture>) new RegistryBuilder<Fixture>().setType(Fixture.class).setName(registryName).create();
-            MinecraftForge.EVENT_BUS.post(new Register<>(registryName, REGISTRY));
+            REGISTRY = newRegistryEvent.create(new RegistryBuilder<Fixture>().setType(Fixture.class).setName(registryName));
+//            MinecraftForge.EVENT_BUS.post(new Register<>(registryName, REGISTRY));
         }
     }
 
-    public static ForgeRegistry<Fixture> getRegistry() {
+    public static Supplier<IForgeRegistry<Fixture>> getRegistry() {
         return REGISTRY;
     }
 
@@ -47,10 +47,10 @@ public class Fixture extends ForgeRegistryEntry<Fixture> {
     private final int channelCount;
     private final ChannelsDefinition channelsDefinition;
 
-    private IBakedModel staticModel;
-    private IBakedModel hookedModel;
-    private IBakedModel tiltModel;
-    private IBakedModel panModel;
+    private BakedModel staticModel;
+    private BakedModel hookedModel;
+    private BakedModel tiltModel;
+    private BakedModel panModel;
 
     /**
      * An instance of a fixture
@@ -145,35 +145,35 @@ public class Fixture extends ForgeRegistryEntry<Fixture> {
         return fixtureType;
     }
 
-    public IBakedModel getStaticModel() {
+    public BakedModel getStaticModel() {
         return staticModel;
     }
 
-    public void setStaticModel(IBakedModel staticModel) {
+    public void setStaticModel(BakedModel staticModel) {
         this.staticModel = staticModel;
     }
 
-    public IBakedModel getTiltModel() {
+    public BakedModel getTiltModel() {
         return tiltModel;
     }
 
-    public void setTiltModel(IBakedModel tiltModel) {
+    public void setTiltModel(BakedModel tiltModel) {
         this.tiltModel = tiltModel;
     }
 
-    public IBakedModel getPanModel() {
+    public BakedModel getPanModel() {
         return panModel;
     }
 
-    public void setPanModel(IBakedModel panModel) {
+    public void setPanModel(BakedModel panModel) {
         this.panModel = panModel;
     }
 
-    public IBakedModel getHookedModel() {
+    public BakedModel getHookedModel() {
         return hookedModel;
     }
 
-    public void setHookedModel(IBakedModel hookedModel) {
+    public void setHookedModel(BakedModel hookedModel) {
         this.hookedModel = hookedModel;
     }
 
