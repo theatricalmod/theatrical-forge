@@ -26,6 +26,7 @@ public class TheatricalItems {
     public static final RegistryObject<Item> IWB = ITEMS.register("iwb", () -> new BlockItem(TheatricalBlocks.IWB.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> TEST_DMX = ITEMS.register("test_dmx", () -> new BlockItem(TheatricalBlocks.TEST_DMX.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> MOVING_LIGHT = ITEMS.register("moving_light", () -> new BlockItem(TheatricalBlocks.MOVING_LIGHT.get(), BASE_PROPERTIES));
+    public static final RegistryObject<Item> FLOOD_LIGHT = ITEMS.register("flood_light", () -> new BlockItem(TheatricalBlocks.FLOOD_LIGHT.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> GENERIC_LIGHT = ITEMS.register("generic_light", () -> new BlockItem(TheatricalBlocks.GENERIC_LIGHT.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> DIMMER_RACK = ITEMS.register("dimmer_rack", () -> new BlockItem(TheatricalBlocks.DIMMER_RACK.get(), BASE_PROPERTIES));
     public static final RegistryObject<Item> SOCAPEX_DISTRIBUTION = ITEMS.register("socapex_distribution", () -> new BlockItem(TheatricalBlocks.SOCAPEX_DISTRIBUTION.get(), BASE_PROPERTIES));
