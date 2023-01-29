@@ -20,6 +20,7 @@ import dev.theatricalmod.theatrical.client.gui.container.TheatricalContainers;
 import dev.theatricalmod.theatrical.compat.top.TOPCompat;
 import dev.theatricalmod.theatrical.entity.TheatricalEntities;
 import dev.theatricalmod.theatrical.fixtures.FixtureFresnel;
+import dev.theatricalmod.theatrical.fixtures.FloodFixture;
 import dev.theatricalmod.theatrical.fixtures.MovingLightFixture;
 import dev.theatricalmod.theatrical.items.TheatricalItems;
 import dev.theatricalmod.theatrical.network.TheatricalNetworkHandler;
@@ -144,6 +145,7 @@ public class TheatricalMod {
 
 
     private void registerFixture(RegistryEvent.Register<Fixture> event){
+        event.getRegistry().register(new FloodFixture());
         event.getRegistry().register(new MovingLightFixture());
         event.getRegistry().register(new FixtureFresnel());
     }
